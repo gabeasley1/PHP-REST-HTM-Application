@@ -4,7 +4,9 @@ if (!isset($_SESSION)) {
     session_start();
 }
 
-$edit= isset($_GET['edit']) && $_GET['edit'] != '0' && $_GET['edit'] != 'false';
+$edit= isset($_GET['edit']) && $_GET['edit'] != '0' && $_GET['edit'] != 'false';$new = isset($_GET['new']) && $_GET['new'] != '0' && $_GET['new'] != 'false';
+$copy= isset($_GET['copy']) && $_GET['copy'] != '0' && $_GET['copy'] != 'false';
+$edit = $edit | $new | $copy;
 
 $selectedUserUri = null;
 $selectedTaskUri = null;
@@ -51,6 +53,8 @@ foreach ($tasks as $task) {
         $selectedTask = $task;
     }
 }
+
+if ($new) $selectedTask = null;
 
 ?>
 <!DOCTYPE html>
@@ -103,17 +107,18 @@ foreach ($tasks as $task) {
                     </ul>
                 </div>
                 <div id="tasks" class="section">
+                    <? $username = Util::escape($selectedUser->getUserName());?>
                     <span class="header">
                         <span>Tasks</span>
                         <a href="/tasklist.php?user=<?=$username?>&new=1">
                         <span class="add-item-outer">
-                            <span id="add-account" class="add-item"></span>
+                            <span id="add-task" class="add-item"></span>
                         </span>
                         </a>
                     </span>
                     <ul id="tasks-list" class="list">
                     <? foreach($tasks as $task): ?>
-                        <? if ($task == $selectedTask): ?>
+                        <? if ($task == $selectedTask && !$copy && !$new): ?>
                         <li class='selected'>
                         <? else: ?>
                         <li>
@@ -133,7 +138,7 @@ foreach ($tasks as $task) {
             </div>
             <div id="task-content" class="content">
             <? if ($edit): ?>
-                <?= Task::toEditHtml($selectedUser, $selectedTask); ?>
+                <?= Task::toEditHtml($selectedUser, $selectedTask, $copy); ?>
             <? else: ?>
                 <? if ($selectedTask != null): ?>
                     <? $accNum = Util::escape($selectedUser->getName()); ?>

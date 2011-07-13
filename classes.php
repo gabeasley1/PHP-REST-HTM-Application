@@ -410,7 +410,7 @@ EOF;
         return null;
     }
 
-    public static function toEditHtml($user, $task=null) {
+    public static function toEditHtml($user, $task=null, $copy=false) {
         $name = '';
         $priority = 'NONE';
         $status = '';
@@ -422,12 +422,12 @@ EOF;
         $additionTime = date('G:i');
         $progress = 0;
         $tags = '';
-        $type = '';
+        $type = 'N/A';
         $uri = $user->getUri();
         $details = '';
         $method = 'POST';
         $etag = '';
-        $tasknumber = -1;
+        $tasknumber = '';
         if ($task != null) {
             $name = $task->getName();
             $priority = $task->getPriority();
@@ -448,10 +448,10 @@ EOF;
             $tags = implode(', ', $task->getTags());
             $details = $task->getDetail();
             $type = $task->getType(); 
-            $method = 'PUT';
-            $uri = $task->getUri();
-            $etag = $task->getEtag();
-            $tasknumber = $task->getTaskNumber();
+            if (!$copy) $method = 'PUT';
+            if (!$copy) $uri = $task->getUri();
+            if (!$copy) $etag = $task->getEtag();
+            if (!$copy) $tasknumber = $task->getTaskNumber();
         }
         $modificationDate = date('m/d/Y');
         $modificationTime = date('G:i');
@@ -850,7 +850,7 @@ class Util {
         if ($progress != null) $params["taskProgress"] = $progress;
         if ($processProgress != null) $params["processProgress"] = $processProgress;
         if ($type != null) $params["taskType"] = $type;
-        if ($uri != null) $params["link:self"] = $uri;
+        if ($uri != null && $method == "PUT") $params["link:self"] = $uri;
         if ($details != null) $params["taskDetail:"] = $details;
         if ($tags != null && count($tags) > 0) {
             if (count($tags) == 1) $tags = explode(",", $tags[0]);
@@ -878,11 +878,11 @@ class Util {
     static function AddEntry($user, $name=null, $priority=null, $status=null, $eta=null, 
                       $ActivationTime=null, $ExpirationTime=null, $Addition=null, 
                       $Modification=null, $progress=null, $processProgress=null,
-                      $tags=array(), $details=null, $type=null) {
+                      $tags=array(), $type=null, $details=null) {
           return self::TaskEntry($user, $name, $priority, $status, $eta, 
-              $ActivityTime, $ExpirationTime, $Addition,
+              $ActivationTime, $ExpirationTime, $Addition,
               $Modification, $progress, $processProgress,
-              $tags, $type, $details, $uri, "POST", null);
+              $tags, $type, $details, $user->getUri(), "POST", null);
     }
 
     static function EditEntry($user, $name=null, $priority=null, $status=null, $eta=null, 

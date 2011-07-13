@@ -1,3 +1,6 @@
+// Note: This file reqiures Google Closure, jQuery, and jQuery-UI to work
+// correctly.  I would recommend compiling all of them together into one
+// file when complete.
 goog.require('goog.editor.Field');
 goog.require('goog.editor.plugins.BasicTextFormatter');
 goog.require('goog.editor.plugins.EnterHandler');
@@ -6,7 +9,6 @@ goog.require('goog.editor.plugins.LinkBubble');
 goog.require('goog.editor.plugins.LinkDialogPlugin');
 goog.require('goog.editor.plugins.ListTabHandler');
 goog.require('goog.editor.plugins.RemoveFormatting');
-goog.require('goog.editor.plugins.SpacesTabHandler');
 goog.require('goog.editor.plugins.UndoRedo');
 goog.require('goog.ui.editor.DefaultToolbar');
 goog.require('goog.ui.editor.ToolbarController');
@@ -63,7 +65,6 @@ function registerEditingItems() {
     richEditor.registerPlugin(new goog.editor.plugins.RemoveFormatting());
     richEditor.registerPlugin(new goog.editor.plugins.UndoRedo());
     richEditor.registerPlugin(new goog.editor.plugins.ListTabHandler());
-    richEditor.registerPlugin(new goog.editor.plugins.SpacesTabHandler());
     richEditor.registerPlugin(new goog.editor.plugins.EnterHandler());
     richEditor.registerPlugin(new goog.editor.plugins.HeaderFormatter());
     richEditor.registerPlugin(
@@ -155,9 +156,10 @@ function flash(message) {
         $("#flash").slideUp();
     }, FLASH_MESSAGE_DISPLAY_SECONDS*1000);
 }
-
-var editing = window.location.href.substring(
-        window.location.href.indexOf('?')).indexOf('edit') != -1;
+var editHref = window.location.href.substring(
+        window.location.href.indexOf('?'));
+var editing = editHref.indexOf('edit') != -1 || editHref.indexOf('new') != -1 ||
+                editHref.indexOf('copy') != -1;
 
 $(document).ready( function() {
     //TODO add functions for when the add button is clicked and when the edit
@@ -170,10 +172,6 @@ $(document).ready( function() {
     });
 
     $(".navbar .header").click( function(e) {
-        e.preventDefault();
-
-        if ($(e.target).hasClass("add-item")) return;
-
         $(this).next().slideToggle();
         $(this).children("span")
             .toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s");
@@ -215,7 +213,8 @@ $(document).ready( function() {
         var href = $(this).attr('href');
         var data = href.substring(href.indexOf('?')+1);
         var rest = href.substring(href.indexOf('user=')+5);
-        var user = unescape(rest.substring(rest.indexOf('&')));
+
+        var user = rest.substring(rest.indexOf('&'));
         
         var $this = $(this);
         
@@ -230,7 +229,9 @@ $(document).ready( function() {
             $("#tasks-list li a").append('<span class="edit-task"></span>');
             
             var parent = $this.parent();
-            $("title").text("Task list for "+ user);
+            $("title").text("Task list for "+ unescape(user));
+            $("#add-task").parent().parent().attr('href', 
+                                    '/tasklist.php?user='+user+'&new=1');
             
             parent.siblings(".selected").removeClass("selected");
             parent.addClass("selected");

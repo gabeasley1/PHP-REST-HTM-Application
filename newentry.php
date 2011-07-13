@@ -1,6 +1,11 @@
 <?
 require_once('classes.php');
 
+foreach ($_POST as $k=>$v) {
+    if ($k != 'tags') $v = trim($v);
+    if (empty($v) and $v != 0 and $v != '0') $_POST[$k] = null;
+}
+
 $name = $_POST['name'];
 $priority = $_POST['priority'];
 $status = $_POST['status'];
@@ -9,14 +14,17 @@ $expiration = $_POST['expiration-date'] . "T" . $_POST['expiration-time'];
 $addition = $_POST['addition-date'] . "T". $_POST['addition-time'];
 $modification = $_POST['modification-date'] . "T" . $_POST['modification-time'];
 $progress = $_POST['progress'];
-$tags = $_POST['tags'];
+$tags = empty($_POST['tags']) ? array() : $_POST['tags'];
 $type = $_POST['type'];
 $uri = $_POST['uri'];
 $username = $_POST['user'];
 $method = strtoupper($_POST['method']);
 $details = $_POST['details'];
 $etag = $_POST['etag'];
-$tasknumber = (int) $_POST['tasknumber'];
+$tasknumber = $_POST['tasknumber'];
+if ($tasknumber != null) {
+    $tasknumber = (int) $tasknumber;
+}
 
 $modificationDT = DateTime::createFromFormat('m/d/Y\TG:i', $modification);
 $modification = $modificationDT->format('Y-m-d\TH:i:sP');
@@ -55,12 +63,12 @@ if ((int) ($response->getStatus()/100) == 2) {
         }
     }
     $username = str_replace('+','%20',urlencode($username));
-    header("Location: /tasklist.php?user=$username&task=$tasknumber");
+    $redirect = "/tasklist.php?user=$username&task=$tasknumber";
 } else {
     $_SESSION['flash'] = "Oops. ".$response->getReasonPhrase();
     $redirect = isset($_SERVER['HTTP_REFERRER']) ? $_SERVER['HTTP_REFERRER'] :
                                                    "/tasklist.php";
-    header("Location: $redirect");
 }
-
+var_dump($response);
+// header("Location: $redirect");
 ?>

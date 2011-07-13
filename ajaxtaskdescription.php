@@ -1,11 +1,16 @@
 <? require_once('classes.php'); ?>
 <? $edit = isset($_GET['edit']) && $_GET['edit'] != 0 ?>
-<? if (isset($_GET['user']) and isset($_GET['task'])): ?>
+<? $copy = isset($_GET['copy']) && $_GET['copy'] != 0 ?>
+<? if (isset($_GET['user'])): ?>
     <? $user = Account::getUserByUserName($_GET['user']); ?>
-    <? $task_uri = Task::uriFromTaskNumber($_GET['task']); ?>
-    <? $task = Util::retrieveTaskDescription($user, $task_uri); ?>
+    <? if (isset($_GET['task'])): ?>
+        <? $task_uri = Task::uriFromTaskNumber($_GET['task']); ?>
+        <? $task = Util::retrieveTaskDescription($user, $task_uri); ?>
+    <? else: ?>
+        <? $task = null; ?>
+    <? endif; ?>
     <? if ($edit): ?>
-        <?= Task::toEditHtml($user, $task); ?>
+        <?= Task::toEditHtml($user, $task, $copy); ?>
     <? else: ?>
         <? if ($task != null): ?>
             <div class='edit-buttons'>
