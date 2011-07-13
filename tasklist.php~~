@@ -1,0 +1,112 @@
+<?php
+require_once("classes.php");
+
+$selectedUserUri = null;
+$selectedTaskUri = null;
+$selectedTaskNumber = null;
+$selectedUserName = null;
+
+if (isset($_GET['user'])) {
+    $selectedUserName = urldecode($_GET['user']);
+}
+if (isset($_GET['task'])) {
+    $selectedTaskNumber = $_GET['task'];
+}
+
+if ($selectedTaskNumber != null) {
+    $selectedTaskUri = Task::uriFromTaskNumber($selectedTaskNumber);
+}
+
+if ($selectedUserName != null) {
+    $selectedUserUri = Account::uriFromUserName($selectedUserName);
+}
+
+$accounts = Util::getAccounts();
+if (count($accounts) > 0) {
+    $selectedUser = $accounts[0];
+} else {
+    $selectedUser = null;
+}
+
+foreach ($accounts as $account) {
+    if ($account->getUri() == $selectedUserUri) {
+        $selectedUser = $account;
+    }
+}
+
+$tasks = Util::getTasksForAccount($selectedUser);
+if (count($tasks) > 0) {
+    $selectedTask = $tasks[0];
+} else {
+    $selectedTask = null;
+}
+
+foreach ($tasks as $task) {
+    if ($task->getUri() == $selectedTaskUri) {
+        $selectedTask = $task;
+    }
+}
+
+?>
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+        <script type='text/javascript' src='/js/jquery-1.6.1.min.js'></script>
+        <link href="/css/custom-theme/taskstyle.css" 
+              type="text/css" rel="Stylesheet" />
+        <script type='text/javascript' src='/js/tasklist.js'></script>
+    </head>
+    <body>
+        <div id="body">
+            <div id="navigation" class="navbar">
+                <div id="accounts" class="section">
+                    <a href="#" class="header">
+                        <span class="ui-triangle-1-s"></span>
+                        Accounts
+                    </a>
+                    <ul id="accounts-list" class="list">
+                    <? foreach($accounts as $account): ?>
+                        <? if ($account == $selectedUser): ?>
+                        <li class='selected'>
+                        <? else: ?>
+                        <li>
+                        <? endif; ?>
+                            <a href="?user=<?= $account->getUserName() ?>">
+                                <?= $account->getName() ?>
+                            </a>
+                        </li>
+                    <? endforeach; ?>
+                    </ul>
+                </div>
+                <div id="tasks" class="section">
+                    <a href="#" class="header">
+                        <span class="ui-icon-triangle-1-s"></span>
+                        Tasks
+                    </a>
+                    <ul id="tasks-list" class="list">
+                    <? foreach($tasks as $task): ?>
+                        <? if ($task == $selectedTask): ?>
+                        <li class='selected'>
+                        <? else: ?>
+                        <li>
+                        <? endif; ?>
+                            <a href="?user=<?= $selectedUser->getName() ?>&task=<?= $task->getTaskNumber() ?>">
+                                <?= $task->getName() ?>
+                            </a>
+                        </li>
+                    <? endforeach; ?>
+                    </ul>
+                </div>
+            </div>
+            <div id="task-content" class="content">
+                <? if ($selectedTask != null): ?>
+                    <h3 class="task-title"><?= $selectedTask->getName() ?></h3>
+                    <?= $selectedTask->toHtml() ?>
+                <? else: ?>
+                    <h2>There are no tasks available to display.</h2>
+                <? endif; ?>
+            </div>
+        </div>
+    </body>
+</html>

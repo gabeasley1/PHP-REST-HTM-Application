@@ -1,0 +1,9 @@
+from __future__ import with_statement
+from sys import argv as ARGV
+from re import search
+import os
+
+cur_file = ARGV[1]
+
+with open("hashfile.txt") as f:
+    for here, dirs, paths in os.walk(
