@@ -1536,11 +1536,17 @@ html, body {
     float: left;
     overflow: auto; }
     #body .navbar .header {
+      user-select: none;
+      -o-user-select: none;
+      -moz-user-select: none;
+      -khtml-user-select: none;
+      -webkit-user-select: none;
       font-size: 0.8em;
       border-top: thin solid black;
       border-bottom: thin solid black;
       display: block;
-      text-decoration: none; }
+      text-decoration: none;
+      cursor: pointer; }
       #body .navbar .header span {
         display: inline-block; }
       #body .navbar .header .add-item-outer, #body .navbar .header .add-item-outer:hover {
@@ -1781,7 +1787,7 @@ html, body {
     font-size: 13pt;
     text-align: left;
     color: #7a7a7a;
-    width: 150px;
+    width: 175px;
     border: thin solid #ccc; }
     #edit-task-menu ul li, #edit-account-menu ul li {
       user-select: none;

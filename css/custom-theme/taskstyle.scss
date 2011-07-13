@@ -75,11 +75,13 @@ html, body {
 
         .header {
             @extend .ui-widget-header;
+            @include multilang(user-select, none);
             font-size: $smallfont;
             border-top: thin solid black;
             border-bottom: thin solid black;
             display: block;
             text-decoration: none;
+            cursor: pointer;
             
             span {
                 display: inline-block;
@@ -463,7 +465,7 @@ html, body {
         font-size: $normalfont;
         text-align: left;
         color: #7a7a7a;
-        width:150px;
+        width: 175px;
         border: thin solid #ccc;
         li {
             @include multilang(user-select, none);

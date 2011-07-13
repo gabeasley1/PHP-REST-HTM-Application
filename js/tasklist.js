@@ -23,9 +23,9 @@ function registerViewingItems() {
     });
 }
 
-function setSelected(item) {
+function setSelected(item, click) {
     item.siblings().removeClass('selected');
-    item.children("a").click();
+    if (click) item.children("a").click();
 }
 
 function registerEditingItems() {
@@ -134,7 +134,7 @@ function deleteTask(anchor) {
                         "<h2 style='padding:10px 30px'>There are no tasks "+
                         "available to display.</h2>");
                 } else {
-                    setSelected(anchor.parent().siblings(":first"));
+                    setSelected(anchor.parent().siblings(":first"), true);
                 }
             }
             $(anchor.parent()).hide();
@@ -178,10 +178,7 @@ $(document).ready( function() {
         $(this).children("span")
             .toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s");
 
-    }).append('<span class="add-item-outer">'+
-                '<span id="add-account" class="add-item"></span>'+
-              '</span>')
-      .prepend('<span class="ui-icon ui-icon-triangle-1-s"></span>');
+    }).prepend('<span class="ui-icon ui-icon-triangle-1-s"></span>');
     
     $("#accounts-list li a").append('<span class="edit-account"></span>');
     $("#tasks-list li a").append('<span class="edit-task"></span>');
@@ -281,6 +278,7 @@ $(document).ready( function() {
 
     $("<div id='edit-task-menu' />").html(
             "<ul><li class='edit'>Edit Task</li>"+
+            "<li class='create-copy'>Create From Copy</li>"+
             "<li class='delete'>Delete Task</li></ul>").appendTo("body");
 
     $(".edit-task").live('click', function(e) {
@@ -325,7 +323,7 @@ $(document).ready( function() {
     $("#edit-task-menu .edit").bind('click', function(e) {
         var anchor = $($("#edit-task-menu").data("last-elem"));
         var href = anchor.attr('href');
-        var data = href.substring(href.indexOf('?')+1)+ "&edit=1"
+        var data = href.substring(href.indexOf('?')+1)+ "&edit=1";
 
         loadDescription(data, true, function(data) {
             setSelected(anchor.parent());
@@ -336,6 +334,22 @@ $(document).ready( function() {
                 }
             }).click( function(e) {
                 //TODO use this to submit to the save data php script
+            });
+        });
+    });
+
+    $("#edit-task-menu .create-copy").bind('click', function(e) {
+        var anchor = $($("#edit-task-menu").data("last-elem"));
+        var href = anchor.attr('href');
+        var data = href.substring(href.indexOf('?')+1)+ "&edit=1&copy=1";
+
+        loadDescription(data, true, function(data) {
+            setSelected(anchor.parent());
+            hideMenus();
+            $("#task-save-button").button({
+                icons: {
+                    parimary: 'ui-icon-disk'
+                }
             });
         });
     });

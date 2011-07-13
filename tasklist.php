@@ -77,9 +77,14 @@ foreach ($tasks as $task) {
             <div id="navigation" class="navbar">
                 <div class='overflow-catch'>
                 <div id="accounts" class="section">
-                    <a href="#" class="header">
+                   <span class="header">
                         <span>Accounts</span>
-                    </a>
+                        <a href="/addaccount.php">
+                        <span class="add-item-outer">
+                            <span id="add-account" class="add-item"></span>
+                        </span>
+                        </a>
+                    </span>
                     <ul id="accounts-list" class="list">
                     <? foreach($accounts as $account): ?>
                         <? if ($account == $selectedUser): ?>
@@ -98,9 +103,14 @@ foreach ($tasks as $task) {
                     </ul>
                 </div>
                 <div id="tasks" class="section">
-                    <a href="#" class="header">
+                    <span class="header">
                         <span>Tasks</span>
-                    </a>
+                        <a href="/tasklist.php?user=<?=$username?>&new=1">
+                        <span class="add-item-outer">
+                            <span id="add-account" class="add-item"></span>
+                        </span>
+                        </a>
+                    </span>
                     <ul id="tasks-list" class="list">
                     <? foreach($tasks as $task): ?>
                         <? if ($task == $selectedTask): ?>
