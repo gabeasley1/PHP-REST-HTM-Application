@@ -69,6 +69,5 @@ if ((int) ($response->getStatus()/100) == 2) {
     $redirect = isset($_SERVER['HTTP_REFERRER']) ? $_SERVER['HTTP_REFERRER'] :
                                                    "/tasklist.php";
 }
-var_dump($response);
-// header("Location: $redirect");
+header("Location: $redirect");
 ?>

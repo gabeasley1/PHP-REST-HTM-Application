@@ -9,8 +9,7 @@ require_once 'HTTP/Request2.php';
  * @author Andrew Hays
  * @copyright LGPLv3
  */
- 
- session_start();
+session_start();
 /**
  * Class for manipulating an account.
  * This class mostly contains getters and setters for manipulating
@@ -62,12 +61,11 @@ class Account {
     }
     
     public static function getUserByUserName($name) {
-        foreach(Util::getAccounts() as $account) {
-            // TODO when a database is set up, this would be better done as
-            // a query instead of filtering through a whole list.
-            if ($account->getUserName() == $name) return $account;
-        }
-        return null;
+        return Util::getUserByUserName($name);
+    }
+
+    public static function addAccount($name, $password, $uri) {
+        Util::addAccount($name, $password, $uri);
     }
 }
 
@@ -667,15 +665,14 @@ EOF;
     static function deleteTask($user, $task) {
         $url = $task->getUri();
         $auth = "{$user->getName()}:{$user->getPassword()}";
-        $request = new HttpRequest($url, HttpRequest::METH_DELETE);
-        $request->setOptions(array("httpauth" => $auth));
+        $request = new HTTP_Request2($url, HTTP_Request2::METHOD_DELETE);
 
         $response = $request->send();
-        $codeBase = (int) ($response->getResponseCode() / 100);
+        $codeBase = (int) ($response->getStatus() / 100);
 
         if ($codeBase == 2) {
             return true;
-        } else if ($response->getResponseCode() == 401) {
+        } else if ($response->getStatus() == 401) {
             return "Bad authorization.  Your login credentials may be stale.";
         } else {
             return "Something went wrong, the task may not have been deleted.";
@@ -688,35 +685,55 @@ EOF;
  * Everything in here should be pretty straightforward.
  */
 class Util {
+    private static $mysqli = null;
+
+    public static function init() {
+        self::$mysqli = new mysqli("localhost", "root", "", "login accounts");
+    }
+
+    public static function getUserByUserName($name) {
+        $result = self::$mysqli->query("SELECT Username, Password, URI ".
+                                       "FROM users ".
+                                       "WHERE Username='$name'");
+        if ($result) {
+            $row = $result->fetch_assoc();
+            return new Account($row["Username"], $row["Password"], $row["URI"]);
+        }
+        return null;
+    }
+
     static function escape($string) {
         return str_replace('+','%20', urlencode($string));
     }
+
     static function retrieveMessage($uri, $user=null, $password=null) {
       
         $etag = null;
         if (array_key_exists($uri, $_SESSION))
         {
-            $etag = $_SESSION[$uri]->getHeader("etag");
+            $etag = $_SESSION[$uri]["etag"];
+
         }
-        $request = new HttpRequest($uri, HttpRequest::METH_GET);
-        $request->setHeaders(array("Accept"=>"application/xml,text/xml;q=0.8"));
+        $request = new HTTP_Request2($uri, HTTP_Request2::METHOD_GET);
+        $request->setHeader("Accept", "application/xml,text/xml;q=0.8");
         if ($etag != null) {
-            $request->setHeaders(array("If-None-Match" => $etag));
+            $request->setHeader("If-None-Match", $etag);
         }
         if ($user != null && $password != null) {
-            $request->setOptions(array("httpauth"=>"$user:$password"));
+            $request->setAuth($user, $password);
         }
         
         $response = $request->send();
         
-        if ($response->getResponseCode() == 304)
+        if ($response->getStatus() == 304)
         {
             return $_SESSION[$uri];
         } 
         else 
         {
             $etag = $response->getHeader("etag");
-            $_SESSION[$uri] = $response;
+            $_SESSION[$uri] = array("etag"=>$etag, "body"=>$response->getBody(),
+                                    "status"=>$response->getStatus());
             return $_SESSION[$uri];
         }
     }
@@ -729,17 +746,17 @@ class Util {
     }
 
     static function getAccounts() {
-        // TODO this needs to be fixed eventually, since it's just hardcoded.
-        // When this stuff gets put in a database, pull the accounts from
-        // a database instead of seeing it hardcoded.
-        return array(
-            new Account("Bilbo Beutlin", "obliB", 
-                "http://restapp.dyndns.org:9998/a/Bilbo%20Beutlin"),
-            new Account("Frodo Beutlin", "odorF", 
-                "http://restapp.dyndns.org:9998/a/Frodo%20Beutlin"),
-            new Account("Samweis Sam Gamdschie", "maS", 
-                "http://restapp.dyndns.org:9998/a/Samweis%20Sam%20Gamdschie")
-        );
+        $users = array();
+        $result = self::$mysqli->query("SELECT Username, Password, URI ".
+                                       "FROM users; ");
+        if ($result) {
+            while ($row = $result->fetch_assoc()) {
+                $users[] = new Account($row["Username"], $row["Password"], 
+                    $row["URI"]);
+            }
+            return $users;
+        }
+        return null;
     }
 
     static function getTasksForAccount(Account $account, $fetch_description = true) {
@@ -747,10 +764,9 @@ class Util {
             $response = self::retrieveMessage($account->getUri(), 
                                 $account->getName(), $account->getPassword());
             $tasks = array();
-            // TODO handle other response codes besides 200
-            //TODO handle 304
-            if ($response->getResponseCode() == 200) {
-                $xml = self::getXmlResponse($response->getBody());
+            
+            if ($response["status"] == 200) {
+                $xml = self::getXmlResponse($response["body"]);
                 $taskNodes = $xml->xpath('//ns:link[@rel="http://danieloscarschulte.de/cs'.
                                                 '/tm/taskDescription"]');
                 foreach ($taskNodes as $taskNode) {
@@ -776,12 +792,12 @@ class Util {
 
             $task = null;
             // TODO handle other response codes besides 200
-            if ($response->getResponseCode() == 200) {
+            if ($response["status"] == 200) {
                 // TODO handle different value types.  I'm just going to treat
                 // everything as a string for right now.
-                $xml = self::getXmlResponse($response->getBody());
+                $xml = self::getXmlResponse($response["body"]);
                 $task = new Task(null, $taskUri);
-                $task->setEtag(htmlentities($response->getHeader('etag')));
+                $task->setEtag(htmlentities($response["etag"]));
                 $task->setName(self::firstValue($xml,'//ns:taskName'));
                 $task->setType(self::firstValue($xml,'//ns:taskType'));
                 $task->setDetail(html_entity_decode(html_entity_decode(self::firstValue(
@@ -895,65 +911,30 @@ class Util {
               $ActivationTime, $ExpirationTime, $Addition,
               $Modification, $Progress, $ProcessProgress,
               $Tags, $Type, $details, $Uri, "PUT", $etag);
-        /*if($tags != null)
-        {
-           if($Tags.count() == 1)
-           { 
-              $Tags.trim(split("commas"));
-              $request->setRawPostData($Tags);
-           }
-           else
-           {
-              $request->setRawPostData($Tags);
-           } 
-        }
-        if($Name != null)
-        {
-            $request->setRawPostData($Name);
-        }
-        if($Type != null)
-        {
-            $request->setRawPostData($Type);
-        }
-        if($Uri != null)
-        {
-            $request->setRawPostData($Uri);
-        }
-        if($Priority != null)
-        {
-            $request->setRawPostData($Priority);
-        }if($Status != null)
-        {
-            $request->setRawPostData($Status);
-        }
-        if($Eta != null)
-        {
-            $request->setRawPostData($Eta);
-        }
-        if($ActivationTime != null)
-        {
-            $request->setRawPostData($ActivationTime);
-        }
-        if($ExperationTime != null)
-        {
-            $request->setRawPostData($ExperationTime);
-        }
-        if($Addition != null)
-        {
-            $request->setRawPostData($Addition);
-        }
-        if($Modification != null)
-        {
-            $request->setRawPostData($Modification);
-        }
-        if($Progress != null)
-        {
-            $request->setRawPostData($Progress);
-        }
-        if($ProcessProgress != null)
-        {
-            $request->setRawPostData($ProcessProgress);
-        }*/
     }
-}
+
+    public static function addAccount($name, $password, $uri) {
+        if ($result = self::$mysqli->query("SELECT COUNT(*) as total ".
+                                           "FROM users ".
+                                           "WHERE Username='$name';")) {
+            $row = $result->fetch_assoc();
+            if ($row["total"] > 0) {
+                return null;
+            }
+        }
+        $result = self::retrieveMessage($uri, $name, $password);
+        var_dump($result);
+        if ((int) ($result["status"]/100) == 2) {
+            $query = "INSERT INTO users(Username, Password,    URI) ".
+                     "           VALUES('$name',  '$password', '$uri');";
+            $result = self::$mysqli->query($query);
+            if ($result === TRUE) {
+                return true;
+            } else {
+                return false;
+            }
+        }
+        return false;
+    }
+} Util::init();
 ?>
