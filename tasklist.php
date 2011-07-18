@@ -1,4 +1,9 @@
 <?php
+/**
+ * The main view screen.  Handles all views for all tasks and accounts.
+ * @package PhpHtmRestApplicationMainView
+ */
+
 require_once("classes.php");
 if (!isset($_SESSION)) {
     session_start();

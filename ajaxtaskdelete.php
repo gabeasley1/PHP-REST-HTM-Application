@@ -1,4 +1,11 @@
-<? require_once('classes.php'); 
+<? 
+/**
+ * Allows for deleting tasks through a series of GIT requests.
+ * @package PhpHtmRestApplicationAjaxTaskDeletion
+ * @todo {Andrew Hays} Make a more secure method of deleting tasks.
+ */
+
+require_once('classes.php'); 
 if (isset($_GET['user']) and isset($_GET['task'])) {
     $user = Account::getUserByUserName($_GET['user']);
     $task_uri = Task::uriFromTaskNumber($_GET['task']);
@@ -16,3 +23,4 @@ if (isset($_GET['user']) and isset($_GET['task'])) {
     echo "\t\"message\": \"Not enough information to delete task.\"\n";
     echo "}";
 }
+?>

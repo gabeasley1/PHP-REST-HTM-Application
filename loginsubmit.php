@@ -1,4 +1,10 @@
 <?
+/**
+ * Handles all submit requests from the login form.
+ * @todo {Andrew Hays} Redesign to use new style accounts.
+ * @package PhpHtmRestApplicationLoginSubmit
+ */
+
 require_once('classes.php');
 $href = "/login/";
 if (isset($_SERVER["HTTP_REFERRER"])) {

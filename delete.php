@@ -1,4 +1,12 @@
-<? require_once('classes.php');
+<? 
+/**
+ * Task deletion for those without JavaScript
+ * @todo {Andrew Hays} make more secure.  
+ *              Require session variables for user and account
+ * @package PhpHtmRestApplicationTaskDelete
+ */
+
+require_once('classes.php');
 session_start();
 if (isset($_GET['user']) and isset($_GET['task'])) {
     $user = Account::getUserByUserName($_GET['user']);

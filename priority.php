@@ -1,6 +1,14 @@
 <?php
 /**
- * Displays an image to the screen based on some given values.  Used for the priority bubble.
+ * Displays an image to the screen based on some given values.  
+ * Used for the priority bubble.
+ * @package PhpHtmRestApplicationPriorityImage
+ */
+
+/**
+ * Turns an array of HSV values into an array of RGB values
+ * @param array $hsv The HSV values to load in
+ * @return array The RGB values that are equivalent.
  */
 function hsvToRgb(array $hsv) {
     list($H,$S,$V) = $hsv;
@@ -38,6 +46,12 @@ function hsvToRgb(array $hsv) {
     return array((int)(255*$R), (int)(255*$G), (int)(255*$B));
 }
 
+/**
+ * Returns a priority as a value.
+ * @param string $priority One of [HIGHEST, VERYHIGH, HIGH, MEDIUM, LOW, 
+ *              VERYLOW, LOWEST].
+ * @return int An integer for determining what radius to use for a hue.
+ */
 function priorityToValue($priority) {
     if ($priority == "HIGHEST") return 0;
     if ($priority == "VERYHIGH") return 1;
@@ -49,6 +63,10 @@ function priorityToValue($priority) {
     return -1;
 }
 
+/**
+ * Takes a priority and returns it as an RGB value for creating a bubble.
+ * @param string The priority to convert.
+ */
 function priorityToRgb($priority) {
     $val = priorityToValue($priority);
     if ($val == -1) return array(175, 175, 175);

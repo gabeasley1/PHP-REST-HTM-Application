@@ -1,4 +1,11 @@
-<? require_once('classes.php'); ?>
+<? 
+/**
+ * Allows for retrieving Html for Task Descriptions and forms for editing those
+ * descritpions.
+ * @package PhpHtmRestApplicationAjaxTaskDescription
+ */
+
+require_once('classes.php'); ?>
 <? $edit = isset($_GET['edit']) && $_GET['edit'] != 0 ?>
 <? $copy = isset($_GET['copy']) && $_GET['copy'] != 0 ?>
 <? if (isset($_GET['user'])): ?>
