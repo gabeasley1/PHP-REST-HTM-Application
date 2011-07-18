@@ -83,7 +83,7 @@ if ($new) $selectedTask = null;
                 <div id="accounts" class="section">
                    <span class="header">
                         <span>Accounts</span>
-                        <a href="/addaccount.php">
+                        <a href="/new/">
                         <span class="add-item-outer">
                             <span id="add-account" class="add-item"></span>
                         </span>
@@ -96,8 +96,8 @@ if ($new) $selectedTask = null;
                         <? else: ?>
                         <li>
                         <? endif; ?>
-                        <?$username = Util::escape($account->getUserName());?>
-                            <a href="?user=<?=$username?>">
+                        <?$username = urlencode($account->getUserName());?>
+                            <a href="/<?= $username ?>/">
                                 <span class="account-name">
                                     <?= $account->getName() ?>
                                 </span>
@@ -107,10 +107,10 @@ if ($new) $selectedTask = null;
                     </ul>
                 </div>
                 <div id="tasks" class="section">
-                    <? $username = Util::escape($selectedUser->getUserName());?>
+                    <? $username = urlencode($selectedUser->getUserName());?>
                     <span class="header">
                         <span>Tasks</span>
-                        <a href="/tasklist.php?user=<?=$username?>&new=1">
+                        <a href="/<?= $username ?>/new/">
                         <span class="add-item-outer">
                             <span id="add-task" class="add-item"></span>
                         </span>
@@ -123,13 +123,14 @@ if ($new) $selectedTask = null;
                         <? else: ?>
                         <li>
                         <? endif; ?>
-                        <? $username = Util::escape($selectedUser->getName());?>
-                        <? $tasknum = Util::escape($task->getTaskNumber()); ?>
-                            <a href="?user=<?=$username?>&task=<?=$tasknum?>">
-                                <span class="task-name">
-                                    <?= $task->getName() ?>
-                                </span>
-                            </a>
+                        <? $username = urlencode($selectedUser->getName());?>
+                        <? $tasknum = urlencode($task->getTaskNumber()); ?>
+                        <? $taskname = Util::urlifyTaskName($task->getName());?>
+                        <a href="/<?=$username?>/<?=$tasknum?>/<?=$taskname?>/">
+                            <span class="task-name">
+                                <?= $task->getName() ?>
+                            </span>
+                        </a>
                         </li>
                     <? endforeach; ?>
                     </ul>
@@ -137,29 +138,30 @@ if ($new) $selectedTask = null;
             </div>
             </div>
             <div id="task-content" class="content">
-            <? if ($edit): ?>
-                <?= Task::toEditHtml($selectedUser, $selectedTask, $copy); ?>
+        <? if ($edit): ?>
+            <?= Task::toEditHtml($selectedUser, $selectedTask, $copy); ?>
+        <? else: ?>
+            <? if ($selectedTask != null): ?>
+                <? $accNum = urlencode($selectedUser->getName()); ?>
+                <? $taskNum = urlencode($selectedTask->getTaskNumber()); ?>
+                <? $taskname = Util::urlifyTaskName($selectedTask->getName());?>
+                <div class='edit-buttons'>
+                    <a id='edit-task-link' 
+                       href='/<?=$accNum?>/<?=$taskNum?>/<?=$taskname?>/edit/'>
+                        Edit
+                    </a>
+                    <a id='delete-task-link'
+                      href='/<?=$accNum?>/<?=$taskNum?>/<?=$taskname?>/delete/'>
+                        Delete
+                    </a>
+                </div>
+                <?= $selectedTask->toHtml() ?>
             <? else: ?>
-                <? if ($selectedTask != null): ?>
-                    <? $accNum = Util::escape($selectedUser->getName()); ?>
-                    <? $taskNum = Util::escape($selectedTask->getTaskNumber()); ?>
-                    <div class='edit-buttons'>
-                        <a id='edit-task-link' 
-                           href='?user=<?=$accNum?>&task=<?=$taskNum?>&edit=1'>
-                            Edit
-                        </a>
-                        <a id='delete-task-link'
-                           href='delete.php?user=<?=$accNum?>&task=<?=$taskNum?>'>
-                            Delete
-                        </a>
-                    </div>
-                    <?= $selectedTask->toHtml() ?>
-                <? else: ?>
-                    <h2 style="padding: 10px 30px">
-                        There are no tasks available to display.
-                    </h2>
-                <? endif; ?>
+                <h2 style="padding: 10px 30px">
+                    There are no tasks available to display.
+                </h2>
             <? endif; ?>
+        <? endif; ?>
             </div>
         </div>
     </body>

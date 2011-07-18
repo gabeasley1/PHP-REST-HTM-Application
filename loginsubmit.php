@@ -1,6 +1,6 @@
 <?
 require_once('classes.php');
-$href = "login.php";
+$href = "/login/";
 if (isset($_SERVER["HTTP_REFERRER"])) {
     $href = $_SERVER["HTTP_REFERRER"];
 }
@@ -12,8 +12,8 @@ if (isset($_POST['username']) and isset($_POST['uri']) and
     
     $result = Util::addAccount($username, $password, $uri);
     if ($result or $result===null) {
-        $name = str_replace('+', '%20', urlencode($username));
-        $href = "tasklist.php?user=$name";
+        $name = urlencode($username);
+        $href = "/$name/";
     } else {
         if (!isset($_SESSION)) session_start();
         $_SESSION['flash'] = "Oops! Something went wrong.  Are you sure that ".

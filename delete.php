@@ -17,7 +17,7 @@ if (isset($_GET['user']) and isset($_GET['task'])) {
 if (isset($_SERVER['HTTP_REFERER']) and $_SERVER['HTTP_REFERER']) {
     $referrer = $_SERVER['HTTP_REFERER'];
 } else {
-    $referrer = "/taskdisplay.php";
+    $referrer = "/tasklist/";
 }
 
 header("Location: $referrer");

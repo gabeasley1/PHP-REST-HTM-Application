@@ -15,11 +15,11 @@
         <? if ($task != null): ?>
             <div class='edit-buttons'>
                 <a id='edit-task-link' 
-               href='?user=<?=$_GET['user']?>&task=<?=$_GET['task']?>&edit=1'>
+               href='/<?=$_GET['user']?>/<?=$_GET['task']?>/edit/'>
                     Edit
                 </a>
                 <a id='delete-task-link'
-               href='delete.php?user=<?=$_GET['user']?>&task=<?=$_GET['task']?>'
+               href='/<?=$_GET['user']?>/<?=$_GET['task']?>/delete/'
                 >
                     Delete
                 </a>
@@ -32,5 +32,6 @@
         <? endif; ?>
     <? endif; ?>
 <? else: ?>
-        // TODO set error code somehow to indicate that request failed
+    <?= $_SERVER['REQUEST_URI']; ?><br/>
+    // TODO set error code somehow to indicate that request failed
 <? endif; ?>

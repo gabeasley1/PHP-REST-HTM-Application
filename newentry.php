@@ -56,18 +56,16 @@ if ($method == "POST") {
 if ((int) ($response->getStatus()/100) == 2) {
     $_SESSION['flash'] = "Task successfully ". 
         (($method == "POST") ? "created" : "updated") . ".";
+    $username = urlencode($username);
     if ($tasknumber == -1) {
-        // TODO figure out new task number if possible
-        if ($response->getStatus() == 204) {
-            header("Location: /tasklist.php?user=$username&task=$tasknumber");
-        }
+        $redirect = "/$username/";
+    } else {
+        $redirect = "/$username/$tasknumber/";
     }
-    $username = str_replace('+','%20',urlencode($username));
-    $redirect = "/tasklist.php?user=$username&task=$tasknumber";
 } else {
     $_SESSION['flash'] = "Oops. ".$response->getReasonPhrase();
     $redirect = isset($_SERVER['HTTP_REFERRER']) ? $_SERVER['HTTP_REFERRER'] :
-                                                   "/tasklist.php";
+                                                   "/tasklist/";
 }
 header("Location: $redirect");
 ?>

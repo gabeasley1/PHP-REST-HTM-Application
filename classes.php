@@ -263,7 +263,7 @@ class Task {
                         <span id='task-title'>{$this->mName}</span>
                     <img id='task-priority' alt='{$this->mPriority}'
                          title='{$this->mPriority}'
-                         src='./priority.php?priority={$this->mPriority}&len=10'
+                         src='/priority.php?priority={$this->mPriority}&len=10'
                     />
                     </div>
                     <div class='title-col-right'>
@@ -935,6 +935,10 @@ class Util {
             }
         }
         return false;
+    }
+
+    public static function urlifyTaskName($name) {
+        return trim(substr(preg_replace('/[^A-Z0-9]+/i','-',$name),0,18),'-');
     }
 } Util::init();
 ?>

@@ -1,6 +1,11 @@
 // Note: This file reqiures Google Closure, jQuery, and jQuery-UI to work
 // correctly.  I would recommend compiling all of them together into one
 // file when complete.
+//
+// TODO add closure-style comments to everything.
+
+//goog.require('goog.History');
+goog.require('goog.Uri');
 goog.require('goog.editor.Field');
 goog.require('goog.editor.plugins.BasicTextFormatter');
 goog.require('goog.editor.plugins.EnterHandler');
@@ -10,27 +15,145 @@ goog.require('goog.editor.plugins.LinkDialogPlugin');
 goog.require('goog.editor.plugins.ListTabHandler');
 goog.require('goog.editor.plugins.RemoveFormatting');
 goog.require('goog.editor.plugins.UndoRedo');
+goog.require('goog.events');
+goog.require('goog.history.EventType');
+goog.require('goog.history.Html5History');
 goog.require('goog.ui.editor.DefaultToolbar');
 goog.require('goog.ui.editor.ToolbarController');
 
 var FLASH_MESSAGE_DISPLAY_SECONDS = 5;
 
-function hideMenus() {
-    $("#edit-account-menu,#edit-task-menu").hide();
-}
+var Task = function() {
+    // TODO make history work with the old Html4 way, too.
+    // TODO figure out why history is messed up for editing items
+    this.history = new goog.history.Html5History();
+    this.historyEvent = goog.history.EventType.NAVIGATE;
+    this.history.setUseFragment(false);
+    this.history.setEnabled(true);
+    var $this = this;
+    goog.events.listen(this.history, this.historyEvent, function(e) {
+        e.preventDefault();
+        var token = e.token;
+        if (e.token) {
+            var tok = Task.trim(e.token, '/');
+            var edit = Task.endsWith(tok, "edit");
+            var copy = Task.endsWith(tok, "copy");
+            var isNew = Task.endsWith(tok, "new");
+            var delt = Task.endsWith(tok, "delete");
+            
+            var isTaskList = (tok.split("/").length-1)==0;
+            
+            if (delt) return;
+            $.get('/ajax/'+tok+'/', function(html) {
+                if (!isTaskList) {
+                    $("#task-content").html(html);
+                    var anchor = $("a[href*=\""+e.token+"\"]");
+                    var parent = anchor.parent();
+                    $("title").text(anchor.text());
+                    
+                    parent.siblings(".selected").removeClass("selected");
+                    parent.addClass("selected");
+                    if (edit||copy||isNew) {
+                        $this.registerEditingItems();
+                        if (edit) {
+                            $("title").text("Edit: "+$("title").text());
+                        } else if (copy) {
+                            $("title").text("Copy: "+$("title").text());
+                        } else {
+                            $("title").text("New Task");
+                        }
+                    } else {
+                        $this.registerViewingItems();
+                    }
+                } else {
+                    $("#tasks-list").html(html);
+                    $("#tasks-list li:first a").click();
+                    if ($("#tasks-list li").size() == 0) {
+                        $("#task-content").html(
+                                "<h2 style='padding:10px 30px'>" +
+                                "There are no tasks available to display." +
+                                "</h2>");
+                    }
 
-function registerViewingItems() {
-    $("#task-progress-bar").progressbar({
-        value: parseInt($("#task-progress").text())
+                    $("#tasks-list li a").append('<span class="edit-task">'+
+                        '</span>');
+
+                    var user = tok;
+                    
+                    var anchor = $("#accounts-list a[href*='"+e.token+"']");
+                    var parent = anchor.parent();
+                    $("title").text("Task list for "+ unescape(user));
+                    $("#add-task").parent().parent().attr('href', 
+                                            '/'+user+'/new/');
+                    
+                    parent.siblings(".selected").removeClass("selected");
+                    parent.addClass("selected");
+                }
+            });
+        }
     });
 }
 
-function setSelected(item, click) {
-    item.siblings().removeClass('selected');
-    if (click) item.children("a").click();
+Task.endsWith = function(string, substr, caseInsensitive) {
+    if (caseInsensitive) {
+        string = string.toLowerCase();
+        substr = substr.toLowerCase();
+    }
+    return string.substring(string.length-substr.length)==string;
 }
 
-function registerEditingItems() {
+Task.startsWith = function(string, substr, caseInsensitive) {
+    if (caseInsensitive) {
+        string = string.toLowerCase();
+        substr = substr.toLowerCase();
+    }
+    return string.substring(0, substr.length)==substr;
+}
+
+Task.trim = function(string, chars) {
+    var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g");
+    if (!chars) {
+        chars = "\\s";
+    } else {
+        chars = "["+chars.replace(specials, "$&")+"]";
+    }
+    var re = new RegExp("^"+chars+"*(.*?)"+chars+"*$","g");
+    return string.replace(re, "$1");
+}
+
+Task.prototype.updateHistory = function(anchor) {
+    var url;
+    if (typeof anchor != "string") {
+        url = anchor.attr('href');
+    } else {
+        url = anchor;
+    }
+    url = Task.trim(url, '/') + '/';
+    this.history.setToken(url);
+}
+
+Task.prototype.registerViewingItems = function() {
+    var $this = this;
+    $("#task-progress-bar").progressbar({
+        value: parseInt($("#task-progress").text())
+    });
+    $("#edit-task-link").button({
+        icons: {
+            primary: "ui-icon-pencil"
+        }   
+    }).css("font-size", "85%").live('click', function(e) {
+        e.preventDefault();
+        $this.updateHistory($(this));
+    });
+
+    $("#delete-task-link").button({
+        icons: {
+            primary: "ui-icon-trash"
+        }
+    }).css("font-size", "85%");
+};
+
+Task.prototype.registerEditingItems = function() {
     $("#task-progress-edit-slider").slider({
         range: 'min',
         value: $("#task-progress-edit").val(),
@@ -105,28 +228,31 @@ function registerEditingItems() {
             });
     richEditor.makeEditable();
     richEditor.setHtml(false, $("#task-details-edit").hide().val());
-}
+};
 
-function loadDescription(data, edit, callback) {
-    $.get("ajaxtaskdescription.php", data, function(html) {
+Task.prototype.get = function(anchor, callback) {
+    var $this = this;
+    $.get('/ajax/'+url, function(html) {
         $("#task-content").html(html);
-
+        $this.registerViewingItems();
         if (callback) callback(html);
+    });
+};
 
-        if (edit) {
-            registerEditingItems();
-        } else {
-            registerViewingItems();
-        }
-    }, 'html');
-}
+Task.prototype.getEditor = function(anchor, callback) {
+    var $this = this;
+    $.get('/ajax/'+url, function(html) {
+        $("#task-content").html(html);
+        $this.registerEditingItems();
+        if (callback) callback(html);
+    });
+};
 
-function deleteTask(anchor) {
-    var data = anchor.attr('href').substring(
-            anchor.attr('href').indexOf('?')+1);
-    $.get("ajaxtaskdelete.php", data, function(json) {
+Task.prototype.deleteItem = function(anchor, callback) {
+    var $this = this;
+    $.get('/ajax/'+url, function(json) {
         if (!json) {
-            flash("Oops!  Something went wrong.  Please refresh the page.");
+            $this.flash("Oops! Something went wrong. Please refresh the page.");
         }
         if (json.success) {
             if (anchor.parent().hasClass('selected')) {
@@ -135,17 +261,58 @@ function deleteTask(anchor) {
                         "<h2 style='padding:10px 30px'>There are no tasks "+
                         "available to display.</h2>");
                 } else {
-                    setSelected(anchor.parent().siblings(":first"), true);
+                    $this.setSelected(anchor.parent().siblings(":first"), true);
                 }
             }
             $(anchor.parent()).hide();
             $("#edit-task-menu").hide();
         }
-        flash(json.message);
+        $this.flash(json.message);
+        if (callback) callback(json);
     }, 'json');
 }
 
-function flash(message) {
+Task.prototype.getList = function(anchor, callback) {
+    $.get('/ajax/'+url, {}, function(data) {
+        $("#tasks-list").html(data);
+        $("#tasks-list li:first a").click();
+        if ($("#tasks-list li").size() == 0) {
+            $("#task-content").html(
+                    "<h2 style='padding:10px 30px'>There are no tasks available to display.</h2>");
+        }
+
+        $("#tasks-list li a").append('<span class="edit-task"></span>');
+
+        var userReg = new RegExp("^/([^/]+)");
+        var user = new goog.Uri(document.location.href).getPath().replace(
+            userReg, "$1");
+        
+        var parent = anchor.parent();
+        $("title").text("Task list for "+ unescape(user));
+        $("#add-task").parent().parent().attr('href', 
+                                '/'+user+'/new/');
+        
+        parent.siblings(".selected").removeClass("selected");
+        parent.addClass("selected");
+
+        if (callback) callback();
+    }, "html");
+}
+
+Task.prototype.hideMenus = function() {
+    $("#edit-account-menu,#edit-task-menu").hide();
+}
+
+Task.prototype.setSelected = function(item, click) {
+    item.siblings().removeClass('selected');
+    if (click) {
+        item.children("a").click();
+    } else {
+        item.addClass('selected');
+    }
+};
+
+Task.prototype.flash = function(message) {
     if (message) {
         $("#flash-inner").text(message).slideDown();
     }
@@ -156,16 +323,18 @@ function flash(message) {
         $("#flash").slideUp();
     }, FLASH_MESSAGE_DISPLAY_SECONDS*1000);
 }
+
 var editHref = window.location.href.substring(
-        window.location.href.indexOf('?'));
+        window.location.href.indexOf('/'));
 var editing = editHref.indexOf('edit') != -1 || editHref.indexOf('new') != -1 ||
                 editHref.indexOf('copy') != -1;
 
 $(document).ready( function() {
     //TODO add functions for when the add button is clicked and when the edit
     //button is clicked
-
-    flash();
+    
+    var task = new Task();
+    task.flash();
 
     $("#flash").click( function() {
         $(this).slideUp();
@@ -181,23 +350,6 @@ $(document).ready( function() {
     $("#accounts-list li a").append('<span class="edit-account"></span>');
     $("#tasks-list li a").append('<span class="edit-task"></span>');
 
-    $("#edit-task-link").button({
-        icons: {
-            primary: "ui-icon-pencil"
-        }   
-    }).css("font-size", "85%").live('click', function(e) {
-        e.preventDefault();
-        var href = $(this).attr('href');
-        var data = href.substring(href.indexOf('?')+1);
-        
-        loadDescription(data, true);
-    });
-
-    $("#delete-task-link").button({
-        icons: {
-            primary: "ui-icon-trash"
-        }
-    }).css("font-size", "85%");
     //TODO maybe make this automagically work with JavaScript?  For now the 
     //refresh should be fine.
     
@@ -209,67 +361,18 @@ $(document).ready( function() {
         if ($(this).parent().hasClass("selected")) return;
     
         var list = $("#tasks-list").empty();
-        
-        var href = $(this).attr('href');
-        var data = href.substring(href.indexOf('?')+1);
-        var rest = href.substring(href.indexOf('user=')+5);
-
-        var user = rest.substring(rest.indexOf('&'));
-        
-        var $this = $(this);
-        
-        $.get('ajaxtasklist.php', data, function(data) {
-            $("#tasks-list").html(data);
-            $("#tasks-list li:first a").click();
-            if ($("#tasks-list li").size() == 0) {
-                $("#task-content").html(
-                        "<h2 style='padding:10px 30px'>There are no tasks available to display.</h2>");
-            }
-
-            $("#tasks-list li a").append('<span class="edit-task"></span>');
-            
-            var parent = $this.parent();
-            $("title").text("Task list for "+ unescape(user));
-            $("#add-task").parent().parent().attr('href', 
-                                    '/tasklist.php?user='+user+'&new=1');
-            
-            parent.siblings(".selected").removeClass("selected");
-            parent.addClass("selected");
-        }, "html");
+        task.updateHistory($(this));
     });
 
-    
     $("#tasks-list li a").live('click', function(e) {
         e.preventDefault();
 
         if ($(e.target).hasClass('edit-task')) return;
-
         if ($(this).parent().hasClass("selected")) return;
-        
-        var href = $(this).attr('href');
-        var data = href.substring(href.indexOf('?')+1);
         
         var $this = $(this);
         
-        loadDescription(data, false, function(data) {
-            var parent = $this.parent();
-            
-            parent.siblings(".selected").removeClass("selected");
-            parent.addClass("selected");
-            
-            $("#task-content").html(data);
-            
-            $("#edit-task-link").button({
-                icons: {
-                    primary: "ui-icon-pencil"
-                }   
-            }).css("font-size", "85%");
-            $("#delete-task-link").button({
-                icons: {
-                    primary: "ui-icon-trash"
-                }
-            }).css("font-size", "85%");
-        });
+        task.updateHistory($(this));
     });
 
     $("<div id='edit-account-menu' />").html(
@@ -324,46 +427,31 @@ $(document).ready( function() {
     $("#edit-task-menu .edit").bind('click', function(e) {
         var anchor = $($("#edit-task-menu").data("last-elem"));
         var href = anchor.attr('href');
-        var data = href.substring(href.indexOf('?')+1)+ "&edit=1";
+        var link = Task.trim(href.substring(href.indexOf('/')),'/')+'/edit/';
 
-        loadDescription(data, true, function(data) {
-            setSelected(anchor.parent());
-            hideMenus();
-            $("#task-save-button").button({
-                icons: {
-                    primary: 'ui-icon-disk'
-                }
-            }).click( function(e) {
-                //TODO use this to submit to the save data php script
-            });
-        });
+        task.updateHistory(link);
     });
 
     $("#edit-task-menu .create-copy").bind('click', function(e) {
         var anchor = $($("#edit-task-menu").data("last-elem"));
         var href = anchor.attr('href');
-        var data = href.substring(href.indexOf('?')+1)+ "&edit=1&copy=1";
-
-        loadDescription(data, true, function(data) {
-            setSelected(anchor.parent());
-            hideMenus();
-            $("#task-save-button").button({
-                icons: {
-                    parimary: 'ui-icon-disk'
-                }
-            });
-        });
+        var link = Task.trim(href.substring(href.indexOf('/')),'/')+'/copy/';
+        task.updateHistory(link);
     });
 
     $("#edit-task-menu .delete").click( function(e) {
-        deleteTask($($("#edit-task-menu").data("last-elem")));
+        var anchor = $($("#edit-task-menu").data("last-elem"));
+        var href = anchor.attr('href');
+        var link = Task.trim(href.substring(href.indexOf('/')),'/')+'/delete/';
+
+        task.deleteItem(link);
     });
     
     // Only do the following if editing a task
 
     if (editing) {
-        registerEditingItems();
+        task.registerEditingItems();
     } else {
-        registerViewingItems();
+        task.registerViewingItems();
     }
 });
