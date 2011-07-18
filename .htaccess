@@ -1,0 +1,34 @@
+RewriteEngine on
+
+# Direct links
+RewriteRule ^css/(.*) css/$1 [L]
+RewriteRule ^js/(.*) js/$1 [L]
+RewriteRule ^priority.php priority.php [L]
+RewriteRule ^(tasklist/?)?$ tasklist.php [L]
+RewriteRule ^login/?$ login.php [L]
+RewriteRule ^new/?$ addaccount.php [L]
+
+# All ajax events
+# TODO Update to correct links to look through for pulling ajax stuff
+RewriteRule ^ajax/([^/\.]+)/?$ ajaxtasklist.php?user=$1 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/?$ ajaxtaskdescription.php?user=$1&task=$2 [L]
+# TODO RewriteRule ^ajax/([^/\.]+)/new/?$ tasklist.php?user=$1&new=1 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/edit/?$ ajaxtaskdescription.php?user=$1&task=$2&edit=1 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/delete/?$ ajaxtaskdelete.php?user=$1&task=$2 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/copy/?$ ajaxtaskdescription.php?user=$1&task=$2&copy=1 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/?$ ajaxtaskdescription.php?user=$1&task=$2 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/edit/?$ ajaxtaskdescription.php?user=$1&task=$2&edit=1 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/delete/?$ ajaxtaskdelete.php?user=$1&task=$2 [L]
+RewriteRule ^ajax/([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/copy/?$ ajaxtaskdescription.php?user=$1&task=$2&copy=1 [L]
+
+# All non-ajax links.
+RewriteRule ^([^/\.]+)/?$ tasklist.php?user=$1 [L]
+RewriteRule ^([^/\.]+)/new/?$ tasklist.php?user=$1&new=1 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/?$ tasklist.php?user=$1&task=$2 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/edit/?$ tasklist.php?user=$1&task=$2&edit=1 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/delete/?$ delete.php?user=$1&task=$2 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/copy/?$ tasklist.php?user=$1&task=$2&copy=1 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/?$ tasklist.php?user=$1&task=$2 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/edit/?$ tasklist.php?user=$1&task=$2&edit=1 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/delete/?$ delete.php?user=$1&task=$2 [L]
+RewriteRule ^([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/copy/?$ tasklist.php?user=$1&task=$2&copy=1 [L]
