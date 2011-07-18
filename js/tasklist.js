@@ -36,6 +36,7 @@ var Task = function() {
         var token = e.token;
         if (e.token) {
             var tok = Task.trim(e.token, '/');
+            console.log(tok);
             var edit = Task.endsWith(tok, "edit");
             var copy = Task.endsWith(tok, "copy");
             var isNew = Task.endsWith(tok, "new");
@@ -45,7 +46,12 @@ var Task = function() {
             
             if (delt) return;
             $.get('/ajax/'+tok+'/', function(html) {
+                console.log("EDIT: "+edit);
+                console.log("COPY: "+copy);
+                console.log("NEW:  "+isNew);
                 if (!isTaskList) {
+                    var href=e.token;
+                    if (edit||copy) href = href.substring(0,href.length-5);
                     $("#task-content").html(html);
                     var anchor = $("a[href*=\""+e.token+"\"]");
                     var parent = anchor.parent();
@@ -99,7 +105,7 @@ Task.endsWith = function(string, substr, caseInsensitive) {
         string = string.toLowerCase();
         substr = substr.toLowerCase();
     }
-    return string.substring(string.length-substr.length)==string;
+    return string.substring(string.length-substr.length)==substr;
 }
 
 Task.startsWith = function(string, substr, caseInsensitive) {

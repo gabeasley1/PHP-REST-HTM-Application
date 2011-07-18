@@ -1,14 +1,25 @@
 <?
-require_once 'HTTP/Request2.php';
 /**
  * A number of classes and utilities for manipulating users, tasks,
  * URIs, and other goodies.  This file can be easily added to any
  * other PHP scripts you're working on by adding the line
+ * <code>
  *     require_once('/path/to/your/classes.php');
+ * </code>
  *
  * @author Andrew Hays
  * @copyright LGPLv3
+ * @version 1.0
+ * @package PhpHtmRestApplicationClasses
+ * @todo {Andrew Hays|Grant Beasley} This package will likely need another class
+ *              that is associated with the new style users that we will be
+ *              storing in our database.  We will need methods for manipulating
+ *              those and other methods (that will likely go in the
+ *              {@link Util} class) to link the User objects with the Account
+ *              objects.
  */
+
+require_once 'HTTP/Request2.php';
 session_start();
 /**
  * Class for manipulating an account.
@@ -16,54 +27,144 @@ session_start();
  * an account.
  *
  * @author Andrew Hays
+ * @package PhpHtmRestApplicationClasses
+ * @subpackage Accounts
  */
 class Account {
+    /**
+     * The name attribute for an account object.
+     * @var string 
+     */
     private $mName;
+    /**
+     * The password attribute for an account object.
+     * @var string
+     */
     private $mPassword;
+    /**
+     * The Uri attribute for an account object.
+     * @var string
+     */
     private $mUri;
-    private $mUserNamePattern = '/\/a\/(?P<name>[\w% ]+)/';
-    
+    /**
+     * The pattern to match the end of a username, to make sure that it looks
+     * correct.
+     * @todo {Andrew Hays} I'm not entirely sure that this is still required
+     * @var string
+     * @static
+     */
+    private static $sUserNamePattern = '/\/a\/(?P<name>[\w% ]+)/';
+
+    /**
+     * Constructor for the <code>Account</code> class.  Sets up a new account
+     * (from the database or hardcoded).
+     *
+     * @param string $name The name for the account, this should NOT be encoded
+     *          for urls, that will happen naturally when required.
+     * @param string $password The password for the account.
+     * @param string $uri The Uri that should be associated with the account
+     *          for logging in.
+     */
     function __construct($name, $password, $uri) {
         $this->mName = $name;
         $this->mPassword = $password;
         $this->mUri = $uri;
     }
-    
+
+    /**
+     * Getter for the name attribute.
+     * @return string The name attribute.
+     */
     public function getName() {
         return $this->mName;
     }
-    
+
+    /**
+     * Getter for the Uri attribute
+     * @return string The uri attribute.
+     */
     public function getUri() {
         return $this->mUri;
     }
-    
+
+    /**
+     * Getter for the password attribute.
+     * @return string The password attribute
+     */
     public function getPassword() {
         return $this->mPassword;
     }
-    
+
+    /**
+     * Getter for the username attribute.  Currently this looks at uri for the
+     * object in question and determines the username.
+     * @todo {Andrew Hays} Is this required?  Will {@link Account::getName()} 
+     *          work instead?
+     * @return string The username associated with the account.
+     */
     public function getUserName() {
-        preg_match($this->mUserNamePattern, $this->mUri, $matches);
+        preg_match(self::$sUserNamePattern, $this->mUri, $matches);
         if (array_key_exists("name", $matches)) {
             return urldecode($matches["name"]);
         } else {
             return null;
         }
     }
-    
+
+    /**
+     * Gets the uri for the user given a number.
+     * @static
+     * @deprecated
+     * @todo {Andrew Hays} Can we phase this out completely?
+     * @param string|int $number The number associated with the account.
+     * @return string The alternate uri associated with the user number in
+     *          question.
+     */
     public static function uriFromUserNumber($number) {
         $urlnumber = urlencode($number);
         return "http://restapp.dyndns.org:9998/tdl/$urlnumber";
     }
-    
+
+    /**
+     * Gets the uri for a user given a username
+     * @static
+     * @deprecated
+     * @todo {Grant Beasley} All calls to this function should instead use some
+     *          form of {@link Account::getUserByUserName()} instead.
+     * @param string $name The name associated with the account.
+     * @return string The Uri associated with the account in question.
+     */
     public static function uriFromUserName($name) {
         $urlname = str_replace('+','%20', urlencode($name));
         return "http://restapp.dyndns.org:9998/a/$urlname";
     }
-    
+
+    /**
+     * Gets the account for a user given a username.
+     * @static
+     * @todo {Grant Beasley} Any calls to this function should use the new style
+     *          queries from the database.  It will return Accounts associated
+     *          with Daniel's API based on a username given, by comparing it
+     *          with the database.
+     * @param string $name The name associated with the account.
+     * @return Account The account for Daniel's database associated with the 
+     *          given username.
+     */
     public static function getUserByUserName($name) {
         return Util::getUserByUserName($name);
     }
 
+    /**
+     * Adds a new account to the database.
+     * @static
+     * @todo {Grant Beasley} This should use the new style queries, where the
+     *          $name, $password, and $uri variables are associated with the
+     *          API from Daniel.  You will likely need to add a few more
+     *          parameters (associated with our accounts that we use), so that
+     *          we can link users and accounts.
+     * @param string $name The name for the account
+     * @param string $password The password for the account
+     * @param string $uri The uri for the account.
     public static function addAccount($name, $password, $uri) {
         Util::addAccount($name, $password, $uri);
     }
@@ -92,8 +193,13 @@ class Task {
     private $mProcessProgress;
     private $mTags;
     private $mEtag;
-    private $mTaskNumberPattern = '/\/td\/(?P<number>\d+)/';
-    
+    private static $sTaskNumberPattern = '/\/td\/(?P<number>\d+)/';
+
+    /**
+     * Constructor for a Task object.  Both parameters are optional
+     * @param $name Optional name parameter.  Can be set later.
+     * @param $uri Optional uri parameter.  Can be set later.
+     */
     function __construct($name=null, $uri=null) {
         $this->mName = $name;
         $this->mUri = $uri;
@@ -171,71 +277,131 @@ class Task {
     public function getDetail() {
         return $this->mDetail;
     }
-    
+
+    /**
+     * The status for the current task.
+     * @return Task status
+     */
     public function getStatus() {
         return $this->mStatus;
     }
-    
+
+    /**
+     * Returns the priority for the Task
+     * @return string The Task's priority.
+     */
     public function getPriority() {
         return $this->mPriority;
     }
     
+    /**
+     * Returns the Estimated completion time for the Task.
+     * @return DateTime Estimated completion time.
+     */
     public function getEstimatedCompletionTime() {
         return $this->mEstimatedCompletionTime;
     }
-    
+
+    /**
+     * Returns the activation time for the Task.
+     * @return DateTime Activation time.
+     */
     public function getActivationTime() {
         return $this->mActivationTime;
     }
     
+    /**
+     * Returns the expiration time for the Task.
+     * @return DateTime Expiration time.
+     */
     public function getExpirationTime() {
         return $this->mExpirationTime;
     }
     
+    /**
+     * Returns the addition time for the Task.
+     * @return DateTime Addition time.
+     */
     public function getAdditionTime() {
         return $this->mAdditionTime;
     }
-    
+
+    /**
+     * Returns the modification time for the Task.
+     * @return DateTime Modification time.
+     */
     public function getModificationTime() {
         return $this->mModificationTime;
     }
-    
+
+    /**
+     * Returns the current progress for the Task.
+     * @return int Current progress.
+     */
     public function getProgress() {
         return $this->mProgress;
     }
-    
+
+    /**
+     * Returns the current process progress for the Task.
+     * @return int The current process progress.
+     */
     public function getProcessProgress() {
         return $this->mProcessProgress;
     }
-    
+
+    /**
+     * Return the list of tags associated with the Task.
+     * @return array The tags for the Task.
     public function getTags() {
         return $this->mTags;
     }
-    
+
+    /**
+     * Function to get the task number associated with the account.  I don't
+     * think there's any way around not using this function, yet.
+     * @return int The task number, or null if none was found.
+     */
     public function getTaskNumber() {
-        preg_match($this->mTaskNumberPattern, $this->mUri, $matches);
+        preg_match(self::$sTaskNumberPattern, $this->mUri, $matches);
         if (array_key_exists("number", $matches)) {
             return $matches["number"];
         } else {
             return null;
         }
     }
-    
+
+    /**
+     * Adds a single tag to the set of tags the task already has.
+     * @param string $tag The tag to add to the account.
+     */
     public function addTag($tag) {
         $this->mTags[] = $tag;
     }
-    
+
+    /**
+     * Adds a series of tags to the set of tags that the task already has.
+     * @param array $tags The tags to add.
+     */
     public function addTags($tags) {
         $this->mTags = array_merge($this->mTags, $tags);
     }
-    
+
+    /**
+     * Getter for the uri attribute of a task.
+     * @return string The uri attribute of the task.
+     */
     public function getUri() {
         return $this->mUri;
     }
-    
+
+    /**
+     * Displays a task in Html.  No styling is given, so all styling should
+     * be done through external CSS.
+     * 
+     * @return string The Html for displaying the Task.
+     */
     public function toHtml() {
-        // TODO this is not a good way to do it.  I don't know of a 
-        // nice way to display this yet, though.
         $startDate = "Unknown"; $startAt = ""; $startTime = "";
         $expirationDate = "Unknown"; $expirationAt = ""; $expirationTime = "";
         if ($this->mActivationTime != null) {
@@ -376,12 +542,29 @@ class Task {
         </div>
 EOF;
     }
-    
+
+    /**
+     * Returns a task, given a task number.  We still use this, I believe,
+     * because we don't typically store any information about tasks in our
+     * database.  So this method is required for now.
+     *
+     * @param string|int $number The number associated with the task.
+     * @param string The uri associated with the task.
+     */
     public static function uriFromTaskNumber($number) {
         $urlnumber = urlencode($number);
         return "http://restapp.dyndns.org:9998/td/$urlnumber";
     }
 
+    /**
+     * Attempts to parse the date given a date string using one of many
+     * date string styles.
+     * @todo {Andrew Hays} I would love to see some way to clean this up,
+     *          but right now I don't know what that would be.
+     * @param string The string to parse.
+     * @return DateTime the DateTime associated with the account, or null if 
+     *          no date could be parsed.
+     */
     private static function parseDate($datestr) {
         $formats = array('Y#m#d\TH#m#s#uP', 'Y#m#d\TH#m#sP', 'Y#m#d', 'Y#n#d', 
             'Y#m#d H:m:s', 'Y#m#d G#m#s', 'Y#m#d H#m', 'Y#m#d G#m', 'Y#m#j', 
@@ -408,6 +591,18 @@ EOF;
         return null;
     }
 
+    /**
+     * Static method for returning an Html string that allows for manipulation
+     * through an Html form.  Note that this code isn't styled at all, so any
+     * styling will have to be done externally through CSS.
+     * 
+     * @param Account $user The account associated with the task.
+     * @param Task $task Optional task to add.  If no task is given, it's
+     *          assumed that you're creating a new account.
+     * @param boolean $copy Optional parameter to specify whether or not to
+     *          just create a copy of the provided task.
+     * @return string The Html required to create the form.
+     */
     public static function toEditHtml($user, $task=null, $copy=false) {
         $name = '';
         $priority = 'NONE';
@@ -662,6 +857,17 @@ EOF;
 EOF;
     }
 
+
+    /** 
+     * Static method to delete a task from the database, given an 
+     * {@link Account} and a {@link Task}.
+     *
+     * @param Account $user The user associated with the task
+     * @param Task $task The task to be deleted.
+     * @return boolean|string If the deletion was successful, thie method
+     *          returns <code>true</code>.  Otherwise this method returns
+     *          some kind of error string.
+     */
     static function deleteTask($user, $task) {
         $url = $task->getUri();
         $auth = "{$user->getName()}:{$user->getPassword()}";
@@ -683,14 +889,36 @@ EOF;
 /**
  * Utility module used mostly for handling HttpRequests.
  * Everything in here should be pretty straightforward.
+ * All methods in this class should remain static and can be called with
+ * <code>
+ *      Util::methodName()
+ * </code>
+ * @todo {Grant Beasley|Andrew Hays} Methods should be added to link the 
+ *      {@link User} class (when created) with {@link Account} objects.
+ * @author Andrew Hays
  */
 class Util {
+    /**
+     * Static variable for the MySql class.
+     * @var Mysqli
+     */
     private static $mysqli = null;
 
+    /**
+     * Static initializer for this class.  Has to be explicitly called since
+     * PHP doesn't support constructors for static classes.
+     * @todo {Grant Beasley} This needs to be updated with the new database
+     *          credentials.
+     */
     public static function init() {
         self::$mysqli = new mysqli("localhost", "root", "", "login accounts");
     }
 
+    /**
+     * Searches the database for an Account with a username.
+     * @todo {Grant Beasley} This should use the new query tables.
+     * @todo {Andrew Hays} Rename to getAccountByUserName and fix all references
+     */
     public static function getUserByUserName($name) {
         $result = self::$mysqli->query("SELECT Username, Password, URI ".
                                        "FROM users ".
@@ -702,10 +930,26 @@ class Util {
         return null;
     }
 
+    /**
+     * Utility function for escaping a string for Daniel's server.  Encodes
+     * the string using urlencode, and then replaces all '+' with '%20' so that
+     * Daniel's server can handle it.
+     *
+     * @param string $string The string to encode.
+     * @return string The encoded string.
+     */
     static function escape($string) {
         return str_replace('+','%20', urlencode($string));
     }
 
+    /**
+     * Utility function for retrieving a message from the server.
+     * @param string $uri The uri to query for the message
+     * @param string $user The user for authentication purposes, if required.
+     * @param string $password The password for authentication purposes, if
+     *          required.
+     * @return array Some details associated with the account.
+     */
     static function retrieveMessage($uri, $user=null, $password=null) {
       
         $etag = null;
@@ -737,7 +981,14 @@ class Util {
             return $_SESSION[$uri];
         }
     }
-    
+
+    /**
+     * Converts an Xml string to an Xml dom.
+     * @param string $body The xml string to convert
+     * @param string $namespace the alias namespace to use with searching for
+     *          elements in the Xml.
+     * @return SimpleXMLElement The xml dom for the body.
+     */
     static function getXmlResponse($body, $namespace="ns") {
         $xml = new SimpleXMLElement($body);
         $xml->registerXPathNamespace($namespace, 
@@ -745,6 +996,13 @@ class Util {
         return $xml;      
     }
 
+    /**
+     * Returns all accounts in the database
+     * @todo {Grant Beasley} Adjust this query to use new tables.  You'll likely
+     *          need to accept a new parameter (like a {@link User} object) so
+     *          that you will only get accounts associated with that User.
+     * @return array An array of {@link Account} objects.
+     */
     static function getAccounts() {
         $users = array();
         $result = self::$mysqli->query("SELECT Username, Password, URI ".
@@ -759,7 +1017,18 @@ class Util {
         return null;
     }
 
-    static function getTasksForAccount(Account $account, $fetch_description = true) {
+    /**
+     * Returns a list of tasks for a given account.
+     * @todo {Andrew Hays} Write similar method that accepts an array of
+     *          accounts to display a list of all tasks for the listed accounts
+     * @param Account $account The account to look up tasks for.
+     * @param boolean $fetch_description Whether or not to continue to do 
+     *          requests to fetch descriptions for the tasks as well, or if
+     *          names and links will be fine.
+     * @return array An array of {@link Task} objects
+     */
+    static function getTasksForAccount(Account $account, 
+                                       $fetch_description = true) {
         try {
             $response = self::retrieveMessage($account->getUri(), 
                                 $account->getName(), $account->getPassword());
@@ -767,11 +1036,13 @@ class Util {
             
             if ($response["status"] == 200) {
                 $xml = self::getXmlResponse($response["body"]);
-                $taskNodes = $xml->xpath('//ns:link[@rel="http://danieloscarschulte.de/cs'.
-                                                '/tm/taskDescription"]');
+                $taskNodes = $xml->xpath('//ns:link[@rel="'.
+                                         'http://danieloscarschulte.de/cs'.
+                                         '/tm/taskDescription"]');
                 foreach ($taskNodes as $taskNode) {
                     if ($fetch_description) {
-                        $task = self::retrieveTaskDescription($account, "".$taskNode['href']);
+                        $task = self::retrieveTaskDescription($account, 
+                            "".$taskNode['href']);
                         if ($task != null) $tasks[] = $task;
                     } else {
                         $tasks[] = new Task("".$taskNode, "".$taskNode['href']);
@@ -784,33 +1055,45 @@ class Util {
             return array();
         }
     }
-    
+
+    /**
+     * Retrieves a task description for a given account and task uri
+     * @param Account $account The account to use for authentication purposes.
+     * @param string $taskUri The Uri to look in for the account.
+     * @return Task A task with descriptions loaded.
+     */
     static function retrieveTaskDescription(Account $account, $taskUri) {
         try {
             $response = self::retrieveMessage($taskUri,
                                 $account->getName(), $account->getPassword());
 
             $task = null;
-            // TODO handle other response codes besides 200
+            // TODO {Andrew Hays|Grant Beasley} handle other response codes 
+            // besides 200
             if ($response["status"] == 200) {
-                // TODO handle different value types.  I'm just going to treat
-                // everything as a string for right now.
                 $xml = self::getXmlResponse($response["body"]);
                 $task = new Task(null, $taskUri);
                 $task->setEtag(htmlentities($response["etag"]));
                 $task->setName(self::firstValue($xml,'//ns:taskName'));
                 $task->setType(self::firstValue($xml,'//ns:taskType'));
-                $task->setDetail(html_entity_decode(html_entity_decode(self::firstValue(
-                    $xml,'//ns:taskDetail'))));
+                $task->setDetail(html_entity_decode(html_entity_decode(
+                    self::firstValue($xml,'//ns:taskDetail'))));
                 $task->setStatus(self::firstValue($xml,'//ns:taskStatus'));
                 $task->setPriority(self::firstValue($xml,'//ns:taskPriority'));
-                $task->setEstimatedCompletionTime(self::firstValue($xml,'//ns:estimatedDuration'));
-                $task->setActivationTime(self::firstValue($xml,'//ns:taskActivationTime'));
-                $task->setExpirationTime(self::firstValue($xml, '//ns:taskExpriationTime'));
-                $task->setAdditionTime(self::firstValue($xml,'//ns:taskAdditionTime'));
-                $task->setModificationTime(self::firstValue($xml,'//ns:taskModificationTime'));
-                $task->setProgress(self::firstValue($xml,'//ns:taskProgress'));
-                $task->setProcessProgress(self::firstValue($xml,'//ns:processProgress'));
+                $task->setEstimatedCompletionTime(self::firstValue(
+                    $xml,'//ns:estimatedDuration'));
+                $task->setActivationTime(self::firstValue(
+                    $xml,'//ns:taskActivationTime'));
+                $task->setExpirationTime(self::firstValue(
+                    $xml, '//ns:taskExpriationTime'));
+                $task->setAdditionTime(self::firstValue(
+                    $xml,'//ns:taskAdditionTime'));
+                $task->setModificationTime(self::firstValue(
+                    $xml,'//ns:taskModificationTime'));
+                $task->setProgress(self::firstValue(
+                    $xml,'//ns:taskProgress'));
+                $task->setProcessProgress(self::firstValue(
+                    $xml,'//ns:processProgress'));
                 foreach($xml->xpath('//ns:taskTag') as $k=>$v) {
                     $task->addTag("".$v);
                 }
@@ -821,7 +1104,14 @@ class Util {
             return null;
         }
     }
-    
+
+    /**
+     * Uses xpath to find the first value of a certain type in the Xml.  Not
+     * the most beautiful way to handle this, but it gets the job done.
+     * @param SimpleXMLElement $xml The xml to search through
+     * @param string $xpath The xpath search to use.
+     * @return string The value at the point.
+     */
     private static function firstValue($xml, $xpath) {
         $result = $xml->xpath($xpath);
         if (count($result) > 0) {
@@ -831,6 +1121,11 @@ class Util {
         }
     }
 
+    /**
+     * Generates an xml document for a given list of parameters
+     * @param array $params An associative array used to create the Xml document
+     * @return string An xml string to submit to the server.
+     */
     private static function GenerateXmlDoc($params) {
         $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
         $xml .= "<tm xmlns=\"http://danieloscarschulte.de/cs/ns/2011/tm\">\n";
@@ -849,22 +1144,32 @@ class Util {
         return $xml;
     }
 
-    private static function TaskEntry($user, $name=null, $priority=null, $status=null, $eta=null, 
-                      $ActivationTime=null, $ExpirationTime=null, $Addition=null, 
-                      $Modification=null, $progress=null, $processProgress=null,
-                      $tags=array(), $type=null, $details=null, $uri=null, $method="POST", $etag=null)
-    {
-        $params = array("taskPriority"=>"NONE");
+    /**
+     * Generic task entry method for adding or updating a task on the server.
+     * Each parameter is generally easily understandable and I'm not going
+     * to document them specifically.
+     * @return HTTP_Request2 The request to the server for later parsing.
+     */
+    private static function TaskEntry($user, $name=null, $priority=null, 
+            $status=null, $eta=null, $ActivationTime=null, 
+            $ExpirationTime=null, $Addition=null, $Modification=null, 
+            $progress=null, $processProgress=null,$tags=array(), $type=null, 
+            $details=null, $uri=null, $method="POST", $etag=null) {
+            $params = array("taskPriority"=>"NONE");
         if ($name != null) $params["taskName"] = $name;
         if ($priority != null) $params["taskPriority"] = $priority;
         if ($status != null) $params["taskStatus"] = $status;
         if ($eta != null) $params["estimatedDuration"] = $eta;
-        if ($ActivationTime != null) $params["taskActivationTime"]= $ActivationTime;
-        if ($ExpirationTime != null) $params["taskExpirationTime"]= $ExpirationTime;
+        if ($ActivationTime != null) 
+            $params["taskActivationTime"]= $ActivationTime;
+        if ($ExpirationTime != null) 
+            $params["taskExpirationTime"]= $ExpirationTime;
         if ($Addition != null) $params["taskAdditionTime"] = $Addition;
-        if ($Modification != null) $params["taskModificationTime"] = $Modification;
+        if ($Modification != null) 
+            $params["taskModificationTime"] = $Modification;
         if ($progress != null) $params["taskProgress"] = $progress;
-        if ($processProgress != null) $params["processProgress"] = $processProgress;
+        if ($processProgress != null) 
+            $params["processProgress"] = $processProgress;
         if ($type != null) $params["taskType"] = $type;
         if ($uri != null && $method == "PUT") $params["link:self"] = $uri;
         if ($details != null) $params["taskDetail:"] = $details;
@@ -891,28 +1196,48 @@ class Util {
         return $request->send();
     }
 
-    static function AddEntry($user, $name=null, $priority=null, $status=null, $eta=null, 
-                      $ActivationTime=null, $ExpirationTime=null, $Addition=null, 
-                      $Modification=null, $progress=null, $processProgress=null,
-                      $tags=array(), $type=null, $details=null) {
-          return self::TaskEntry($user, $name, $priority, $status, $eta, 
-              $ActivationTime, $ExpirationTime, $Addition,
-              $Modification, $progress, $processProgress,
-              $tags, $type, $details, $user->getUri(), "POST", null);
+    /**
+     * Method for adding a new task entry.
+     */
+    static function AddEntry($user, $name=null, $priority=null, $status=null, 
+            $eta=null, $ActivationTime=null, $ExpirationTime=null, 
+            $Addition=null, $Modification=null, $progress=null, 
+            $processProgress=null, $tags=array(), $type=null, $details=null) {
+        return self::TaskEntry($user, $name, $priority, $status, $eta, 
+            $ActivationTime, $ExpirationTime, $Addition,
+            $Modification, $progress, $processProgress,
+            $tags, $type, $details, $user->getUri(), "POST", null);
     }
 
-    static function EditEntry($user, $name=null, $priority=null, $status=null, $eta=null, 
-                       $ActivationTime=null, $ExpirationTime=null, 
-                       $Addition=null, $Modification=null, $Progress=null, 
-                       $ProcessProgress=null, $Tags=null, $Type=null, 
-                       $details=null, $Uri=null, $etag=null)
-    {
-          return self::TaskEntry($user, $name, $priority, $status, $eta, 
-              $ActivationTime, $ExpirationTime, $Addition,
-              $Modification, $Progress, $ProcessProgress,
-              $Tags, $Type, $details, $Uri, "PUT", $etag);
+    /**
+     * Method for updating an existing task entry.
+     */
+    static function EditEntry($user, $name=null, $priority=null, $status=null, 
+            $eta=null, $ActivationTime=null, $ExpirationTime=null, 
+            $Addition=null, $Modification=null, $Progress=null, 
+            $ProcessProgress=null, $Tags=null, $Type=null, 
+            $details=null, $Uri=null, $etag=null) {
+        return self::TaskEntry($user, $name, $priority, $status, $eta, 
+            $ActivationTime, $ExpirationTime, $Addition,
+            $Modification, $Progress, $ProcessProgress,
+            $Tags, $Type, $details, $Uri, "PUT", $etag);
     }
 
+    /**
+     * Method for adding a new account to the database, if it doesn't already
+     * exist and it validates against the server correctly.
+     * @todo {Grant Beasley|Andrew Hays} Update function to use new queries.
+     *          This may require a bit of magic to not die if the user already
+     *          exists in the database, but we still want to link it to another
+     *          User.  Speaking of which, this will probably require more
+     *          parameters for linking it to a {@link User} object.
+     * @todo {Andrew Hays} Use a better return system instead of true|false|null
+     *          and update all methods that call it.
+     * @param string $name The name for the Account
+     * @param string $password The password for the Account.
+     * @param string $uri The uri for the Account.
+     * @return boolean Whether or not the method was successful.
+     */
     public static function addAccount($name, $password, $uri) {
         if ($result = self::$mysqli->query("SELECT COUNT(*) as total ".
                                            "FROM users ".
@@ -937,6 +1262,12 @@ class Util {
         return false;
     }
 
+    /**
+     * Takes a task name and converts it to a pretty url for displaying in
+     * the url bar of the client's browser.
+     * @param string $name The name to put in the address bar.
+     * @return string A safe string to display in the address bar.
+     */
     public static function urlifyTaskName($name) {
         return trim(substr(preg_replace('/[^A-Z0-9]+/i','-',$name),0,18),'-');
     }
