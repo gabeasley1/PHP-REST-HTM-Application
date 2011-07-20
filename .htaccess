@@ -11,6 +11,7 @@ RewriteRule ^new/?$ addaccount.php [L]
 # All ajax events
 # TODO Update to correct links to look through for pulling ajax stuff
 RewriteRule ^ajax/([^/\.]+)/?$ ajaxtasklist.php?user=$1 [L]
+RewriteRule ^ajax/([^/\.]+)/new/?$ ajaxtaskdescription.php?user=$1&edit=1 [L]
 RewriteRule ^ajax/([^/\.]+)/([0-9]+)/?$ ajaxtaskdescription.php?user=$1&task=$2 [L]
 # TODO RewriteRule ^ajax/([^/\.]+)/new/?$ tasklist.php?user=$1&new=1 [L]
 RewriteRule ^ajax/([^/\.]+)/([0-9]+)/edit/?$ ajaxtaskdescription.php?user=$1&task=$2&edit=1 [L]
@@ -23,7 +24,7 @@ RewriteRule ^ajax/([^/\.]+)/([0-9]+)/[A-Za-z0-9\-\+%]+/copy/?$ ajaxtaskdescripti
 
 # All non-ajax links.
 RewriteRule ^([^/\.]+)/?$ tasklist.php?user=$1 [L]
-RewriteRule ^([^/\.]+)/new/?$ tasklist.php?user=$1&new=1 [L]
+RewriteRule ^([^/\.]+)/new/?$ tasklist.php?user=$1&edit=1&new=1 [L]
 RewriteRule ^([^/\.]+)/([0-9]+)/?$ tasklist.php?user=$1&task=$2 [L]
 RewriteRule ^([^/\.]+)/([0-9]+)/edit/?$ tasklist.php?user=$1&task=$2&edit=1 [L]
 RewriteRule ^([^/\.]+)/([0-9]+)/delete/?$ delete.php?user=$1&task=$2 [L]

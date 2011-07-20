@@ -20,17 +20,32 @@ require_once('classes.php'); ?>
         <?= Task::toEditHtml($user, $task, $copy); ?>
     <? else: ?>
         <? if ($task != null): ?>
-            <div class='edit-buttons'>
-                <a id='edit-task-link' 
-               href='/<?=$_GET['user']?>/<?=$_GET['task']?>/edit/'>
+            <? $user = urlencode(urldecode($_GET['user'])); ?>
+            <? $taskId = urlencode(urldecode($_GET['task'])); ?>
+    <div class='edit-buttons'>
+        <div id='edit-task-link-wrapper'>
+            <div id='edit-task-link' 
+                   class='goog-custom-button goog-custom-button-collapse-right'>
+                <a id='edit-task-link-inner' 
+                   href='/<?=$user?>/<?=$taskId?>/edit/'>
                     Edit
                 </a>
-                <a id='delete-task-link'
-               href='/<?=$_GET['user']?>/<?=$_GET['task']?>/delete/'
-                >
-                    Delete
+            </div><div id='create-copy-link' 
+                   class='goog-custom-button goog-custom-button-collapse-left'>
+                <? $href = "/$user/$taskId/copy/"; ?>
+                <a id='create-copy-link-inner'
+                    href='<?= $href ?>'>
+                    Copy
                 </a>
             </div>
+        </div>
+        <div id='delete-task-link' class='goog-custom-button'>
+            <a id='delete-task-link-inner' 
+               href='/<?=$user?>/<?=$taskId?>/delete/'>
+                    Delete
+            </a>
+        </div>
+    </div>
             <?= $task->toHtml() ?>
         <? else: ?>
             <h2 style="padding: 10px 30px">

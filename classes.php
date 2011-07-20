@@ -165,6 +165,7 @@ class Account {
      * @param string $name The name for the account
      * @param string $password The password for the account
      * @param string $uri The uri for the account.
+     */
     public static function addAccount($name, $password, $uri) {
         Util::addAccount($name, $password, $uri);
     }
@@ -353,6 +354,7 @@ class Task {
     /**
      * Return the list of tags associated with the Task.
      * @return array The tags for the Task.
+     */
     public function getTags() {
         return $this->mTags;
     }
@@ -664,7 +666,7 @@ EOF;
         $priorityOptionsHtml .= "</select>";
         return <<<EOF
         <div class='task-edit'>
-            <form id='task-edit-form' method='POST' action='newentry.php'>
+            <form id='task-edit-form' method='POST' action='/newentry.php'>
                 <div class='title-section'>
                 <div class='title-wrapper'>
                     <div class='input-table-row'>
@@ -704,25 +706,25 @@ EOF;
                 </div> 
                 </div>
                 <div class='dates-section'>
-                <div class='date-table'>
-                    <div class='start-date'>
-                    <div class='date-table'>
-                        <div class='date-row'>
-                            <div class='date-item'>
+                <table class='date-table'>
+                    <tr><td class='start-date'>
+                    <table class='date-table'>
+                        <tr class='date-row'>
+                            <td class='date-item'>
                                 <label for='task-start-date-edit'
                                        id='task-start-date-label'>
                                     Start Date
                                 </label>
-                            </div>
-                            <div class='date-item'>
+                            </td>
+                            <td class='date-item'>
                                 <label for='task-start-time-edit'
                                        id='task-start-time-label'>
                                     Time
                                 </label>
-                            </div>
-                        </div>
-                        <div class='date-row'>
-                            <div class='date-input'>
+                            </td>
+                        </tr>
+                        <tr class='date-row'>
+                            <td class='date-input'>
                                 <div class='input-wrapper'>
                                     <input type='text' id='task-start-date-edit'
                                            name='start-date' value='$startDate' 
@@ -732,8 +734,8 @@ EOF;
                                            id='task-start-date-icon'></label>
                                 </div>
                                 <span class='divider'>at</span>
-                            </div>
-                            <div class='time-input'>
+                            </td>
+                            <td class='time-input'>
                                 <div class='input-wrapper'>
                                     <input type='text' id='task-start-time-edit'
                                            name='start-time' value='$startTime'
@@ -742,28 +744,31 @@ EOF;
                                            for='task-start-time-edit'
                                            id='task-start-time-icon'></label>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                    <div class='end-date'>
-                    <div class='date-table'>
-                        <div class='date-row'>
-                            <div class='date-item'>
+                            </td>
+                        </tr>
+                        <tr class='date-row'>
+                            <td colspan='2'>
+                                <div id='start-date-widget'></div>
+                            </td>
+                        </tr>
+                    </table></td><td class='end-date'>
+                    <table class='date-table'>
+                        <tr class='date-row'>
+                            <td class='date-item'>
                                 <label for='task-expiration-date-edit'
                                        id='task-expiration-date-label'>
                                     End Date
                                 </label>
-                            </div>
-                            <div class='date-item'>
+                            </td>
+                            <td class='date-item'>
                                 <label for='task-expiration-time-edit'
                                        id='task-expiration-time-label'>
                                     Time
                                 </label>
-                            </div>
-                        </div>
-                        <div class='date-row'>
-                            <div class='date-input'>
+                            </td>
+                        </tr>
+                        <tr class='date-row'>
+                            <td class='date-input'>
                                 <div class='input-wrapper'>
                                     <input type='text' 
                                            id='task-expiration-date-edit'
@@ -774,8 +779,8 @@ EOF;
                                            id='task-end-date-icon'></label>
                                 </div>
                                 <span class='divider'>at</span>
-                            </div>
-                            <div class='time-input'>
+                            </td>
+                            <td class='time-input'>
                                 <div class='input-wrapper'>
                                     <input type='text' 
                                            id='task-expiration-time-edit'
@@ -785,11 +790,16 @@ EOF;
                                            for='task-expiration-time-edit'
                                            id='task-end-time-icon'></label>
                                 </div>
-                            </div>
-                        </div>
-                    </div>
-                    </div>
-                </div>
+                            </td>
+                        </tr>
+                        <tr class='date-row'>
+                            <td colspan='2'>
+                                <div id='end-date-widget'></div>
+                            </td>
+                        </tr>
+                    </table></td>
+                    </tr>
+                </table>
                 </div>
                 <div class='progress-section'>
                 <div class='progress-wrapper'>

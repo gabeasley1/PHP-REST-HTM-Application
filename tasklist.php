@@ -69,7 +69,47 @@ if ($new) $selectedTask = null;
         <title>Task list for <?= $selectedUser->getName() ?></title>
         <link href="/css/custom-theme/taskstyle.css" 
               type="text/css" rel="Stylesheet" />
-        <script type='text/javascript' src='/js/compiled.js'></script>
+        <script type='text/javascript' 
+                src='/closure-library/closure/goog/base.js'></script>
+        <script>
+goog.require('goog.History');
+goog.require('goog.Uri');
+goog.require('goog.date');
+goog.require('goog.date.Date');
+goog.require('goog.dom');
+goog.require('goog.editor.Field');
+goog.require('goog.editor.plugins.BasicTextFormatter');
+goog.require('goog.editor.plugins.EnterHandler');
+goog.require('goog.editor.plugins.HeaderFormatter');
+goog.require('goog.editor.plugins.LinkBubble');
+goog.require('goog.editor.plugins.LinkDialogPlugin');
+goog.require('goog.editor.plugins.ListTabHandler');
+goog.require('goog.editor.plugins.RemoveFormatting');
+goog.require('goog.editor.plugins.UndoRedo');
+goog.require('goog.events');
+goog.require('goog.history.EventType');
+goog.require('goog.history.Html5History');
+goog.require('goog.i18n.DateTimeFormat');
+goog.require('goog.i18n.DateTimeParse');
+goog.require('goog.i18n.DateTimeSymbols');
+goog.require('goog.i18n.DateTimeSymbols_en_US');
+goog.require('goog.locale');
+goog.require('goog.net.XhrIo');
+goog.require('goog.string');
+goog.require('goog.style');
+goog.require('goog.ui.Button');
+goog.require('goog.ui.ButtonRenderer');
+goog.require('goog.ui.ButtonSide');
+goog.require('goog.ui.Component');
+goog.require('goog.ui.CustomButton');
+goog.require('goog.ui.CustomButtonRenderer');
+goog.require('goog.ui.DatePicker');
+goog.require('goog.ui.ProgressBar');
+goog.require('goog.ui.Slider');
+goog.require('goog.ui.decorate');
+goog.require('goog.ui.editor.DefaultToolbar');
+goog.require('goog.ui.editor.ToolbarController');
+        </script>
     </head>
     <body>
     <? if (isset($_SESSION['flash'])): ?>
@@ -115,9 +155,9 @@ if ($new) $selectedTask = null;
                     <? $username = urlencode($selectedUser->getUserName());?>
                     <span class="header">
                         <span>Tasks</span>
-                        <a href="/<?= $username ?>/new/">
+                        <a id="add-task" href="/<?= $username ?>/new/">
                         <span class="add-item-outer">
-                            <span id="add-task" class="add-item"></span>
+                            <span class="add-item"></span>
                         </span>
                         </a>
                     </span>
@@ -143,22 +183,37 @@ if ($new) $selectedTask = null;
             </div>
             </div>
             <div id="task-content" class="content">
-        <? if ($edit): ?>
+        <? if ($edit and !$new): ?>
             <?= Task::toEditHtml($selectedUser, $selectedTask, $copy); ?>
+        <? elseif ($edit and $new): ?>
+            <?= Task::toEditHtml($selectedUser); ?>
         <? else: ?>
             <? if ($selectedTask != null): ?>
                 <? $accNum = urlencode($selectedUser->getName()); ?>
                 <? $taskNum = urlencode($selectedTask->getTaskNumber()); ?>
                 <? $taskname = Util::urlifyTaskName($selectedTask->getName());?>
                 <div class='edit-buttons'>
-                    <a id='edit-task-link' 
+                <div id='edit-task-link-wrapper'>
+                <div id='edit-task-link' 
+                   class='goog-custom-button goog-custom-button-collapse-right'>
+                    <a id='edit-task-link-inner' 
                        href='/<?=$accNum?>/<?=$taskNum?>/<?=$taskname?>/edit/'>
                         Edit
                     </a>
-                    <a id='delete-task-link'
+                </div><div id='create-copy-link' 
+                   class='goog-custom-button goog-custom-button-collapse-left'>
+                    <a id='create-copy-link-inner'
+                        href='/<?=$accNum?>/<?=$taskNum?>/<?=$taskname?>/copy/'>
+                        Copy
+                    </a>
+                </div>
+                </div>
+                <div id='delete-task-link' class='goog-custom-button'>
+                    <a id='delete-task-link-inner' 
                       href='/<?=$accNum?>/<?=$taskNum?>/<?=$taskname?>/delete/'>
                         Delete
                     </a>
+                </div>
                 </div>
                 <?= $selectedTask->toHtml() ?>
             <? else: ?>
@@ -169,5 +224,6 @@ if ($new) $selectedTask = null;
         <? endif; ?>
             </div>
         </div>
+        <script type='text/javascript' src='/js/tasklist.js'></script>
     </body>
 </html>

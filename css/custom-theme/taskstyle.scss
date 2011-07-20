@@ -1,21 +1,23 @@
 //TODO make all image imports from these css files local for easier use.
 
-@import "../closure/common.css";
+@import "../closure/custombutton.css";
 @import "../closure/button.css";
-@import "../closure/dialog.css";
-@import "../closure/linkbutton.css";
-@import "../closure/menu.css";
-@import "../closure/menuseparator.css";
-@import "../closure/tab.css"; 
-@import "../closure/tabbar.css"; 
-@import "../closure/toolbar.css"; 
 @import "../closure/colormenubutton.css"; 
-@import "../closure/palette.css"; 
 @import "../closure/colorpalette.css"; 
+@import "../closure/common.css";
+@import "../closure/dialog.css";
+@import "../closure/datepicker.css";
 @import "../closure/editor/bubble.css"; 
 @import "../closure/editor/dialog.css"; 
 @import "../closure/editor/linkdialog.css"; 
 @import "../closure/editortoolbar.css"; 
+@import "../closure/linkbutton.css";
+@import "../closure/menu.css";
+@import "../closure/menuseparator.css";
+@import "../closure/palette.css"; 
+@import "../closure/tab.css"; 
+@import "../closure/tabbar.css"; 
+@import "../closure/toolbar.css"; 
 
 @import "jquery-ui-1.8.14.custom.scss";
 
@@ -165,11 +167,18 @@ html, body {
         .edit-buttons {
             padding: 9px 30px 15px 30px;
 
-            #edit-task-link {
+            #edit-task-link-wrapper {
                 float: left;
             }
             #delete-task-link {
                 float: right;
+            }
+
+            #edit-task-link, #create-copy-link, #delete-task-link {
+                a {
+                    color: black;
+                    text-decoration: none;
+                }
             }
         }
 
@@ -307,6 +316,10 @@ html, body {
 
                     .date-input {
                         padding-right: 0.5em;
+                    }
+
+                    .date-values {
+                        position: relative;
                     }
 
                     .date-input, .time-input {
@@ -454,10 +467,6 @@ html, body {
 }
 
 #edit-task-menu, #edit-account-menu {
-    position: absolute;
-    display: none;
-    z-index: 5;
-
     ul {
         list-style-type: none;
         padding: 0;
@@ -514,4 +523,100 @@ html, body {
             width: 16.2em;
         }
     }
+}
+
+// Google Slider Stuff
+.goog-slider-vertical,
+.goog-slider-horizontal {
+  background-color: ThreeDFace;
+  position: relative;
+  overflow: hidden;
+}
+
+.goog-slider-thumb {
+  position: absolute;
+  background-color: ThreeDShadow;
+  overflow: hidden;
+}
+
+.goog-slider-vertical .goog-slider-thumb {
+  left: 0;
+  height: 20px;
+  width: 100%;
+}
+
+.goog-slider-horizontal .goog-slider-thumb {
+  top: 0;
+  width: 20px;
+  height: 100%;
+}
+#s-h {
+  margin-bottom: 2em;
+}
+strong {
+  display: block;
+  margin-bottom: 3px;
+}
+#out1, #out2 {
+  color: #999;
+  margin-left: 1em;
+}
+
+
+// Google Progress Bar Stuff
+.progress-bar-vertical,
+.progress-bar-horizontal {
+  position: relative;
+  border: 1px solid #949dad;
+  background: white;
+  padding: 1px;
+  overflow: hidden;
+  margin: 2px;
+}
+
+.progress-bar-horizontal {
+  width: 80%;
+  height: 14px;
+}
+
+.progress-bar-vertical {
+  width: 14px;
+  height: 200px;
+}
+
+.progress-bar-thumb {
+  position: relative;
+  background: #d4e4ff;
+  overflow: hidden;
+  width: 100%;
+  height: 100%;
+}
+
+#pb2 {
+  height: 1.3em;
+}
+
+// Google Button Stuff
+.goog-icon {
+    height: 16px;
+    width: 16px;
+    margin: 0 1px;
+    background-image: url(./images/ui-icons_222222_256x240.png);
+    background-repeat: no-repeat;
+    vertical-align: middle;
+}
+
+.pencil-icon {
+    background-position: -64px -112px;
+}
+
+.trash-icon {
+    background-position: -176px -96px;
+}
+
+
+// Datepicker stuff
+#start-date-widget, #end-date-widget {
+    position: absolute;
+    z-index: 1;
 }

@@ -1,11 +1,17 @@
 // Note: This file reqiures Google Closure, jQuery, and jQuery-UI to work
 // correctly.  I would recommend compiling all of them together into one
 // file when complete.
-//
-// TODO add closure-style comments to everything.
 
-//goog.require('goog.History');
+// TODO Add methods for when both the Add Account and Add Task methods are 
+// clicked.
+// TODO Add all account manipulation functions
+
+/*
+goog.require('goog.History');
 goog.require('goog.Uri');
+goog.require('goog.date');
+goog.require('goog.date.Date');
+goog.require('goog.dom');
 goog.require('goog.editor.Field');
 goog.require('goog.editor.plugins.BasicTextFormatter');
 goog.require('goog.editor.plugins.EnterHandler');
@@ -18,60 +24,180 @@ goog.require('goog.editor.plugins.UndoRedo');
 goog.require('goog.events');
 goog.require('goog.history.EventType');
 goog.require('goog.history.Html5History');
+goog.require('goog.i18n.DateTimeFormat');
+goog.require('goog.i18n.DateTimeParse');
+goog.require('goog.i18n.DateTimeSymbols');
+goog.require('goog.i18n.DateTimeSymbols_en_US');
+goog.require('goog.locale');
+goog.require('goog.net.XhrIo');
+goog.require('goog.string');
+goog.require('goog.style');
+goog.require('goog.ui.Button');
+goog.require('goog.ui.ButtonRenderer');
+goog.require('goog.ui.ButtonSide');
+goog.require('goog.ui.Component');
+goog.require('goog.ui.CustomButton');
+goog.require('goog.ui.CustomButtonRenderer');
+goog.require('goog.ui.DatePicker');
+goog.require('goog.ui.ProgressBar');
+goog.require('goog.ui.Slider');
+goog.require('goog.ui.decorate');
 goog.require('goog.ui.editor.DefaultToolbar');
 goog.require('goog.ui.editor.ToolbarController');
+*/
 
-var FLASH_MESSAGE_DISPLAY_SECONDS = 5;
+var $ = goog.dom.getElement;
 
-var Task = function() {
-    // TODO make history work with the old Html4 way, too.
-    // TODO figure out why history is messed up for editing items
-    this.history = new goog.history.Html5History();
+/**
+ * Utility class for manipulating the screen's tasks and description items.
+ * @constructor
+ */
+var Util = function() {
+    try {
+        this.history = new goog.history.Html5History();
+        this.history.setUseFragment(false);
+    } catch (e) {
+        this.history = new goog.History();
+    }
     this.historyEvent = goog.history.EventType.NAVIGATE;
-    this.history.setUseFragment(false);
     this.history.setEnabled(true);
     var $this = this;
     goog.events.listen(this.history, this.historyEvent, function(e) {
         e.preventDefault();
-        var token = e.token;
-        if (e.token) {
-            var tok = Task.trim(e.token, '/');
-            console.log(tok);
-            var edit = Task.endsWith(tok, "edit");
-            var copy = Task.endsWith(tok, "copy");
-            var isNew = Task.endsWith(tok, "new");
-            var delt = Task.endsWith(tok, "delete");
+        $this._historyHandler(e);
+    });
+};
+
+/**
+ * Constants for Task event types.
+ * @enum {string}
+ */
+Util.EventType = {
+    VIEW: 'view',
+    EDIT: 'edit',
+    COPY: 'copy',
+    NEW: 'new',
+    DELETE: 'delete',
+    TASKLIST: 'tasklist'
+}
+
+/** @const */ Util.FLASH_MESSAGE_DISPLAY_SECONDS = 5;
+
+/**
+ * Static function for return the path of an href.  If the passed element
+ * is a string, the value is just returned.
+ * @param {(Element|string)} anchor An anchor to grab the path from.
+ * @return {string} The path part of a URI.
+ */
+Util.anchorToHref = function(anchor) {
+    if (goog.isString(anchor)) {
+        return anchor;
+    } else {
+        return new goog.Uri(anchor.href).getPath();
+    }
+};
+
+
+/**
+ * Static function for trimming a string with needed characters at the beginning
+ * and end of a string.
+ * @param {string} string The string to trim
+ * @param {string=} opt_chars An optional string containing characters to trim.
+ * @return {string} The trimmed string.
+ */
+Util.trim = function(string, opt_chars) {
+    var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g");
+    var chars = opt_chars ||"["+opt_chars.replace(specials, "$&")+"]";
+    var re = new RegExp("^"+chars+"*(.*?)"+chars+"*$","g");
+    return string.replace(re, "$1");
+};
+
+/**
+ * Update the URL bar the current URL (without refreshing the page).
+ * @this {Util}
+ * @param {(Element|string)} anchor An &lt;a&gt; element, or a string link.
+ */
+Util.prototype.updateHistory = function(anchor) {
+    var url;
+    if (goog.dom.isNodeLike(anchor)) {
+        url = new goog.Uri(anchor.href).getPath();
+    } else {
+        url = anchor;
+    }
+    url = Util.trim(url, '/') + '/';
+    this.history.setToken(url);
+};
+
+/**
+ * Handles the NAVIGATE event for the history object.
+ * @this {Util}
+ * @param {Event} evt The event to handle.
+ */
+Util.prototype._historyHandler = function(evt) {
+    if (evt.token) {
+        var token = Util.trim(evt.token, '/').toLowerCase();
+        var $this = this;
+        var eventType;
+
+        if (goog.string.endsWith(token, "edit")) {
+            eventType = Util.EventType.EDIT;
+            this._getTaskEditor(evt.token);
+        } else if (goog.string.endsWith(token, "copy")) {
+            eventType = Util.EventType.COPY;
+            this._getTaskEditor(evt.token);
+        } else if (goog.string.endsWith(token, "new")) {
+            eventType = Util.EventType.NEW;
+            this._getTaskEditor(evt.token);
+        } else if (goog.string.endsWith(token, "delete")) {
+            eventType = Util.EventType.DELETE;
+        } else if (token.split("/").length-1 == 0) {
+            eventType = Util.EventType.TASKLIST;
+            this._getTaskList(evt.token);
+        } else {
+            eventType = Util.EventType.VIEW;
+            this._getTaskDescription(evt.token);
+        }
+    } else {
+        // Looks like the token is null (at the root view), so lets update it
+        var params = [['li', 'selected', 'tasks-list'],
+                      ['li', null, 'tasks-list'],
+                      ['li', 'selected', 'accounts-list'],
+                      ['li', null, 'accounts-list']];
+        for (var i = 0; i < params.length; i++) {
+            var p = params[i];
+            var li = goog.dom.getElementsByTagNameAndClass(p[0], p[1], $(p[2]));
+            if (li.length != 0) {
+                var a = goog.dom.getElementsByTagNameAndClass('a', null, li[0]);
+                this.updateHistory(Util.anchorToHref(a[0]));
+                return;
+            }
+        }
+        // We should never ever ever make it here.
+        throw "wtf";
+    }
+};
+
+/**
+ * Handles the response from the XmlHttpResponse given from the call in 
+ * _historyHandler
+ * @this {Util}
+ * @param {Event} evt The event to handle.
+ * @param {Util.EventType} eventType The task event type
+ *//*
+Util.prototype._handleXhrResponse = function(evt, eventType) {
+    var xhr = evt.target;
+    var response = xhr.getResponseText();
+    if (eventType = Util.EventType.DELETE) return;
+    if (eventType = Util.EventType.TASKLIST) {
+        var tasklist = $('tasks-list');
+        tasklist.innerHTML = response;
+        var li = goog.dom.getElementsByTagNameAndClass('li', null, tasklist)[0];
+        this._setSelected(li);
+        var a = goog.dom.getElementsByTagNameAndClass('a', null, tasklist);
+        var links = goog.dom.getElementsByTagNameAndClass('a', null, tasklist);
+        if (a.length == 0) {
             
-            var isTaskList = (tok.split("/").length-1)==0;
-            
-            if (delt) return;
-            $.get('/ajax/'+tok+'/', function(html) {
-                console.log("EDIT: "+edit);
-                console.log("COPY: "+copy);
-                console.log("NEW:  "+isNew);
-                if (!isTaskList) {
-                    var href=e.token;
-                    if (edit||copy) href = href.substring(0,href.length-5);
-                    $("#task-content").html(html);
-                    var anchor = $("a[href*=\""+e.token+"\"]");
-                    var parent = anchor.parent();
-                    $("title").text(anchor.text());
-                    
-                    parent.siblings(".selected").removeClass("selected");
-                    parent.addClass("selected");
-                    if (edit||copy||isNew) {
-                        $this.registerEditingItems();
-                        if (edit) {
-                            $("title").text("Edit: "+$("title").text());
-                        } else if (copy) {
-                            $("title").text("Copy: "+$("title").text());
-                        } else {
-                            $("title").text("New Task");
-                        }
-                    } else {
-                        $this.registerViewingItems();
-                    }
-                } else {
+
                     $("#tasks-list").html(html);
                     $("#tasks-list li:first a").click();
                     if ($("#tasks-list li").size() == 0) {
@@ -94,101 +220,150 @@ var Task = function() {
                     
                     parent.siblings(".selected").removeClass("selected");
                     parent.addClass("selected");
-                }
-            });
-        }
-    });
-}
 
-Task.endsWith = function(string, substr, caseInsensitive) {
-    if (caseInsensitive) {
-        string = string.toLowerCase();
-        substr = substr.toLowerCase();
     }
-    return string.substring(string.length-substr.length)==substr;
-}
+};*/
 
-Task.startsWith = function(string, substr, caseInsensitive) {
-    if (caseInsensitive) {
-        string = string.toLowerCase();
-        substr = substr.toLowerCase();
-    }
-    return string.substring(0, substr.length)==substr;
-}
+/**
+ * Updates the screen to register all the items related with viewing a task
+ * description (not editing one).  Uses a progress bar, and some buttons.
+ * @this {Util}
+ */
+Util.prototype._registerViewingItems = function() {
+    var progress = new goog.ui.ProgressBar();
+    progress.render($('task-progress-bar'));
+    progress.setValue(goog.dom.getRawTextContent($('task-progress')));
 
-Task.trim = function(string, chars) {
-    var specials = new RegExp("[.*+?|()\\[\\]{}\\\\]", "g");
-    if (!chars) {
-        chars = "\\s";
-    } else {
-        chars = "["+chars.replace(specials, "$&")+"]";
-    }
-    var re = new RegExp("^"+chars+"*(.*?)"+chars+"*$","g");
-    return string.replace(re, "$1");
-}
+    var edit_link     = $('edit-task-link');
+    var copy_link     = $('create-copy-link');
+    var delete_link   = $('delete-task-link');
+    
+    var edit_button   = goog.ui.decorate(edit_link);
+    var copy_button   = goog.ui.decorate(copy_link);
+    var delete_button = goog.ui.decorate(delete_link);
 
-Task.prototype.updateHistory = function(anchor) {
-    var url;
-    if (typeof anchor != "string") {
-        url = anchor.attr('href');
-    } else {
-        url = anchor;
-    }
-    url = Task.trim(url, '/') + '/';
-    this.history.setToken(url);
-}
-
-Task.prototype.registerViewingItems = function() {
+    var edit_link_a   = goog.dom.getElementsByTagNameAndClass('a', null,
+            edit_link)[0];
+    var copy_link_a   = goog.dom.getElementsByTagNameAndClass('a', null,
+            copy_link)[0];
+    var delete_link_a = goog.dom.getElementsByTagNameAndClass('a', null,
+            delete_link)[0];
+    
+    // TODO I'm not sure that we want to override the /delete/ method yet.  It 
+    // also still needs to be fixed.
     var $this = this;
-    $("#task-progress-bar").progressbar({
-        value: parseInt($("#task-progress").text())
+    goog.array.forEach([edit_link_a, copy_link_a], function(elem, ind, arr) {
+        goog.events.listen(elem, goog.events.EventType.CLICK, function(evt) {
+            evt.preventDefault();
+            $this.updateHistory(elem);
+        });
     });
-    $("#edit-task-link").button({
-        icons: {
-            primary: "ui-icon-pencil"
-        }   
-    }).css("font-size", "85%").live('click', function(e) {
-        e.preventDefault();
-        $this.updateHistory($(this));
-    });
-
-    $("#delete-task-link").button({
-        icons: {
-            primary: "ui-icon-trash"
-        }
-    }).css("font-size", "85%");
 };
 
-Task.prototype.registerEditingItems = function() {
-    $("#task-progress-edit-slider").slider({
-        range: 'min',
-        value: $("#task-progress-edit").val(),
-        slide: function(event, ui) {
-            $("#task-progress-edit").val(ui.value);
+/**
+ * Registers a datepicker item with an input box.
+ * @param {Element} widget The div to attach the datepicker to.
+ * @param {Element} inputwrapper The inputwrapper element to use with the 
+ *              datepicker.
+ * @param {string=} opt_format An optional format to parse and format the date 
+ *              with.
+ */
+Util._registerDatePicker = function(widget, input_wrapper, opt_format) {
+    var dp = new goog.ui.DatePicker();
+    var input = goog.dom.getElementsByTagNameAndClass('input', null, 
+            input_wrapper)[0];
+    var image = goog.dom.getElementsByTagNameAndClass(null, 'date-icon', 
+            input_wrapper)[0];
+    var hideDatePicker = function() {
+        goog.style.showElement(widget, false);
+    };
+    var showDatePicker = function() {
+        goog.style.showElement(widget, true);
+    };
+    var formatter = new goog.i18n.DateTimeFormat(opt_format || 'MM/dd/yyyy');
+    var parser    = new goog.i18n.DateTimeParse(opt_format || 'MM/dd/yyyy');
+    var setDate = function() {
+        var d = new goog.date.Date();
+        var value = goog.string.trim(input.value);
+        var parsed = parser.strictParse(value, d);
+        input.value = value;
+        if (value.length > 0) {
+            dp.setDate(d);
+        }
+    }
+
+    setDate();
+
+    if (!widget.id) {
+        widget.id = "goog-datepicker-"+goog.getUid(widget);
+    }
+    goog.i18n.DateTimeSymbols = goog.i18n.DateTimeSymbols_en_US;
+    goog.style.showElement(widget, false);
+    dp.create(widget);
+    dp.setAllowNone(false);
+    dp.setUseSimpleNavigationMenu(true);
+    
+    goog.events.listen(image, goog.events.EventType.CLICK, function(evt) {
+        showDatePicker();
+    });
+
+    goog.events.listen(input, goog.events.EventType.CHANGE, setDate);
+
+    goog.events.listen(document,goog.events.EventType.MOUSEDOWN, function(evt) {
+        var target = evt.target;
+        if (target.id != widget.id && !goog.dom.contains(widget, target) &&
+                !goog.dom.contains(input_wrapper, target) && 
+                goog.style.isElementShown(widget)) {
+            hideDatePicker();
         }
     });
 
-    $("#task-progress-edit").change( function(e) {
-        $("#task-progress-edit-slider").slider('value', $(this).val());
+    goog.events.listen(dp, goog.ui.DatePicker.Events.CHANGE, function(evt) {
+        input.value = formatter.format(evt.date);
+        hideDatePicker();
     });
 
-    $("#task-start-date-edit").datepicker();
-    $("#task-expiration-date-edit").datepicker();
-
-    $(".submit-section input[type=submit]").button({
-        icons: {
-            primary: 'ui-icon-gear'
+    goog.events.listen(input, goog.events.EventType.KEYDOWN, function(evt) {
+        if (evt.keyCode == goog.events.KeyCodes.TAB) {
+            hideDatePicker();
         }
     });
+};
 
-    $("#task-tags-edit").scroll( function(e) {
-        var rows = parseInt($(this).attr('rows'));
-        if (rows < 5) {
-            $(this).attr('rows', rows+1);
-        }
+/**
+ * Updates the screen to register all items related with editing a task 
+ * description (not viewing one).  Uses a slider, some buttons, two datepickers.
+ * @this {Util}
+ */
+Util.prototype._registerEditingItems = function() {
+    var element = $("task-progress-edit-slider");
+    var input = $('task-progress-edit');
+    var slider = new goog.ui.Slider();
+    slider.setMinimum(0);
+    slider.setMaximum(100);
+    slider.decorate(element);
+    slider.setValue(parseInt(input.value));
+    slider.setMoveToPointEnabled(true);
+
+    // TODO write some mechanism to ensure that the given value is an int
+    slider.addEventListener(goog.ui.Component.EventType.CHANGE, function(evt) {
+        $('task-progress-edit').value = slider.getValue();
     });
 
-    // Stuff for editor
+    goog.events.listen(input, goog.events.EventType.CHANGE, function(evt) {
+        slider.setValue(parseInt(input.value));
+    });
+
+    //Datepicker stuff
+    var start_widget = $('start-date-widget');
+    var end_widget = $('end-date-widget');
+    var start_input_wrapper = $('task-start-date-edit').parentElement;
+    var end_input_wrapper = $('task-expiration-date-edit').parentElement;
+
+    Util._registerDatePicker(start_widget, start_input_wrapper);
+    Util._registerDatePicker(end_widget, end_input_wrapper);
+    
+    // Rich Text Editor
     var richEditor = new goog.editor.Field('task-details-rich-editor');
     richEditor.registerPlugin(new goog.editor.plugins.BasicTextFormatter());
     richEditor.registerPlugin(new goog.editor.plugins.RemoveFormatting());
@@ -225,239 +400,383 @@ Task.prototype.registerEditingItems = function() {
     ];
 
     var richToolbar = goog.ui.editor.DefaultToolbar.makeToolbar(buttons,
-            $('#task-details-toolbar')[0]);
+            $('task-details-toolbar'));
     var toolbarController = new goog.ui.editor.ToolbarController(richEditor,
             richToolbar);
     goog.events.listen(richEditor, goog.editor.Field.EventType.DELAYEDCHANGE,
             function() {
-               $("#task-details-edit").val(richEditor.getCleanContents());
+               $('task-details-edit').value = richEditor.getCleanContents();
             });
     richEditor.makeEditable();
-    richEditor.setHtml(false, $("#task-details-edit").hide().val());
-};
+    richEditor.setHtml(false, $('task-details-edit').value);
+    goog.style.showElement($('task-details-edit'), false);
 
-Task.prototype.get = function(anchor, callback) {
-    var $this = this;
-    $.get('/ajax/'+url, function(html) {
-        $("#task-content").html(html);
-        $this.registerViewingItems();
-        if (callback) callback(html);
+    // Apparently in the current version of closure this doesn't work in
+    // WebKit, so no Chrome. :(
+    var details_label = $('task-details-label');
+    goog.events.listen(details_label, goog.events.EventType.CLICK, function(e) {
+        e.preventDefault();
+        richEditor.focus();
     });
 };
 
-Task.prototype.getEditor = function(anchor, callback) {
+/**
+ * Gets a task description for a given link and puts it in #task-content
+ * @param {(Element|string)} anchor The anchor to get the href from
+ * @this {Util}
+ */
+Util.prototype._getTaskDescription = function(anchor) {
+    var href = Util.trim(Util.anchorToHref(anchor), '/') + '/';
     var $this = this;
-    $.get('/ajax/'+url, function(html) {
-        $("#task-content").html(html);
-        $this.registerEditingItems();
-        if (callback) callback(html);
+    goog.net.XhrIo.send('/ajax/'+href, function(e) {
+        var xhr = e.target;
+        $('task-content').innerHTML = xhr.getResponseText();
+        $this._registerViewingItems();
     });
 };
 
-Task.prototype.deleteItem = function(anchor, callback) {
+/**
+ * Gets the form for a task description for a link and puts it in #task-content
+ * @param {(Element|string)} anchor The anchor to get the href from
+ * @this {Util}
+ */
+Util.prototype._getTaskEditor = function(anchor) {
+    var href = Util.trim(Util.anchorToHref(anchor), '/') + '/';
     var $this = this;
-    $.get('/ajax/'+url, function(json) {
-        if (!json) {
-            $this.flash("Oops! Something went wrong. Please refresh the page.");
+    goog.net.XhrIo.send('/ajax/'+href, function(e) {
+        var xhr = e.target;
+        $('task-content').innerHTML = xhr.getResponseText();
+        $this._registerEditingItems();
+    });
+};
+
+/**
+ * Gets the list of tasks and puts it in #tasks-list.
+ * @param {(Element|string)} anchor The anchor to get the href from
+ * @this {Util}
+ */
+Util.prototype._getTaskList = function(anchor) {
+    var href = Util.trim(Util.anchorToHref(anchor), '/') + '/';
+    var $this = this;
+    goog.net.XhrIo.send('/ajax/'+href, function(e) {
+        var xhr = e.target;
+        var list = $('tasks-list');
+        list.innerHTML = xhr.getResponseText();
+        var items = goog.dom.getElementsByTagNameAndClass('li', null, list);
+        if (items.length == 0) {
+            $('task-content').innerHTML = '<h2 style="padding:10px 30px;">'+
+                'There are no tasks available to display.</h2>';
+        } else {
+            $this._setSelected(items[0]);
+            var a = goog.dom.getElementsByTagNameAndClass('a', null, items[0]);
+            $this._getTaskDescription(a[0]);
+
+            goog.array.forEach(items, function(elem, ind, arr) {
+                $this._registerForSelection(elem);
+                $this._registerForTaskContextMenu(elem);
+            });
         }
-        if (json.success) {
-            if (anchor.parent().hasClass('selected')) {
-                if (anchor.parent().siblings().size() == 0) {
-                    $("#task-content").html(
-                        "<h2 style='padding:10px 30px'>There are no tasks "+
-                        "available to display.</h2>");
-                } else {
-                    $this.setSelected(anchor.parent().siblings(":first"), true);
-                }
+    });
+};
+
+/**
+ * Selects the given item (and unselects all the other items around it)
+ * @param {Element} list_item The item to select.
+ * @this {Util}
+ */
+Util.prototype._setSelected = function(list_item) {
+    var ul = list_item.parentElement;
+    var li =goog.dom.getElementsByTagNameAndClass('li', 'selected', ul);
+    goog.array.forEach(li, function(elem, ind, arr) {
+        goog.dom.classes.remove(elem, 'selected');
+    });
+    goog.dom.classes.add(list_item, 'selected');
+};
+
+/**
+ * Returns whether or not the curent list_item is selected
+ * @param {Element} list_item The item to check.
+ * @this {Util}
+ * @return {boolean} Whether or not the list_item is selected.
+ */
+Util.prototype._isSelected = function(list_item) {
+    return goog.dom.classes.has(list_item, "selected");
+};
+
+/**
+ * Register a list item as being eligible for selection on click.
+ * @param {Element} list_item The item to register.
+ * @this {Util}
+ */
+Util.prototype._registerForSelection = function(list_item) {
+    var $this = this;
+    var anchor = goog.dom.getElementsByTagNameAndClass('a', null, list_item)[0];
+
+    goog.events.listen(anchor, goog.events.EventType.CLICK, function(evt) {
+        evt.preventDefault();
+        if (goog.dom.classes.has(evt.target, 'edit-task') ||
+            goog.dom.classes.has(evt.target, 'edit-account')) return;
+        if (!$this._isSelected(list_item)) {
+            $this._setSelected(list_item);
+            $this.updateHistory(anchor);
+        }
+    });
+};
+
+/**
+ * Determins whether or not a list item has been registered for a context menu.
+ * @param {Element} list_item The list item to check
+ */
+Util._isRegisteredForContextMenu = function(list_item) {
+    return goog.dom.classes.has(list_item, 'context-menu-registered');
+};
+
+/**
+ * Registers a list item for the context menu.
+ * @param {Element} list_item The item to register.
+ * @this {Util}
+ */
+Util.prototype._registerForTaskContextMenu = function(list_item) {
+    if (Util._isRegisteredForContextMenu(list_item)) return;
+    goog.dom.classes.add(list_item, 'context-menu-registered');
+    var anchor = goog.dom.getElementsByTagNameAndClass('a', null, list_item)[0];
+    var span = goog.dom.createDom('span', 'edit-account');
+    goog.dom.appendChild(anchor, span);
+    var $this = this;
+
+    goog.events.listen(span, goog.events.EventType.CLICK, function(evt) {
+        var position = goog.style.getPosition(span);
+        var size     = goog.style.getSize(span);
+        var edit_task_menu = $('edit-task-menu');
+        if (edit_task_menu) goog.dom.removeNode(edit_task_menu);
+        edit_task_menu = goog.dom.createDom('div', {id: 'edit-task-menu'});
+        var ul = goog.dom.createDom('ul');
+        var edit = goog.dom.createDom('li', 'edit', 'Edit Task');
+        var copy = goog.dom.createDom('li', 'copy', 'Copy Task');
+        var dele = goog.dom.createDom('li', 'delete', 'Delete Task');
+        goog.dom.appendChild(ul, edit);
+        goog.dom.appendChild(ul, copy);
+        goog.dom.appendChild(ul, dele);
+        goog.dom.appendChild(edit_task_menu, ul);
+        edit_task_menu.style.position = 'absolute';
+        goog.style.setPosition(edit_task_menu, position.x, position.y + 
+            size.height);
+        
+        var body = goog.dom.getElementsByTagNameAndClass('body', null)[0];
+        goog.dom.appendChild(body, edit_task_menu);
+
+        goog.events.listenOnce(document, goog.events.EventType.MOUSEDOWN, 
+                function(evt) {
+            edit_task_menu = $('edit-task-menu');
+            if (edit_task_menu) goog.dom.removeNode(edit_task_menu);
+            var what;
+            if (evt.target == edit) {
+                what = "edit";
+            } else if (evt.target == copy) {
+                what = "copy";
+            } else if (evt.target == dele) {
+                what = "delete";
+            } else {
+                return;
             }
-            $(anchor.parent()).hide();
-            $("#edit-task-menu").hide();
-        }
-        $this.flash(json.message);
-        if (callback) callback(json);
-    }, 'json');
-}
-
-Task.prototype.getList = function(anchor, callback) {
-    $.get('/ajax/'+url, {}, function(data) {
-        $("#tasks-list").html(data);
-        $("#tasks-list li:first a").click();
-        if ($("#tasks-list li").size() == 0) {
-            $("#task-content").html(
-                    "<h2 style='padding:10px 30px'>There are no tasks available to display.</h2>");
-        }
-
-        $("#tasks-list li a").append('<span class="edit-task"></span>');
-
-        var userReg = new RegExp("^/([^/]+)");
-        var user = new goog.Uri(document.location.href).getPath().replace(
-            userReg, "$1");
-        
-        var parent = anchor.parent();
-        $("title").text("Task list for "+ unescape(user));
-        $("#add-task").parent().parent().attr('href', 
-                                '/'+user+'/new/');
-        
-        parent.siblings(".selected").removeClass("selected");
-        parent.addClass("selected");
-
-        if (callback) callback();
-    }, "html");
-}
-
-Task.prototype.hideMenus = function() {
-    $("#edit-account-menu,#edit-task-menu").hide();
-}
-
-Task.prototype.setSelected = function(item, click) {
-    item.siblings().removeClass('selected');
-    if (click) {
-        item.children("a").click();
-    } else {
-        item.addClass('selected');
-    }
+            var href = '/'+Util.trim(Util.anchorToHref(anchor),'/')+'/'+what+
+                    '/';
+            $this.updateHistory(href);
+        });
+    });
 };
 
-Task.prototype.flash = function(message) {
-    if (message) {
-        $("#flash-inner").text(message).slideDown();
-    }
-    $("#flash").click( function() {
-        $(this).slideUp();
+/**
+ * Registers an account item for the context menu.
+ * @param {Element} list_item The item to register.
+ * @this {Util}
+ */
+Util.prototype._registerForAccountContextMenu = function(list_item) {
+    if (Util._isRegisteredForContextMenu(list_item)) return;
+    goog.dom.classes.add(list_item, 'context-menu-registered');
+    var anchor = goog.dom.getElementsByTagNameAndClass('a', null, list_item)[0];
+    var span = goog.dom.createDom('span', 'edit-account');
+    goog.dom.appendChild(anchor, span);
+    var $this = this;
+
+    goog.events.listen(span, goog.events.EventType.CLICK, function(evt) {
+        var position = goog.style.getPosition(span);
+        var size     = goog.style.getSize(span);
+        var edit_account_menu = $('edit-account-menu');
+        if (edit_account_menu) goog.dom.removeNode(edit_account_menu);
+        edit_account_menu = goog.dom.createDom('div', 
+            {id: 'edit-account-menu'});
+        var ul = goog.dom.createDom('ul');
+        var edit = goog.dom.createDom('li', 'edit', 'Edit Account Details');
+        var dele = goog.dom.createDom('li', 'delete', 'Unlink Account');
+        goog.dom.appendChild(ul, edit);
+        goog.dom.appendChild(ul, dele);
+        goog.dom.appendChild(edit_account_menu, ul);
+        edit_account_menu.style.position = 'absolute';
+        goog.style.setPosition(edit_account_menu, position.x, position.y + 
+            size.height);
+        
+        var body = goog.dom.getElementsByTagNameAndClass('body', null)[0];
+        goog.dom.appendChild(body, edit_account_menu);
+
+        goog.events.listenOnce(document, goog.events.EventType.MOUSEDOWN, 
+                function(evt) {
+            // TODO allow for editing accounts
+            // TODO allow for deleiting accounts
+            edit_account_menu = $('edit-account-menu');
+            if (edit_account_menu) goog.dom.removeNode(edit_account_menu);
+            var what;
+            if (evt.target == edit) {
+                what = "edit";
+            } else if (evt.target == dele) {
+                what = "delete";
+            } else {
+                return;
+            }
+            var href = '/'+Util.trim(Util.anchorToHref(anchor),'/')+'/'+what+
+                    '/';
+            //$this.updateHistory(href);
+        });
     });
-    setTimeout( function() {
-        $("#flash").slideUp();
-    }, FLASH_MESSAGE_DISPLAY_SECONDS*1000);
+};
+
+/**
+ * Registers the message with flash viewer (banner across top).
+ * @this {Util}
+ * @param {string=} opt_message Optional message to use.  Otherwise, just sets 
+ *              events.
+ * @param {int=} opt_speed Optional speed to use.
+ */
+Util.prototype._registerFlashMessage = function(opt_message, opt_speed) {
+    var flash = $('flash');
+    var flash_inner = $('flash-inner');
+    var size, padbox;
+    flash.style.overflow = "hidden";
+    flash_inner.style.overflow = "hidden";
+    var speed = opt_speed || 300;
+    if (opt_message) {
+        flash_inner.innerHTML = opt_message;
+        
+        if (!goog.style.isElementShown(flash)) {
+            flash.style.height = "auto";
+            flash_inner.style.height = "auto";
+            size = goog.style.getSize(flash);
+            padbox = goog.style.getPaddingBox(flash);
+            size.height -= padbox.top + padbox.bottom;
+            size.width -= padbox.left + padbox.right;
+            goog.style.setSize(flash, size.width, 0);
+            goog.style.showElement(flash, true);
+
+            //Animate the flash message by sliding downwards.
+            var show = new goog.fx.dom.ResizeHeight(flash, 0, size.height, 
+                    speed);
+            show.play();
+        }
+    }
+    
+    size = goog.style.getSize(flash);
+    padbox = goog.style.getPaddingBox(flash);
+    size.height -= padbox.top + padbox.bottom;
+    size.width -= padbox.left + padbox.right;
+    var timeout;
+    var slideUpAndHide = function () {
+        var hide = new goog.fx.dom.ResizeHeight(flash, size.height, 0, speed);
+        goog.events.listen(hide, goog.fx.Animation.EventType.END, function() {
+            flash.style.display = "none";
+            flash.style.height = "auto";
+        });
+        hide.play();
+    };
+    var listener = function() {
+        clearTimeout(timeout);
+        slideUpAndHide();
+    };
+
+    // Animate the flash message by sliding upwards.
+    var timeout = setTimeout(function() {
+        goog.events.unlisten(flash, goog.events.EventType.CLICK, listener);
+        slideUpAndHide();
+    }, Util.FLASH_MESSAGE_DISPLAY_SECONDS*1000);
+    goog.events.listenOnce(flash, goog.events.EventType.CLICK, listener);
 }
 
-var editHref = window.location.href.substring(
-        window.location.href.indexOf('/'));
-var editing = editHref.indexOf('edit') != -1 || editHref.indexOf('new') != -1 ||
-                editHref.indexOf('copy') != -1;
+/**
+ * Registers a menu as collapsible.
+ * @param {Element} menu to set as collapsible
+ * @param {int=} opt_speed The speed to set. Optional.
+ */
+Util._registerCollapsibleMenu = function(menu, opt_speed) {
+    var header = goog.dom.getElementsByTagNameAndClass('span', 'header', 
+            menu)[0];
+    var list   = goog.dom.getElementsByTagNameAndClass('ul', 'list', menu)[0];
+    var collapser = goog.dom.createDom('span', 'ui-icon ui-icon-triangle-1-s');
+    var li = goog.dom.getElementsByTagNameAndClass('li', null, list);
+    var speed = opt_speed || 300;
+    goog.dom.insertChildAt(header, collapser, 0);
 
-$(document).ready( function() {
-    //TODO add functions for when the add button is clicked and when the edit
-    //button is clicked
-    
-    var task = new Task();
-    task.flash();
-
-    $("#flash").click( function() {
-        $(this).slideUp();
-    });
-
-    $(".navbar .header").click( function(e) {
-        $(this).next().slideToggle();
-        $(this).children("span")
-            .toggleClass("ui-icon-triangle-1-e ui-icon-triangle-1-s");
-
-    }).prepend('<span class="ui-icon ui-icon-triangle-1-s"></span>');
-    
-    $("#accounts-list li a").append('<span class="edit-account"></span>');
-    $("#tasks-list li a").append('<span class="edit-task"></span>');
-
-    //TODO maybe make this automagically work with JavaScript?  For now the 
-    //refresh should be fine.
-    
-    $("#accounts-list li a").live('click', function(e) {
-        e.preventDefault();
-
-        if ($(e.target).hasClass('edit-account')) return;
-
-        if ($(this).parent().hasClass("selected")) return;
-    
-        var list = $("#tasks-list").empty();
-        task.updateHistory($(this));
-    });
-
-    $("#tasks-list li a").live('click', function(e) {
-        e.preventDefault();
-
-        if ($(e.target).hasClass('edit-task')) return;
-        if ($(this).parent().hasClass("selected")) return;
-        
-        var $this = $(this);
-        
-        task.updateHistory($(this));
-    });
-
-    $("<div id='edit-account-menu' />").html(
-            "<ul><li class='edit'>Edit Account</li>"+
-            "<li class='delete'>Unlink Account</li></ul>")
-        .appendTo("body");
-
-    $("<div id='edit-task-menu' />").html(
-            "<ul><li class='edit'>Edit Task</li>"+
-            "<li class='create-copy'>Create From Copy</li>"+
-            "<li class='delete'>Delete Task</li></ul>").appendTo("body");
-
-    $(".edit-task").live('click', function(e) {
-        if ($("#edit-account-menu").is(":visible")) {
-            $("#edit-account-menu").hide();
-        }
-        var parent = $(this).parent()[0];
-        if ($("#edit-task-menu").is(":visible") &&
-                $("#edit-task-menu").data("last-elem") == parent) {
-            $("#edit-task-menu").hide();
+    goog.events.listen(header, goog.events.EventType.CLICK, function(evt) {
+        var anim, height;
+        if (goog.dom.classes.has(list, 'collapsed-list')) {
+            // UNCOLLAPSE
+            list.style.overflow = "";
+            height = goog.style.getSize(list).height;
+            list.style.display = "";
+            anim = new goog.fx.dom.ResizeHeight(list, 0, height, speed);
+            goog.dom.classes.addRemove(collapser, 'ui-icon-triangle-1-e',
+                'ui-icon-triangle-1-s');
+            goog.events.listen(anim, goog.fx.Animation.EventType.END, 
+                    function() {
+                goog.dom.classes.remove(list, 'collapsed-list');
+                list.style.height = "";
+            });
         } else {
-            var pos = $(this).position();
-            var dim = {width: $(this).width(), height: $(this).height()};
-            $("#edit-task-menu").css({
-                top: pos.top+dim.height,
-                left: pos.left
-            }).slideDown('fast');
-            $("#edit-task-menu").data("last-elem", parent);
+            // COLLAPSE
+            list.style.overflow = "hidden";
+            height = goog.style.getSize(list).height;
+            anim = new goog.fx.dom.ResizeHeight(list, height, 0, speed);
+            goog.dom.classes.addRemove(collapser, 'ui-icon-triangle-1-s',
+                'ui-icon-triangle-1-e');
+            goog.events.listen(anim, goog.fx.Animation.EventType.END, 
+                    function() {
+                goog.dom.classes.add(list, 'collapsed-list');
+                list.style.display = "none";
+                list.style.height = "";
+            });
         }
+        anim.play();
     });
+};
 
-
-    $(".edit-account").live('click', function(e) {
-        if ($("#edit-task-menu").is(":visible")) {
-                $("#edit-task-menu").hide();
-        }
-        var parent = $(this).parent()[0];
-        if ($("#edit-account-menu").is(":visible") &&
-                $("#edit-account-menu").data("last-elem") == parent) {
-            $("#edit-account-menu").hide();
-        } else {
-            var pos = $(this).position();
-            var dim = {width: $(this).width(), height: $(this).height()};
-            $("#edit-account-menu").css({
-                top: pos.top+dim.height,
-                left: pos.left
-            }).slideDown('fast');
-            $("#edit-account-menu").data("last-elem", parent);
-        }
+/**
+ * Registers the add task button to work with JavaScript
+ * @param {Element} button The add task button
+ */
+Util.prototype._registerAddTaskButton = function(button) {
+    var $this = this;
+    goog.events.listen(button, goog.events.EventType.CLICK, function(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        $this.updateHistory(Util.anchorToHref(button));
     });
+};
 
-    $("#edit-task-menu .edit").bind('click', function(e) {
-        var anchor = $($("#edit-task-menu").data("last-elem"));
-        var href = anchor.attr('href');
-        var link = Task.trim(href.substring(href.indexOf('/')),'/')+'/edit/';
 
-        task.updateHistory(link);
-    });
-
-    $("#edit-task-menu .create-copy").bind('click', function(e) {
-        var anchor = $($("#edit-task-menu").data("last-elem"));
-        var href = anchor.attr('href');
-        var link = Task.trim(href.substring(href.indexOf('/')),'/')+'/copy/';
-        task.updateHistory(link);
-    });
-
-    $("#edit-task-menu .delete").click( function(e) {
-        var anchor = $($("#edit-task-menu").data("last-elem"));
-        var href = anchor.attr('href');
-        var link = Task.trim(href.substring(href.indexOf('/')),'/')+'/delete/';
-
-        task.deleteItem(link);
-    });
-    
-    // Only do the following if editing a task
-
-    if (editing) {
-        task.registerEditingItems();
-    } else {
-        task.registerViewingItems();
-    }
+var t = new Util();
+t._registerFlashMessage();
+var task_li = goog.dom.getElementsByTagNameAndClass('li', null, 
+        $('tasks-list'));
+goog.array.forEach(task_li, function(elem) {
+    t._registerForSelection(elem);
+    t._registerForTaskContextMenu(elem);
 });
+
+var account_li = goog.dom.getElementsByTagNameAndClass('li', null,
+        $('accounts-list'));
+goog.array.forEach(account_li, function(elem) {
+    t._registerForSelection(elem);
+    t._registerForAccountContextMenu(elem);
+});
+
+Util._registerCollapsibleMenu($('accounts'));
+Util._registerCollapsibleMenu($('tasks'));
+t._registerAddTaskButton($('add-task'));
