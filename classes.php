@@ -20,11 +20,132 @@
  */
 
 require_once 'HTTP/Request2.php';
-session_start();
+
+/**
+ * Class for manipulating a user object.
+ * The user object deals with the PHP server's accounts, and not the remote
+ * server's accounts.  This class mostly contains getters and setters for
+ * manipulating a user object.  The password object is not stored, since it
+ * is never used for anything but an authentication method.
+ *
+ * @author Andrew Hays
+ * @package PhpHtmRestApplicationClasses
+ * @subpackage Accounts
+ */
+class User {
+    /**
+     * The id attribute for an account object in the database (if it exists)
+     * @var int
+     */
+    private $mId;
+
+    /**
+     * The email attribute for an account object.
+     * @var string
+     */
+    private $mEmail;
+
+    /**
+     * Constructor for the <code>User</code> class.
+     * 
+     * @param string $email The email address for the user.
+     * @param string $id The id for the user, if any (default null).
+     */
+    function __construct($email, $id=null) {
+        $this->mId = $id;
+        $this->mEmail = $email;
+    }
+    
+    /**
+     * Getter for the email attribute.
+     * @return string The email address for the user.
+     */
+    public function getEmail() {
+        return $this->mEmail;
+    }
+
+    /**
+     * Getter for the id attribute.
+     * @return int The database id for the user, if any.
+     */
+    public function getId() {
+        return $this->mId;
+    }
+
+    /**
+     * Setter for the email attribute.
+     * @param string $email The email address to set for the User.
+     */
+    public function setEmail($email) {
+        $this->mEmail = $email;
+    }
+
+    /**
+     * Setter for the id attribute.
+     * @param int $id The id to set for the User.
+     */
+    public function setId($id) {
+        $this->mId = $id;
+    }
+
+    /**
+     * Static function for retrieving a User based on an email address.
+     * @static
+     * @param string $email The email address to use for the retrieval.
+     * @return User The user with the email address given.
+     */
+    public static function getUserByEmail($email) {
+        return Util::getUserByEmail($email);
+    }
+
+    /**
+     * Static function for retrieving a User by the id in the database.
+     * @static
+     * @param int $id The id to use for the retrieval.
+     * @return User The user with the id given.
+     */
+    public static function getUserById($id) {
+        return Util::getUserById($id);
+    }
+
+    /**
+     * Static function for authenticating a User with a username and password
+     * @static
+     * @param string $email The email to use for the authentication.
+     * @param string $password The password to use for the authentication.
+     * @return array|bool True if the account authenticates, an array containing
+     *          'success' and 'reason' keys otherwise.  Note that this method
+     *          could also allow 'success' to be true if there's other 
+     *          informatoin to pass back to the user.
+     */
+    public static function authenticateUser($email, $password) {
+        return Util::authenticateUser($email, $password);
+    }
+
+    /**
+     * Static function for registering a new user with a username and password
+     * @static
+     * @param string $email The email to use for the registration
+     * @param string $password The password to use for the registration
+     * @param string $opt_password_verify Optional verification for the password
+     *          to pass along.  Checks to make sure $password and 
+     *          $opt_password_verify are the same thing.
+     * @return array|bool True if the account registers properly, an array
+     *          containing 'success' and 'reason' keys otherwise.  Note that
+     *          this method could also allow 'success' to be true if there
+     *          is other information to pass back.
+     */
+    public static function registerUser($email, ,$password, 
+                $opt_password_verify=null) {
+        return Util::registerUser($email, $password, $opt_password_verify)
+    }
+}
+
 /**
  * Class for manipulating an account.
- * This class mostly contains getters and setters for manipulating
- * an account.
+ * The account class deals with the REST API's accounts, and not the local
+ * server's accounts. This class mostly contains getters and setters for 
+ * manipulating an account.
  *
  * @author Andrew Hays
  * @package PhpHtmRestApplicationClasses
@@ -32,28 +153,28 @@ session_start();
  */
 class Account {
     /**
+     * The id attribute for an account object in the database (if it exists)
+     * @var int
+     */
+    private $mId;
+
+    /**
      * The name attribute for an account object.
      * @var string 
      */
     private $mName;
+
     /**
      * The password attribute for an account object.
      * @var string
      */
     private $mPassword;
+
     /**
      * The Uri attribute for an account object.
      * @var string
      */
     private $mUri;
-    /**
-     * The pattern to match the end of a username, to make sure that it looks
-     * correct.
-     * @todo {Andrew Hays} I'm not entirely sure that this is still required
-     * @var string
-     * @static
-     */
-    private static $sUserNamePattern = '/\/a\/(?P<name>[\w% ]+)/';
 
     /**
      * Constructor for the <code>Account</code> class.  Sets up a new account
@@ -64,11 +185,21 @@ class Account {
      * @param string $password The password for the account.
      * @param string $uri The Uri that should be associated with the account
      *          for logging in.
+     * @param int $id The id for the account from the database, if any.
      */
-    function __construct($name, $password, $uri) {
+    function __construct($name, $password, $uri, $id = null) {
+        $this->mId = $id;
         $this->mName = $name;
         $this->mPassword = $password;
         $this->mUri = $uri;
+    }
+
+    /**
+     * Getter for the id attribute.
+     * @return int The id attribute
+     */
+    public function getId() {
+        return $this->mId;
     }
 
     /**
@@ -96,50 +227,6 @@ class Account {
     }
 
     /**
-     * Getter for the username attribute.  Currently this looks at uri for the
-     * object in question and determines the username.
-     * @todo {Andrew Hays} Is this required?  Will {@link Account::getName()} 
-     *          work instead?
-     * @return string The username associated with the account.
-     */
-    public function getUserName() {
-        preg_match(self::$sUserNamePattern, $this->mUri, $matches);
-        if (array_key_exists("name", $matches)) {
-            return urldecode($matches["name"]);
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * Gets the uri for the user given a number.
-     * @static
-     * @deprecated
-     * @todo {Andrew Hays} Can we phase this out completely?
-     * @param string|int $number The number associated with the account.
-     * @return string The alternate uri associated with the user number in
-     *          question.
-     */
-    public static function uriFromUserNumber($number) {
-        $urlnumber = urlencode($number);
-        return "http://restapp.dyndns.org:9998/tdl/$urlnumber";
-    }
-
-    /**
-     * Gets the uri for a user given a username
-     * @static
-     * @deprecated
-     * @todo {Grant Beasley} All calls to this function should instead use some
-     *          form of {@link Account::getUserByUserName()} instead.
-     * @param string $name The name associated with the account.
-     * @return string The Uri associated with the account in question.
-     */
-    public static function uriFromUserName($name) {
-        $urlname = str_replace('+','%20', urlencode($name));
-        return "http://restapp.dyndns.org:9998/a/$urlname";
-    }
-
-    /**
      * Gets the account for a user given a username.
      * @static
      * @todo {Grant Beasley} Any calls to this function should use the new style
@@ -150,8 +237,28 @@ class Account {
      * @return Account The account for Daniel's database associated with the 
      *          given username.
      */
-    public static function getUserByUserName($name) {
-        return Util::getUserByUserName($name);
+    public static function getAccountByName($name) {
+        return Util::getAccountByName($name);
+    }
+
+    /**
+     * Gets the account for a given uri.
+     * @static
+     * @param string $uri The uri to use for looking up the Account.
+     * @return Account the account with the given uri, or null if none.
+     */
+    public static function getAccountByUri($uri) {
+        return Util::getAccountByUri($uri);
+    }
+
+    /**
+     * Gets the account for a given id in the database.
+     * @static
+     * @param string $id The id to use for looking up the Account.
+     * @return Account The account with the given id, or null if none.
+     */
+    public static function getAccountById($uri) {
+        return Util::getAccountById($id);
     }
 
     /**
@@ -162,12 +269,11 @@ class Account {
      *          API from Daniel.  You will likely need to add a few more
      *          parameters (associated with our accounts that we use), so that
      *          we can link users and accounts.
-     * @param string $name The name for the account
-     * @param string $password The password for the account
-     * @param string $uri The uri for the account.
+     * @param User $user The User object to use to link the account.
+     * @param Account $account The Account object to use to add to the database.
      */
-    public static function addAccount($name, $password, $uri) {
-        Util::addAccount($name, $password, $uri);
+    public static function addAccount($user, $account) {
+        Util::addAccount($user, $account);
     }
 }
 
@@ -179,6 +285,7 @@ class Account {
  * @author Andrew Hays
  */
 class Task {
+    private $mId;
     private $mName;
     private $mUri;
     private $mType;
@@ -204,6 +311,7 @@ class Task {
     function __construct($name=null, $uri=null) {
         $this->mName = $name;
         $this->mUri = $uri;
+        $this->mId = $this->getTaskNumber();
         $this->mTags = array();
     }
 
@@ -213,6 +321,11 @@ class Task {
     
     public function setName($name) {
         $this->mName = $name;
+    }
+
+    public function setUri($uri) {
+        $this->mUri = $uri;
+        $this->mId = $this->getTaskNumber();
     }
     
     public function setType($type) {
@@ -277,6 +390,10 @@ class Task {
     
     public function getDetail() {
         return $this->mDetail;
+    }
+
+    public function getId() {
+        return $this->mId;
     }
 
     /**
@@ -364,7 +481,7 @@ class Task {
      * think there's any way around not using this function, yet.
      * @return int The task number, or null if none was found.
      */
-    public function getTaskNumber() {
+    private function getTaskNumber() {
         preg_match(self::$sTaskNumberPattern, $this->mUri, $matches);
         if (array_key_exists("number", $matches)) {
             return $matches["number"];
@@ -915,27 +1032,54 @@ class Util {
     private static $mysqli = null;
 
     /**
+     * Static variable used to store the user currently logged in, if any.
+     * This value is pulled from $_SESSION['user'].  If the value doesn't
+     * exist, a null value is placed there instead, along with the value for
+     * $mysqli
+     * @var User
+     */
+    private $mUser = null;
+
+    /**
      * Static initializer for this class.  Has to be explicitly called since
      * PHP doesn't support constructors for static classes.
-     * @todo {Grant Beasley} This needs to be updated with the new database
-     *          credentials.
      */
-    public static function init() {
-        self::$mysqli = new mysqli("localhost", "root", "", "login accounts");
+    public static function __construct() {
+        if (!isset($_SESSION)) session_start();
+        if (!isset($_SESSION['user']) or !$_SESSION['user']) {
+            self::$user = null;
+        } else {
+            self::$user = $_SESSION['user'];
+        }
+        self::$mysqli = new mysqli("localhost", "root", "", "htm_database");
+    }
+
+    /**
+     * Handles methods where a user needs to be logged in before the query
+     * can be completed.
+     */
+    public function handleLogin() {
+        if (self::$user == null) {
+            $_SESSION['flash'] = "You must be logged in to use that feature.";
+            header("Location /login/");
+        }
     }
 
     /**
      * Searches the database for an Account with a username.
-     * @todo {Grant Beasley} This should use the new query tables.
-     * @todo {Andrew Hays} Rename to getAccountByUserName and fix all references
+     * @todo {Andrew Hays} Rename to getAccountByName and fix all references
      */
-    public static function getUserByUserName($name) {
-        $result = self::$mysqli->query("SELECT Username, Password, URI ".
-                                       "FROM users ".
-                                       "WHERE Username='$name'");
+    public function getAccountByName($name) {
+        handleLogin();
+        $result = self::$mysqli->query(
+            "SELECT a.username, a.passphrase, a.link, a.id ".
+            "FROM accounts a JOIN user_accounts ua ON (a.id = ua.accountId) ".
+            "                JOIN users u ON (ua.userID = u.id) ".
+            "WHERE a.username='$name' AND u.id={$this->$user->getId()}");
         if ($result) {
             $row = $result->fetch_assoc();
-            return new Account($row["Username"], $row["Password"], $row["URI"]);
+            return new Account($row["a.username"], $row["a.passphrase"], 
+                $row["a.link"], $row["a.id"]);
         }
         return null;
     }
@@ -948,7 +1092,7 @@ class Util {
      * @param string $string The string to encode.
      * @return string The encoded string.
      */
-    static function escape($string) {
+    public static function escape($string) {
         return str_replace('+','%20', urlencode($string));
     }
 
@@ -960,8 +1104,9 @@ class Util {
      *          required.
      * @return array Some details associated with the account.
      */
-    static function retrieveMessage($uri, $user=null, $password=null) {
-      
+    public function retrieveMessage($uri, Account $account) {
+        $user = $account->getName();
+        $password = $account->getPassword();
         $etag = null;
         if (array_key_exists($uri, $_SESSION))
         {
@@ -999,7 +1144,7 @@ class Util {
      *          elements in the Xml.
      * @return SimpleXMLElement The xml dom for the body.
      */
-    static function getXmlResponse($body, $namespace="ns") {
+    public function getXmlResponse($body, $namespace="ns") {
         $xml = new SimpleXMLElement($body);
         $xml->registerXPathNamespace($namespace, 
                         "http://danieloscarschulte.de/cs/ns/2011/tm");
@@ -1011,10 +1156,15 @@ class Util {
      * @todo {Grant Beasley} Adjust this query to use new tables.  You'll likely
      *          need to accept a new parameter (like a {@link User} object) so
      *          that you will only get accounts associated with that User.
+     * @param boolarray $all Whether or not to return all accounts.  If it's
+     *          an array, only for the selected <code>User</code>
+     * @param bool $associative Whether or not to return them as an associative
+     *          array of arrays. (i.e. array("Bob"=>array(Task, Task, Task)))
      * @return array An array of {@link Account} objects.
      */
-    static function getAccounts() {
+    public function getAccounts($all = false, $associative=false) {
         $users = array();
+
         $result = self::$mysqli->query("SELECT Username, Password, URI ".
                                        "FROM users; ");
         if ($result) {
@@ -1280,6 +1430,23 @@ class Util {
      */
     public static function urlifyTaskName($name) {
         return trim(substr(preg_replace('/[^A-Z0-9]+/i','-',$name),0,18),'-');
+    }
+
+    /**
+     * Returns a URI from a username.  Note that the user must first exist
+     * in the database in order to return its URI.
+     * @param string $username The name to look up.
+     * @return string The uri that the username corresponds to, or null if it
+     *          doesn't exist.
+     */
+    public static function getUriFromUsername($username) {
+        $query = "SELECT a.link FROM accounts a WHERE a.username='$name'";
+        if ($result = $mysql->query($query)) {
+            $row = $result->fetch_assoc();
+            return $row['a.link'];
+        } else {
+            return null;
+        }
     }
 } Util::init();
 ?>

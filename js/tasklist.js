@@ -64,7 +64,7 @@ var Util = function() {
     var $this = this;
     goog.events.listen(this.history, this.historyEvent, function(e) {
         e.preventDefault();
-        $this._historyHandler(e);
+        $this.historyHandler(e);
     });
 };
 
@@ -81,11 +81,16 @@ Util.EventType = {
     TASKLIST: 'tasklist'
 }
 
-/** @const */ Util.FLASH_MESSAGE_DISPLAY_SECONDS = 5;
+/** 
+ * The default amount of time to display the message in the header.
+ * @const 
+ */ 
+Util.FLASH_MESSAGE_DISPLAY_SECONDS = 5;
 
 /**
  * Static function for return the path of an href.  If the passed element
  * is a string, the value is just returned.
+ * @static
  * @param {(Element|string)} anchor An anchor to grab the path from.
  * @return {string} The path part of a URI.
  */
@@ -99,8 +104,9 @@ Util.anchorToHref = function(anchor) {
 
 
 /**
- * Static function for trimming a string with needed characters at the beginning
- * and end of a string.
+ * Static function for trimming a string with a given set of characters at the 
+ * beginning and end of a string.
+ * @static
  * @param {string} string The string to trim
  * @param {string=} opt_chars An optional string containing characters to trim.
  * @return {string} The trimmed string.
@@ -113,7 +119,7 @@ Util.trim = function(string, opt_chars) {
 };
 
 /**
- * Update the URL bar the current URL (without refreshing the page).
+ * Update the URL bar's current URL (without refreshing the page).
  * @this {Util}
  * @param {(Element|string)} anchor An &lt;a&gt; element, or a string link.
  */
@@ -133,7 +139,7 @@ Util.prototype.updateHistory = function(anchor) {
  * @this {Util}
  * @param {Event} evt The event to handle.
  */
-Util.prototype._historyHandler = function(evt) {
+Util.prototype.historyHandler = function(evt) {
     if (evt.token) {
         var token = Util.trim(evt.token, '/').toLowerCase();
         var $this = this;
@@ -141,21 +147,21 @@ Util.prototype._historyHandler = function(evt) {
 
         if (goog.string.endsWith(token, "edit")) {
             eventType = Util.EventType.EDIT;
-            this._getTaskEditor(evt.token);
+            this.getTaskEditor(evt.token);
         } else if (goog.string.endsWith(token, "copy")) {
             eventType = Util.EventType.COPY;
-            this._getTaskEditor(evt.token);
+            this.getTaskEditor(evt.token);
         } else if (goog.string.endsWith(token, "new")) {
             eventType = Util.EventType.NEW;
-            this._getTaskEditor(evt.token);
+            this.getTaskEditor(evt.token);
         } else if (goog.string.endsWith(token, "delete")) {
             eventType = Util.EventType.DELETE;
         } else if (token.split("/").length-1 == 0) {
             eventType = Util.EventType.TASKLIST;
-            this._getTaskList(evt.token);
+            this.getTaskList(evt.token);
         } else {
             eventType = Util.EventType.VIEW;
-            this._getTaskDescription(evt.token);
+            this.getTaskDescription(evt.token);
         }
     } else {
         // Looks like the token is null (at the root view), so lets update it
@@ -178,58 +184,11 @@ Util.prototype._historyHandler = function(evt) {
 };
 
 /**
- * Handles the response from the XmlHttpResponse given from the call in 
- * _historyHandler
- * @this {Util}
- * @param {Event} evt The event to handle.
- * @param {Util.EventType} eventType The task event type
- *//*
-Util.prototype._handleXhrResponse = function(evt, eventType) {
-    var xhr = evt.target;
-    var response = xhr.getResponseText();
-    if (eventType = Util.EventType.DELETE) return;
-    if (eventType = Util.EventType.TASKLIST) {
-        var tasklist = $('tasks-list');
-        tasklist.innerHTML = response;
-        var li = goog.dom.getElementsByTagNameAndClass('li', null, tasklist)[0];
-        this._setSelected(li);
-        var a = goog.dom.getElementsByTagNameAndClass('a', null, tasklist);
-        var links = goog.dom.getElementsByTagNameAndClass('a', null, tasklist);
-        if (a.length == 0) {
-            
-
-                    $("#tasks-list").html(html);
-                    $("#tasks-list li:first a").click();
-                    if ($("#tasks-list li").size() == 0) {
-                        $("#task-content").html(
-                                "<h2 style='padding:10px 30px'>" +
-                                "There are no tasks available to display." +
-                                "</h2>");
-                    }
-
-                    $("#tasks-list li a").append('<span class="edit-task">'+
-                        '</span>');
-
-                    var user = tok;
-                    
-                    var anchor = $("#accounts-list a[href*='"+e.token+"']");
-                    var parent = anchor.parent();
-                    $("title").text("Task list for "+ unescape(user));
-                    $("#add-task").parent().parent().attr('href', 
-                                            '/'+user+'/new/');
-                    
-                    parent.siblings(".selected").removeClass("selected");
-                    parent.addClass("selected");
-
-    }
-};*/
-
-/**
  * Updates the screen to register all the items related with viewing a task
  * description (not editing one).  Uses a progress bar, and some buttons.
  * @this {Util}
  */
-Util.prototype._registerViewingItems = function() {
+Util.prototype.registerViewingItems = function() {
     var progress = new goog.ui.ProgressBar();
     progress.render($('task-progress-bar'));
     progress.setValue(goog.dom.getRawTextContent($('task-progress')));
@@ -268,20 +227,37 @@ Util.prototype._registerViewingItems = function() {
  * @param {string=} opt_format An optional format to parse and format the date 
  *              with.
  */
-Util._registerDatePicker = function(widget, input_wrapper, opt_format) {
+Util.registerDatePicker = function(widget, input_wrapper, opt_format) {
     var dp = new goog.ui.DatePicker();
     var input = goog.dom.getElementsByTagNameAndClass('input', null, 
             input_wrapper)[0];
     var image = goog.dom.getElementsByTagNameAndClass(null, 'date-icon', 
             input_wrapper)[0];
+
+    /**
+     * Function for hiding the datepicker.
+     * @type {function()}
+     */
     var hideDatePicker = function() {
         goog.style.showElement(widget, false);
     };
+
+    /**
+     * Function for showing the datepicker
+     * @type {function()}
+     */
     var showDatePicker = function() {
         goog.style.showElement(widget, true);
     };
+
     var formatter = new goog.i18n.DateTimeFormat(opt_format || 'MM/dd/yyyy');
     var parser    = new goog.i18n.DateTimeParse(opt_format || 'MM/dd/yyyy');
+
+    /**
+     * Functoin for setting the date on the datepicker to the value from the
+     * input box.
+     * @type {function()}
+     */
     var setDate = function() {
         var d = new goog.date.Date();
         var value = goog.string.trim(input.value);
@@ -335,7 +311,7 @@ Util._registerDatePicker = function(widget, input_wrapper, opt_format) {
  * description (not viewing one).  Uses a slider, some buttons, two datepickers.
  * @this {Util}
  */
-Util.prototype._registerEditingItems = function() {
+Util.prototype.registerEditingItems = function() {
     var element = $("task-progress-edit-slider");
     var input = $('task-progress-edit');
     var slider = new goog.ui.Slider();
@@ -360,8 +336,8 @@ Util.prototype._registerEditingItems = function() {
     var start_input_wrapper = $('task-start-date-edit').parentElement;
     var end_input_wrapper = $('task-expiration-date-edit').parentElement;
 
-    Util._registerDatePicker(start_widget, start_input_wrapper);
-    Util._registerDatePicker(end_widget, end_input_wrapper);
+    Util.registerDatePicker(start_widget, start_input_wrapper);
+    Util.registerDatePicker(end_widget, end_input_wrapper);
     
     // Rich Text Editor
     var richEditor = new goog.editor.Field('task-details-rich-editor');
@@ -425,13 +401,13 @@ Util.prototype._registerEditingItems = function() {
  * @param {(Element|string)} anchor The anchor to get the href from
  * @this {Util}
  */
-Util.prototype._getTaskDescription = function(anchor) {
+Util.prototype.getTaskDescription = function(anchor) {
     var href = Util.trim(Util.anchorToHref(anchor), '/') + '/';
     var $this = this;
     goog.net.XhrIo.send('/ajax/'+href, function(e) {
         var xhr = e.target;
         $('task-content').innerHTML = xhr.getResponseText();
-        $this._registerViewingItems();
+        $this.registerViewingItems();
     });
 };
 
@@ -440,13 +416,13 @@ Util.prototype._getTaskDescription = function(anchor) {
  * @param {(Element|string)} anchor The anchor to get the href from
  * @this {Util}
  */
-Util.prototype._getTaskEditor = function(anchor) {
+Util.prototype.getTaskEditor = function(anchor) {
     var href = Util.trim(Util.anchorToHref(anchor), '/') + '/';
     var $this = this;
     goog.net.XhrIo.send('/ajax/'+href, function(e) {
         var xhr = e.target;
         $('task-content').innerHTML = xhr.getResponseText();
-        $this._registerEditingItems();
+        $this.registerEditingItems();
     });
 };
 
@@ -455,7 +431,7 @@ Util.prototype._getTaskEditor = function(anchor) {
  * @param {(Element|string)} anchor The anchor to get the href from
  * @this {Util}
  */
-Util.prototype._getTaskList = function(anchor) {
+Util.prototype.getTaskList = function(anchor) {
     var href = Util.trim(Util.anchorToHref(anchor), '/') + '/';
     var $this = this;
     goog.net.XhrIo.send('/ajax/'+href, function(e) {
@@ -467,13 +443,13 @@ Util.prototype._getTaskList = function(anchor) {
             $('task-content').innerHTML = '<h2 style="padding:10px 30px;">'+
                 'There are no tasks available to display.</h2>';
         } else {
-            $this._setSelected(items[0]);
+            $this.setSelected(items[0]);
             var a = goog.dom.getElementsByTagNameAndClass('a', null, items[0]);
-            $this._getTaskDescription(a[0]);
+            $this.getTaskDescription(a[0]);
 
             goog.array.forEach(items, function(elem, ind, arr) {
-                $this._registerForSelection(elem);
-                $this._registerForTaskContextMenu(elem);
+                $this.registerForSelection(elem);
+                $this.registerForTaskContextMenu(elem);
             });
         }
     });
@@ -484,7 +460,7 @@ Util.prototype._getTaskList = function(anchor) {
  * @param {Element} list_item The item to select.
  * @this {Util}
  */
-Util.prototype._setSelected = function(list_item) {
+Util.prototype.setSelected = function(list_item) {
     var ul = list_item.parentElement;
     var li =goog.dom.getElementsByTagNameAndClass('li', 'selected', ul);
     goog.array.forEach(li, function(elem, ind, arr) {
@@ -499,7 +475,7 @@ Util.prototype._setSelected = function(list_item) {
  * @this {Util}
  * @return {boolean} Whether or not the list_item is selected.
  */
-Util.prototype._isSelected = function(list_item) {
+Util.prototype.isSelected = function(list_item) {
     return goog.dom.classes.has(list_item, "selected");
 };
 
@@ -508,7 +484,7 @@ Util.prototype._isSelected = function(list_item) {
  * @param {Element} list_item The item to register.
  * @this {Util}
  */
-Util.prototype._registerForSelection = function(list_item) {
+Util.prototype.registerForSelection = function(list_item) {
     var $this = this;
     var anchor = goog.dom.getElementsByTagNameAndClass('a', null, list_item)[0];
 
@@ -516,8 +492,8 @@ Util.prototype._registerForSelection = function(list_item) {
         evt.preventDefault();
         if (goog.dom.classes.has(evt.target, 'edit-task') ||
             goog.dom.classes.has(evt.target, 'edit-account')) return;
-        if (!$this._isSelected(list_item)) {
-            $this._setSelected(list_item);
+        if (!$this.isSelected(list_item)) {
+            $this.setSelected(list_item);
             $this.updateHistory(anchor);
         }
     });
@@ -527,7 +503,7 @@ Util.prototype._registerForSelection = function(list_item) {
  * Determins whether or not a list item has been registered for a context menu.
  * @param {Element} list_item The list item to check
  */
-Util._isRegisteredForContextMenu = function(list_item) {
+Util.isRegisteredForContextMenu = function(list_item) {
     return goog.dom.classes.has(list_item, 'context-menu-registered');
 };
 
@@ -536,8 +512,8 @@ Util._isRegisteredForContextMenu = function(list_item) {
  * @param {Element} list_item The item to register.
  * @this {Util}
  */
-Util.prototype._registerForTaskContextMenu = function(list_item) {
-    if (Util._isRegisteredForContextMenu(list_item)) return;
+Util.prototype.registerForTaskContextMenu = function(list_item) {
+    if (Util.isRegisteredForContextMenu(list_item)) return;
     goog.dom.classes.add(list_item, 'context-menu-registered');
     var anchor = goog.dom.getElementsByTagNameAndClass('a', null, list_item)[0];
     var span = goog.dom.createDom('span', 'edit-account');
@@ -591,8 +567,8 @@ Util.prototype._registerForTaskContextMenu = function(list_item) {
  * @param {Element} list_item The item to register.
  * @this {Util}
  */
-Util.prototype._registerForAccountContextMenu = function(list_item) {
-    if (Util._isRegisteredForContextMenu(list_item)) return;
+Util.prototype.registerForAccountContextMenu = function(list_item) {
+    if (Util.isRegisteredForContextMenu(list_item)) return;
     goog.dom.classes.add(list_item, 'context-menu-registered');
     var anchor = goog.dom.getElementsByTagNameAndClass('a', null, list_item)[0];
     var span = goog.dom.createDom('span', 'edit-account');
@@ -647,7 +623,7 @@ Util.prototype._registerForAccountContextMenu = function(list_item) {
  *              events.
  * @param {int=} opt_speed Optional speed to use.
  */
-Util.prototype._registerFlashMessage = function(opt_message, opt_speed) {
+Util.prototype.registerFlashMessage = function(opt_message, opt_speed) {
     var flash = $('flash');
     var flash_inner = $('flash-inner');
     var size, padbox;
@@ -705,7 +681,7 @@ Util.prototype._registerFlashMessage = function(opt_message, opt_speed) {
  * @param {Element} menu to set as collapsible
  * @param {int=} opt_speed The speed to set. Optional.
  */
-Util._registerCollapsibleMenu = function(menu, opt_speed) {
+Util.registerCollapsibleMenu = function(menu, opt_speed) {
     var header = goog.dom.getElementsByTagNameAndClass('span', 'header', 
             menu)[0];
     var list   = goog.dom.getElementsByTagNameAndClass('ul', 'list', menu)[0];
@@ -751,7 +727,7 @@ Util._registerCollapsibleMenu = function(menu, opt_speed) {
  * Registers the add task button to work with JavaScript
  * @param {Element} button The add task button
  */
-Util.prototype._registerAddTaskButton = function(button) {
+Util.prototype.registerAddTaskButton = function(button) {
     var $this = this;
     goog.events.listen(button, goog.events.EventType.CLICK, function(evt) {
         evt.preventDefault();
@@ -762,21 +738,21 @@ Util.prototype._registerAddTaskButton = function(button) {
 
 
 var t = new Util();
-t._registerFlashMessage();
+t.registerFlashMessage();
 var task_li = goog.dom.getElementsByTagNameAndClass('li', null, 
         $('tasks-list'));
 goog.array.forEach(task_li, function(elem) {
-    t._registerForSelection(elem);
-    t._registerForTaskContextMenu(elem);
+    t.registerForSelection(elem);
+    t.registerForTaskContextMenu(elem);
 });
 
 var account_li = goog.dom.getElementsByTagNameAndClass('li', null,
         $('accounts-list'));
 goog.array.forEach(account_li, function(elem) {
-    t._registerForSelection(elem);
-    t._registerForAccountContextMenu(elem);
+    t.registerForSelection(elem);
+    t.registerForAccountContextMenu(elem);
 });
 
-Util._registerCollapsibleMenu($('accounts'));
-Util._registerCollapsibleMenu($('tasks'));
-t._registerAddTaskButton($('add-task'));
+Util.registerCollapsibleMenu($('accounts'));
+Util.registerCollapsibleMenu($('tasks'));
+t.registerAddTaskButton($('add-task'));

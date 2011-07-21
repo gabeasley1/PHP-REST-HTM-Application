@@ -1,0 +1,45 @@
+DROP TABLE IF EXISTS User_Accounts;
+
+DROP TABLE IF EXISTS Accounts;
+
+DROP TABLE IF EXISTS Users;
+
+CREATE TABLE Users (
+  id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  email VARCHAR(30)  NOT NULL  ,
+  passphrase VARCHAR(45)  NOT NULL    ,
+PRIMARY KEY(id)  ,
+UNIQUE INDEX email(email));
+
+
+
+CREATE TABLE Accounts (
+  id INTEGER UNSIGNED NOT NULL AUTO_INCREMENT,
+  link VARCHAR(255)  NOT NULL  ,
+  username VARCHAR(20)  NOT NULL  ,
+  passphrase VARCHAR(45)  NOT NULL    ,
+PRIMARY KEY(id)  ,
+UNIQUE INDEX username(username)  ,
+UNIQUE INDEX link(link));
+
+
+
+CREATE TABLE User_Accounts (
+  id INTEGER UNSIGNED  NOT NULL   AUTO_INCREMENT,
+  accountID INTEGER UNSIGNED NOT NULL  ,
+  userID INTEGER UNSIGNED  NOT NULL    ,
+PRIMARY KEY(id)  ,
+INDEX User_Accounts_FKIndex1(userID)  ,
+INDEX User_Accounts_FKIndex2(accountID),
+  FOREIGN KEY(userID)
+    REFERENCES Users(id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE,
+  FOREIGN KEY(accountID)
+    REFERENCES Accounts(id)
+      ON DELETE CASCADE
+      ON UPDATE CASCADE);
+
+
+
+
