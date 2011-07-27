@@ -1,6 +1,7 @@
 <?
 /**
  * Handles all submit requests from the login form.
+ * @author Kevin Topiwalla
  */
 require_once('classes.php');
 session_start();

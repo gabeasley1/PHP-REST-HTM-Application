@@ -1,6 +1,7 @@
 <?
 /**
  * Login page for REST Application
+ * @author Kevin Topiwalla
  */
 ?>
 <!DOCTYPE html>
