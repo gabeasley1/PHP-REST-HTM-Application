@@ -1,0 +1,388 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Account</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Account</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Class for manipulating an account.</p>
+<p class="description"><p>The account class deals with the REST API's accounts, and not the local  server's accounts. This class mostly contains getters and setters for  manipulating an account.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Andrew Hays</li>
+				<li><span class="field">author:</span> Grant Beasley</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_classes.php.html">/classes.php</a> (line <span class="field">166</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																				<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#addAccounts" title="details" class="method-name">addAccounts</a>
+											(<span class="var-type"><a href="../default/User.html">User</a></span>&nbsp;<span class="var-name">$user</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$accounts</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result"><a href="../default/Account.html">Account</a></span>
+										<a href="#getAccountById" title="details" class="method-name">getAccountById</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$uri</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result"><a href="../default/Account.html">Account</a></span>
+										<a href="#getAccountByName" title="details" class="method-name">getAccountByName</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+					static 						<span class="method-result"><a href="../default/Account.html">Account</a></span>
+										<a href="#getAccountByUri" title="details" class="method-name">getAccountByUri</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$uri</span>)
+									</div>
+																																								
+												<div class="method-definition">
+											<span class="method-result">Account</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$password</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$uri</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$id</span> = <span class="var-default">null</span>])
+									</div>
+																																																<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#getId" title="details" class="method-name">getId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getName" title="details" class="method-name">getName</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getPassword" title="details" class="method-name">getPassword</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getUri" title="details" class="method-name">getUri</a>
+										()
+									</div>
+								</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodaddAccounts" id="addAccounts"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method addAccounts</span> (line <span class="line-number">281</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a new account to the database.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addAccounts
+		</span>
+					(<span class="var-type"><a href="../default/User.html">User</a></span>&nbsp;<span class="var-name">$user</span>, <span class="var-type">mixed</span>&nbsp;<span class="var-name">$accounts</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../default/User.html">User</a></span>
+				<span class="var-name">$user</span><span class="var-description">: The User object to use to link the account.</span>			</li>
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$accounts</span><span class="var-description">: A list of accounts to add.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAccountById" id="getAccountById"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getAccountById</span> (line <span class="line-number">270</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets the account for a given id in the database.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The account with the given id, or null if none.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result"><a href="../default/Account.html">Account</a></span>
+		<span class="method-name">
+			getAccountById
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$uri</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$id</span><span class="var-description">: The id to use for looking up the Account.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$uri</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAccountByName" id="getAccountByName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getAccountByName</span> (line <span class="line-number">248</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets the account for a user given a username.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The account for Daniel's database associated with the           given username.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result"><a href="../default/Account.html">Account</a></span>
+		<span class="method-name">
+			getAccountByName
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The name associated with the account.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAccountByUri" id="getAccountByUri"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method getAccountByUri</span> (line <span class="line-number">259</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Gets the account for a given uri.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> the account with the given uri, or null if none.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result"><a href="../default/Account.html">Account</a></span>
+		<span class="method-name">
+			getAccountByUri
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$uri</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$uri</span><span class="var-description">: The uri to use for looking up the Account.</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">202</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor for the <div class="src-code"><ol><li><div class="src-line"><span class="src-id"><a href="../default/Account.html">Account</a></span></div></li>
+</ol></div> class.  Sets up a new account  (from the database or hardcoded).</p>
+	
+	<div class="method-signature">
+		<span class="method-result">Account</span>
+		<span class="method-name">
+			__construct
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$password</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$uri</span>, [<span class="var-type">int</span>&nbsp;<span class="var-name">$id</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The name for the account, this should NOT be encoded           for urls, that will happen naturally when required.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$password</span><span class="var-description">: The password for the account.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$uri</span><span class="var-description">: The Uri that should be associated with the account           for logging in.</span>			</li>
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$id</span><span class="var-description">: The id for the account from the database, if any.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetId" id="getId"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getId</span> (line <span class="line-number">213</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Getter for the id attribute.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The id attribute</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			getId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetName" id="getName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getName</span> (line <span class="line-number">221</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Getter for the name attribute.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The name attribute.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getName
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetPassword" id="getPassword"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPassword</span> (line <span class="line-number">237</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Getter for the password attribute.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The password attribute</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getPassword
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetUri" id="getUri"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getUri</span> (line <span class="line-number">229</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Getter for the Uri attribute</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The uri attribute.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getUri
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 27 Jul 2011 15:52:32 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

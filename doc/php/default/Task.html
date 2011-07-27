@@ -1,0 +1,1293 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Task</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Task</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Class for manipulating a task.</p>
+<p class="description"><p>This class mostly contains getters and setters for manipulating  tasks.</p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Andrew Hays</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_classes.php.html">/classes.php</a> (line <span class="field">294</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																				<div class="method-definition">
+					static 						<span class="method-result">boolean|string</span>
+										<a href="#deleteTask" title="details" class="method-name">deleteTask</a>
+											(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$user</span>, <span class="var-type"><a href="../default/Task.html">Task</a></span>&nbsp;<span class="var-name">$task</span>)
+									</div>
+																																																																																																																																																																																																																																																																								<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#toEditHtml" title="details" class="method-name">toEditHtml</a>
+											(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$user</span>, [<span class="var-type"><a href="../default/Task.html">Task</a></span>&nbsp;<span class="var-name">$task</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$copy</span> = <span class="var-default">false</span>])
+									</div>
+																								<div class="method-definition">
+					static 						<span class="method-result">void</span>
+										<a href="#uriFromTaskNumber" title="details" class="method-name">uriFromTaskNumber</a>
+											(<span class="var-type">string|int</span>&nbsp;<span class="var-name">$number</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">1</span>)
+									</div>
+								
+												<div class="method-definition">
+											<span class="method-result">Task</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+											([<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span> = <span class="var-default">null</span>], [<span class="var-type">$uri</span>&nbsp;<span class="var-name">$uri</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addTag" title="details" class="method-name">addTag</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$tag</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#addTags" title="details" class="method-name">addTags</a>
+											(<span class="var-type">array</span>&nbsp;<span class="var-name">$tags</span>)
+									</div>
+																								<div class="method-definition">
+											<span class="method-result">DateTime</span>
+										<a href="#getActivationTime" title="details" class="method-name">getActivationTime</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">DateTime</span>
+										<a href="#getAdditionTime" title="details" class="method-name">getAdditionTime</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getDetail" title="details" class="method-name">getDetail</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">DateTime</span>
+										<a href="#getEstimatedCompletionTime" title="details" class="method-name">getEstimatedCompletionTime</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getEtag" title="details" class="method-name">getEtag</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">DateTime</span>
+										<a href="#getExpirationTime" title="details" class="method-name">getExpirationTime</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getId" title="details" class="method-name">getId</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">DateTime</span>
+										<a href="#getModificationTime" title="details" class="method-name">getModificationTime</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getName" title="details" class="method-name">getName</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getPriority" title="details" class="method-name">getPriority</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#getProcessProgress" title="details" class="method-name">getProcessProgress</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">int</span>
+										<a href="#getProgress" title="details" class="method-name">getProgress</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../default/Task.html">Task</a></span>
+										<a href="#getStatus" title="details" class="method-name">getStatus</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getTags" title="details" class="method-name">getTags</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getType" title="details" class="method-name">getType</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getUri" title="details" class="method-name">getUri</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setActivationTime" title="details" class="method-name">setActivationTime</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$activationTime</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setAdditionTime" title="details" class="method-name">setAdditionTime</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$additionTime</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setDetail" title="details" class="method-name">setDetail</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$detail</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setEstimatedCompletionTime" title="details" class="method-name">setEstimatedCompletionTime</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$ect</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setEtag" title="details" class="method-name">setEtag</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$etag</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setExpirationTime" title="details" class="method-name">setExpirationTime</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$expirationTime</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setModificationTime" title="details" class="method-name">setModificationTime</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$modificationTime</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setName" title="details" class="method-name">setName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setPriority" title="details" class="method-name">setPriority</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$priority</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setProcessProgress" title="details" class="method-name">setProcessProgress</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$processProgress</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setProgress" title="details" class="method-name">setProgress</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$progress</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setStatus" title="details" class="method-name">setStatus</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$status</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setTags" title="details" class="method-name">setTags</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$tags</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setType" title="details" class="method-name">setType</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$type</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#setUri" title="details" class="method-name">setUri</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$uri</span>)
+									</div>
+																								<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#toHtml" title="details" class="method-name">toHtml</a>
+										()
+									</div>
+																</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methoddeleteTask" id="deleteTask"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method deleteTask</span> (line <span class="line-number">1003</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Static method to delete a task from the database, given an  <a href="../default/Account.html">Account</a> and a <a href="../default/Task.html">Task</a>.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> If the deletion was successful, thie method           returns <div class="src-code"><ol><li><div class="src-line"><span class="src-id">true</span></div></li>
+</ol></div>.  Otherwise this method returns           some kind of error string.</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">boolean|string</span>
+		<span class="method-name">
+			deleteTask
+		</span>
+					(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$user</span>, <span class="var-type"><a href="../default/Task.html">Task</a></span>&nbsp;<span class="var-name">$task</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../default/Account.html">Account</a></span>
+				<span class="var-name">$user</span><span class="var-description">: The user associated with the task</span>			</li>
+					<li>
+				<span class="var-type"><a href="../default/Task.html">Task</a></span>
+				<span class="var-name">$task</span><span class="var-description">: The task to be deleted.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoEditHtml" id="toEditHtml"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method toEditHtml</span> (line <span class="line-number">730</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Static method for returning an Html string that allows for manipulation  through an Html form.  Note that this code isn't styled at all, so any  styling will have to be done externally through CSS.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The Html required to create the form.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toEditHtml
+		</span>
+					(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$user</span>, [<span class="var-type"><a href="../default/Task.html">Task</a></span>&nbsp;<span class="var-name">$task</span> = <span class="var-default">null</span>], [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$copy</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../default/Account.html">Account</a></span>
+				<span class="var-name">$user</span><span class="var-description">: The account associated with the task.</span>			</li>
+					<li>
+				<span class="var-type"><a href="../default/Task.html">Task</a></span>
+				<span class="var-name">$task</span><span class="var-description">: Optional task to add.  If no task is given, it's           assumed that you're creating a new account.</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$copy</span><span class="var-description">: Optional parameter to specify whether or not to           just create a copy of the provided task.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methoduriFromTaskNumber" id="uriFromTaskNumber"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method uriFromTaskNumber</span> (line <span class="line-number">680</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a task, given a task number.  We still use this, I believe,  because we don't typically store any information about tasks in our  database.  So this method is required for now.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">void</span>
+		<span class="method-name">
+			uriFromTaskNumber
+		</span>
+					(<span class="var-type">string|int</span>&nbsp;<span class="var-name">$number</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">1</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string|int</span>
+				<span class="var-name">$number</span><span class="var-description">: The number associated with the task.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">1</span><span class="var-description">: The uri associated with the task.</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">318</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Constructor for a Task object.  Both parameters are optional</p>
+	
+	<div class="method-signature">
+		<span class="method-result">Task</span>
+		<span class="method-name">
+			__construct
+		</span>
+					([<span class="var-type">$name</span>&nbsp;<span class="var-name">$name</span> = <span class="var-default">null</span>], [<span class="var-type">$uri</span>&nbsp;<span class="var-name">$uri</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">$name</span>
+				<span class="var-name">$name</span><span class="var-description">: Optional name parameter.  Can be set later.</span>			</li>
+					<li>
+				<span class="var-type">$uri</span>
+				<span class="var-name">$uri</span><span class="var-description">: Optional uri parameter.  Can be set later.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddTag" id="addTag"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addTag</span> (line <span class="line-number">504</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a single tag to the set of tags the task already has.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addTag
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$tag</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$tag</span><span class="var-description">: The tag to add to the account.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodaddTags" id="addTags"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">addTags</span> (line <span class="line-number">512</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Adds a series of tags to the set of tags that the task already has.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			addTags
+		</span>
+					(<span class="var-type">array</span>&nbsp;<span class="var-name">$tags</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">array</span>
+				<span class="var-name">$tags</span><span class="var-description">: The tags to add.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetActivationTime" id="getActivationTime"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getActivationTime</span> (line <span class="line-number">434</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the activation time for the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Activation time.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">DateTime</span>
+		<span class="method-name">
+			getActivationTime
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetAdditionTime" id="getAdditionTime"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAdditionTime</span> (line <span class="line-number">450</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the addition time for the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Addition time.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">DateTime</span>
+		<span class="method-name">
+			getAdditionTime
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetDetail" id="getDetail"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getDetail</span> (line <span class="line-number">398</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getDetail
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetEstimatedCompletionTime" id="getEstimatedCompletionTime"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getEstimatedCompletionTime</span> (line <span class="line-number">426</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the Estimated completion time for the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Estimated completion time.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">DateTime</span>
+		<span class="method-name">
+			getEstimatedCompletionTime
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetEtag" id="getEtag"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getEtag</span> (line <span class="line-number">386</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getEtag
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetExpirationTime" id="getExpirationTime"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getExpirationTime</span> (line <span class="line-number">442</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the expiration time for the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Expiration time.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">DateTime</span>
+		<span class="method-name">
+			getExpirationTime
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetId" id="getId"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getId</span> (line <span class="line-number">402</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getId
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetModificationTime" id="getModificationTime"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getModificationTime</span> (line <span class="line-number">458</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the modification time for the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Modification time.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">DateTime</span>
+		<span class="method-name">
+			getModificationTime
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetName" id="getName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getName</span> (line <span class="line-number">390</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getName
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetPriority" id="getPriority"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getPriority</span> (line <span class="line-number">418</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the priority for the Task</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The Task's priority.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getPriority
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetProcessProgress" id="getProcessProgress"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getProcessProgress</span> (line <span class="line-number">474</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current process progress for the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The current process progress.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			getProcessProgress
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetProgress" id="getProgress"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getProgress</span> (line <span class="line-number">466</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the current progress for the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Current progress.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">int</span>
+		<span class="method-name">
+			getProgress
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetStatus" id="getStatus"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getStatus</span> (line <span class="line-number">410</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">The status for the current task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> status</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../default/Task.html">Task</a></span>
+		<span class="method-name">
+			getStatus
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetTags" id="getTags"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTags</span> (line <span class="line-number">482</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Return the list of tags associated with the Task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The tags for the Task.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getTags
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetType" id="getType"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getType</span> (line <span class="line-number">394</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getType
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetUri" id="getUri"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getUri</span> (line <span class="line-number">520</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Getter for the uri attribute of a task.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The uri attribute of the task.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getUri
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodsetActivationTime" id="setActivationTime"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setActivationTime</span> (line <span class="line-number">358</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setActivationTime
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$activationTime</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$activationTime</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetAdditionTime" id="setAdditionTime"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setAdditionTime</span> (line <span class="line-number">366</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setAdditionTime
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$additionTime</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$additionTime</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetDetail" id="setDetail"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setDetail</span> (line <span class="line-number">342</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setDetail
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$detail</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$detail</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetEstimatedCompletionTime" id="setEstimatedCompletionTime"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setEstimatedCompletionTime</span> (line <span class="line-number">354</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setEstimatedCompletionTime
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$ect</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$ect</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetEtag" id="setEtag"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setEtag</span> (line <span class="line-number">325</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setEtag
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$etag</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$etag</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetExpirationTime" id="setExpirationTime"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setExpirationTime</span> (line <span class="line-number">362</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setExpirationTime
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$expirationTime</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$expirationTime</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetModificationTime" id="setModificationTime"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setModificationTime</span> (line <span class="line-number">370</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setModificationTime
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$modificationTime</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$modificationTime</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetName" id="setName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setName</span> (line <span class="line-number">329</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetPriority" id="setPriority"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setPriority</span> (line <span class="line-number">350</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setPriority
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$priority</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$priority</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetProcessProgress" id="setProcessProgress"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setProcessProgress</span> (line <span class="line-number">378</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setProcessProgress
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$processProgress</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$processProgress</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetProgress" id="setProgress"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setProgress</span> (line <span class="line-number">374</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setProgress
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$progress</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$progress</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetStatus" id="setStatus"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setStatus</span> (line <span class="line-number">346</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setStatus
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$status</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$status</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetTags" id="setTags"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setTags</span> (line <span class="line-number">382</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setTags
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$tags</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tags</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetType" id="setType"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">setType</span> (line <span class="line-number">338</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setType
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$type</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$type</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodsetUri" id="setUri"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">setUri</span> (line <span class="line-number">333</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			setUri
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$uri</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$uri</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodtoHtml" id="toHtml"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">toHtml</span> (line <span class="line-number">530</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Displays a task in Html.  No styling is given, so all styling should  be done through external CSS.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The Html for displaying the Task.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			toHtml
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 27 Jul 2011 15:52:32 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>

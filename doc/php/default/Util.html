@@ -1,0 +1,986 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+  <html xmlns="http://www.w3.org/1999/xhtml">
+		<head>
+			<!-- template designed by Marco Von Ballmoos -->
+			<title>Docs For Class Util</title>
+			<link rel="stylesheet" href="../media/stylesheet.css" />
+			<meta http-equiv='Content-Type' content='text/html; charset=iso-8859-1'/>
+		</head>
+		<body>
+			<div class="page-body">			
+<h2 class="class-name">Class Util</h2>
+
+<a name="sec-description"></a>
+<div class="info-box">
+	<div class="info-box-title">Description</div>
+	<div class="nav-bar">
+					<span class="disabled">Description</span> |
+															<a href="#sec-method-summary">Methods</a> (<a href="#sec-methods">details</a>)
+						
+					</div>
+	<div class="info-box-body">
+        		<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Utility module used mostly for handling HttpRequests.</p>
+<p class="description"><p>Everything in here should be pretty straightforward.  All methods in this class should remain static and can be called with  <div class="src-code"><ol><li><div class="src-line">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<span class="src-id"><a href="../default/Util.html">Util</a></span><span class="src-sym">::</span><span class="src-id">methodName</span><span class="src-sym">(</span><span class="src-sym">)</span></div></li>
+</ol></div></p></p>
+	<ul class="tags">
+				<li><span class="field">author:</span> Andrew Hays</li>
+				<li><span class="field">author:</span> Grant Beasley</li>
+			</ul>
+		<p class="notes">
+			Located in <a class="field" href="_classes.php.html">/classes.php</a> (line <span class="field">1031</span>)
+		</p>
+		
+				
+		<pre></pre>
+	
+			</div>
+</div>
+
+
+
+
+	<a name="sec-method-summary"></a>
+	<div class="info-box">
+		<div class="info-box-title">Method Summary</span></div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+												<span class="disabled">Methods</span> (<a href="#sec-methods">details</a>)
+		</div>
+		<div class="info-box-body">			
+			<div class="method-summary">
+																																																				<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#escape" title="details" class="method-name">escape</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$string</span>)
+									</div>
+																																																																																																																																																<div class="method-definition">
+					static 						<span class="method-result">string</span>
+										<a href="#urlifyTaskName" title="details" class="method-name">urlifyTaskName</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+								
+												<div class="method-definition">
+											<span class="method-result">Util</span>
+										<a href="#__construct" title="details" class="method-name">__construct</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">mixed</span>
+										<a href="#addAccounts" title="details" class="method-name">addAccounts</a>
+											(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$accounts</span>, [<span class="var-type"><a href="../default/User.html">User</a></span>&nbsp;<span class="var-name">$user</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#AddEntry" title="details" class="method-name">AddEntry</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$user</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$name</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$priority</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$status</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$eta</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ActivationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ExpirationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Addition</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Modification</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$progress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$processProgress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$tags</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$details</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#authenticateUser" title="details" class="method-name">authenticateUser</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$email</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$password</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#EditEntry" title="details" class="method-name">EditEntry</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$user</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$name</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$priority</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$status</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$eta</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ActivationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ExpirationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Addition</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Modification</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Progress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ProcessProgress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Tags</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Type</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$details</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Uri</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$etag</span> = <span class="var-default">null</span>])
+									</div>
+																								<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getAccountById" title="details" class="method-name">getAccountById</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$id</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getAccountByName" title="details" class="method-name">getAccountByName</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getAccountByUri" title="details" class="method-name">getAccountByUri</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$uri</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getAccounts" title="details" class="method-name">getAccounts</a>
+											([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$all</span> = <span class="var-default">false</span>], [<span class="var-type">bool</span>&nbsp;<span class="var-name">$associative</span> = <span class="var-default">false</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../default/User.html">User</a></span>
+										<a href="#getLoggedInUser" title="details" class="method-name">getLoggedInUser</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../default/Task.html">Task</a></span>
+										<a href="#getTaskById" title="details" class="method-name">getTaskById</a>
+											(<span class="var-type">int</span>&nbsp;<span class="var-name">$taskNumber</span>, <span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$account</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#getTasksForAccounts" title="details" class="method-name">getTasksForAccounts</a>
+											(<span class="var-type"><a href="../default/Account.html">Account</a>|array</span>&nbsp;<span class="var-name">$accounts</span>, [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$fetch_description</span> = <span class="var-default">true</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$associative</span> = <span class="var-default">true</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getTasksForUsers" title="details" class="method-name">getTasksForUsers</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$users</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fetch_descriptions</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">string</span>
+										<a href="#getUriFromUsername" title="details" class="method-name">getUriFromUsername</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$username</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getUserByEmail" title="details" class="method-name">getUserByEmail</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$email</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#getUserById" title="details" class="method-name">getUserById</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$id</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result">SimpleXMLElement</span>
+										<a href="#getXmlResponse" title="details" class="method-name">getXmlResponse</a>
+											(<span class="var-type">string</span>&nbsp;<span class="var-name">$body</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$namespace</span> = <span class="var-default">&quot;ns&quot;</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#handleLogin" title="details" class="method-name">handleLogin</a>
+										()
+									</div>
+																<div class="method-definition">
+											<span class="method-result">void</span>
+										<a href="#registerUser" title="details" class="method-name">registerUser</a>
+											(<span class="var-type"></span>&nbsp;<span class="var-name">$email</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$password</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$opt_password_again</span> = <span class="var-default">null</span>])
+									</div>
+																<div class="method-definition">
+											<span class="method-result">array</span>
+										<a href="#retrieveMessage" title="details" class="method-name">retrieveMessage</a>
+											(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$account</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$uri</span> = <span class="var-default">null</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$user</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$password</span>)
+									</div>
+																<div class="method-definition">
+											<span class="method-result"><a href="../default/Task.html">Task</a></span>
+										<a href="#retrieveTaskDescription" title="details" class="method-name">retrieveTaskDescription</a>
+											(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$account</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$taskUri</span>)
+									</div>
+																</div>
+		</div>
+	</div>		
+
+	
+	<a name="sec-methods"></a>
+	<div class="info-box">
+		<div class="info-box-title">Methods</div>
+		<div class="nav-bar">
+			<a href="#sec-description">Description</a> |
+																<a href="#sec-method-summary">Methods</a> (<span class="disabled">details</span>)
+						
+		</div>
+		<div class="info-box-body">
+			<A NAME='method_detail'></A>
+<a name="methodescape" id="escape"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method escape</span> (line <span class="line-number">1088</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Utility function for escaping a string for Daniel's server.  Encodes  the string using urlencode, and then replaces all '+' with '%20' so that  Daniel's server can handle it.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The encoded string.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			escape
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$string</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$string</span><span class="var-description">: The string to encode.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodurlifyTaskName" id="urlifyTaskName"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">static method urlifyTaskName</span> (line <span class="line-number">1624</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Takes a task name and converts it to a pretty url for displaying in  the url bar of the client's browser.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> A safe string to display in the address bar.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+	    static
+		<span class="method-result">string</span>
+		<span class="method-name">
+			urlifyTaskName
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$name</span><span class="var-description">: The name to put in the address bar.</span>			</li>
+				</ul>
+		
+			
+	</div>
+
+<a name="method__construct" id="__construct"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">Constructor __construct</span> (line <span class="line-number">1051</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Static initializer for this class.  Has to be explicitly called since  PHP doesn't support constructors for static classes.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">Util</span>
+		<span class="method-name">
+			__construct
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodaddAccounts" id="addAccounts"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">addAccounts</span> (line <span class="line-number">1550</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Method for adding a new account to the database, if it doesn't already  exist and it validates against the server correctly.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> An integer representing the code if only one account was           added, or an array of codes with the key being the           account name and the value being the result code.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">mixed</span>
+		<span class="method-name">
+			addAccounts
+		</span>
+					(<span class="var-type">mixed</span>&nbsp;<span class="var-name">$accounts</span>, [<span class="var-type"><a href="../default/User.html">User</a></span>&nbsp;<span class="var-name">$user</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$accounts</span><span class="var-description">: The Account to add, or an array of them.</span>			</li>
+					<li>
+				<span class="var-type"><a href="../default/User.html">User</a></span>
+				<span class="var-name">$user</span><span class="var-description">: The user to add for, or null to select the logged in           User.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodAddEntry" id="AddEntry"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">AddEntry</span> (line <span class="line-number">1516</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Method for adding a new task entry.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			AddEntry
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$user</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$name</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$priority</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$status</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$eta</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ActivationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ExpirationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Addition</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Modification</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$progress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$processProgress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$tags</span> = <span class="var-default">array()</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$type</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$details</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$user</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$priority</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$status</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$eta</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$ActivationTime</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$ExpirationTime</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Addition</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Modification</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$progress</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$processProgress</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$tags</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$type</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$details</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodauthenticateUser" id="authenticateUser"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">authenticateUser</span> (line <span class="line-number">1346</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Authenticates a user by checking to see if the username and password  match the database's.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			authenticateUser
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$email</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$password</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$email</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$password</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodEditEntry" id="EditEntry"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">EditEntry</span> (line <span class="line-number">1529</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Method for updating an existing task entry.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			EditEntry
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$user</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$name</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$priority</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$status</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$eta</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ActivationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ExpirationTime</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Addition</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Modification</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Progress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$ProcessProgress</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Tags</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Type</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$details</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$Uri</span> = <span class="var-default">null</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$etag</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$user</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$priority</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$status</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$eta</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$ActivationTime</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$ExpirationTime</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Addition</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Modification</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Progress</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$ProcessProgress</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Tags</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Type</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$details</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$Uri</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$etag</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAccountById" id="getAccountById"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAccountById</span> (line <span class="line-number">1335</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieve an account by a given id.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getAccountById
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAccountByName" id="getAccountByName"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAccountByName</span> (line <span class="line-number">1315</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieve an account by a given username.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getAccountByName
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$name</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$name</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAccountByUri" id="getAccountByUri"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAccountByUri</span> (line <span class="line-number">1325</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieve an account by a given Uri.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getAccountByUri
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$uri</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$uri</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetAccounts" id="getAccounts"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getAccounts</span> (line <span class="line-number">1158</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns all accounts in the database</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> An array of <a href="../default/Account.html">Account</a> objects.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getAccounts
+		</span>
+					([<span class="var-type">mixed</span>&nbsp;<span class="var-name">$all</span> = <span class="var-default">false</span>], [<span class="var-type">bool</span>&nbsp;<span class="var-name">$associative</span> = <span class="var-default">false</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">mixed</span>
+				<span class="var-name">$all</span><span class="var-description">: Whether or not to return all accounts.           If it's an array, only for the selected <div class="src-code"><ol><li><div class="src-line"><span class="src-id">Users</span></div></li>
+</ol></div>, if           its a User, only do it for the given user.  If false, only use           the logged in account.</span>			</li>
+					<li>
+				<span class="var-type">bool</span>
+				<span class="var-name">$associative</span><span class="var-description">: Whether or not to return them as an associative           array of arrays. (i.e. array(&quot;Bob&quot;=&gt;array(Task, Task, Task)))</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetLoggedInUser" id="getLoggedInUser"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getLoggedInUser</span> (line <span class="line-number">1076</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns the currently logged in user, if any.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The user that is currently logged in.  Or null if none.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../default/User.html">User</a></span>
+		<span class="method-name">
+			getLoggedInUser
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodgetTaskById" id="getTaskById"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTaskById</span> (line <span class="line-number">1651</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a Task from a Task Number.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The task with the given number.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../default/Task.html">Task</a></span>
+		<span class="method-name">
+			getTaskById
+		</span>
+					(<span class="var-type">int</span>&nbsp;<span class="var-name">$taskNumber</span>, <span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$account</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">int</span>
+				<span class="var-name">$taskNumber</span><span class="var-description">: The number to use.</span>			</li>
+					<li>
+				<span class="var-type"><a href="../default/Account.html">Account</a></span>
+				<span class="var-name">$account</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetTasksForAccounts" id="getTasksForAccounts"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTasksForAccounts</span> (line <span class="line-number">1228</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a list of tasks for a given account.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> An array of <a href="../default/Task.html">Task</a> objects.  Note that if you</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			getTasksForAccounts
+		</span>
+					(<span class="var-type"><a href="../default/Account.html">Account</a>|array</span>&nbsp;<span class="var-name">$accounts</span>, [<span class="var-type">boolean</span>&nbsp;<span class="var-name">$fetch_description</span> = <span class="var-default">true</span>], [<span class="var-type"></span>&nbsp;<span class="var-name">$associative</span> = <span class="var-default">true</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../default/Account.html">Account</a>|array</span>
+				<span class="var-name">$accounts</span><span class="var-description">: The account or accounts to look up           tasks for.</span>			</li>
+					<li>
+				<span class="var-type">boolean</span>
+				<span class="var-name">$fetch_description</span><span class="var-description">: Whether or not to continue to do           requests to fetch descriptions for the tasks as well, or if           names and links will be fine.</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$associative</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetTasksForUsers" id="getTasksForUsers"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getTasksForUsers</span> (line <span class="line-number">1281</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Quick function to get an associative array of all tasks for a specific  user.  See <a href="../default/Util.html#methodgetAccounts">Util::getAccounts()</a> and           <a href="../default/Util.html#methodgetTasksForAccounts">Util::getTasksForAccounts()</a> as this method just calls           both of those methods and returns the results.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getTasksForUsers
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$users</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$fetch_descriptions</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$users</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$fetch_descriptions</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetUriFromUsername" id="getUriFromUsername"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getUriFromUsername</span> (line <span class="line-number">1635</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Returns a URI from a username.  Note that the user must first exist  in the database in order to return its URI.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The uri that the username corresponds to, or null if it           doesn't exist.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">string</span>
+		<span class="method-name">
+			getUriFromUsername
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$username</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$username</span><span class="var-description">: The name to look up.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetUserByEmail" id="getUserByEmail"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getUserByEmail</span> (line <span class="line-number">1297</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieves a user by a given email address.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getUserByEmail
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$email</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$email</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetUserById" id="getUserById"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">getUserById</span> (line <span class="line-number">1306</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieves a user by a given id.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			getUserById
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$id</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$id</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodgetXmlResponse" id="getXmlResponse"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">getXmlResponse</span> (line <span class="line-number">1141</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Converts an Xml string to an Xml dom.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> The xml dom for the body.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">SimpleXMLElement</span>
+		<span class="method-name">
+			getXmlResponse
+		</span>
+					(<span class="var-type">string</span>&nbsp;<span class="var-name">$body</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$namespace</span> = <span class="var-default">&quot;ns&quot;</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$body</span><span class="var-description">: The xml string to convert</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$namespace</span><span class="var-description">: the alias namespace to use with searching for           elements in the Xml.</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodhandleLogin" id="handleLogin"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">handleLogin</span> (line <span class="line-number">1065</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Handles methods where a user needs to be logged in before the query  can be completed.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			handleLogin
+		</span>
+				()
+			</div>
+	
+		
+			
+	</div>
+<a name="methodregisterUser" id="registerUser"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">registerUser</span> (line <span class="line-number">1360</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Register a new user, if the user doesn't already exist in the database.</p>
+	<ul class="tags">
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">void</span>
+		<span class="method-name">
+			registerUser
+		</span>
+					(<span class="var-type"></span>&nbsp;<span class="var-name">$email</span>, <span class="var-type"></span>&nbsp;<span class="var-name">$password</span>, [<span class="var-type"></span>&nbsp;<span class="var-name">$opt_password_again</span> = <span class="var-default">null</span>])
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$email</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$password</span>			</li>
+					<li>
+				<span class="var-type"></span>
+				<span class="var-name">$opt_password_again</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodretrieveMessage" id="retrieveMessage"><!-- --></a>
+<div class="evenrow">
+	
+	<div class="method-header">
+		<span class="method-title">retrieveMessage</span> (line <span class="line-number">1100</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Utility function for retrieving a message from the server.</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> Some details associated with the account.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result">array</span>
+		<span class="method-name">
+			retrieveMessage
+		</span>
+					(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$account</span>, [<span class="var-type">string</span>&nbsp;<span class="var-name">$uri</span> = <span class="var-default">null</span>], <span class="var-type">string</span>&nbsp;<span class="var-name">$user</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$password</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$uri</span><span class="var-description">: The uri to query for the message</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$user</span><span class="var-description">: The user for authentication purposes, if required.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$password</span><span class="var-description">: The password for authentication purposes, if           required.</span>			</li>
+					<li>
+				<span class="var-type"><a href="../default/Account.html">Account</a></span>
+				<span class="var-name">$account</span>			</li>
+				</ul>
+		
+			
+	</div>
+<a name="methodretrieveTaskDescription" id="retrieveTaskDescription"><!-- --></a>
+<div class="oddrow">
+	
+	<div class="method-header">
+		<span class="method-title">retrieveTaskDescription</span> (line <span class="line-number">1381</span>)
+	</div> 
+	
+	<!-- ========== Info from phpDoc block ========= -->
+<p class="short-description">Retrieves a task description for a given account and task uri</p>
+	<ul class="tags">
+				<li><span class="field">return:</span> A task with descriptions loaded.</li>
+				<li><span class="field">access:</span> public</li>
+			</ul>
+	
+	<div class="method-signature">
+		<span class="method-result"><a href="../default/Task.html">Task</a></span>
+		<span class="method-name">
+			retrieveTaskDescription
+		</span>
+					(<span class="var-type"><a href="../default/Account.html">Account</a></span>&nbsp;<span class="var-name">$account</span>, <span class="var-type">string</span>&nbsp;<span class="var-name">$taskUri</span>)
+			</div>
+	
+			<ul class="parameters">
+					<li>
+				<span class="var-type"><a href="../default/Account.html">Account</a></span>
+				<span class="var-name">$account</span><span class="var-description">: The account to use for authentication purposes.</span>			</li>
+					<li>
+				<span class="var-type">string</span>
+				<span class="var-name">$taskUri</span><span class="var-description">: The Uri to look in for the account.</span>			</li>
+				</ul>
+		
+			
+	</div>
+						
+		</div>
+	</div>
+
+
+	<p class="notes" id="credit">
+		Documentation generated on Wed, 27 Jul 2011 15:52:32 +0200 by <a href="http://www.phpdoc.org" target="_blank">phpDocumentor 1.4.3</a>
+	</p>
+	</div></body>
+</html>
