@@ -10,6 +10,7 @@ foreach ($_POST as $k=>$v) {
     if ($k != 'tags') $v = trim($v);
     if (empty($v) and $v != 0 and $v != '0') $_POST[$k] = null;
 }
+$util = new Util();
 
 $name = $_POST['name'];
 $priority = $_POST['priority'];
@@ -43,16 +44,16 @@ $expiration = $expirationDT->format('Y-m-d\TH:i:sP');
 $activationDT = DateTime::createFromFormat('m/d/Y\TG:i', $activation);
 $activation = $activationDT->format('Y-m-d\TH:i:sP');
 
-$user = Account::getUserByUserName($username);
+$account = $util->getAccountByName($username);
 $response = null;
 if ($method == "POST") {
-    $response = Util::AddEntry($user, $name, $priority, $status, null, $activation, 
-        $expiration, $addition, $modification, $progress, null, $tags, $type, 
-        $details);
+    $response = $util->AddEntry($account, $name, $priority, $status, null, 
+        $activation, $expiration, $addition, $modification, $progress, null, 
+        $tags, $type, $details);
 } else if ($method == "PUT") {
-    $response = Util::EditEntry($user, $name, $priority, $status, null, $activation,
-        $expiration, $addition, $modification, $progress, null, $tags, $type, 
-        $details, $uri, $etag);
+    $response = $util->EditEntry($account, $name, $priority, $status, null, 
+        $activation, $expiration, $addition, $modification, $progress, null, 
+        $tags, $type, $details, $uri, $etag);
 } else {
     die("Unsupported method $method.");
 }
@@ -62,7 +63,7 @@ if ((int) ($response->getStatus()/100) == 2) {
     $_SESSION['flash'] = "Task successfully ". 
         (($method == "POST") ? "created" : "updated") . ".";
     $username = urlencode($username);
-    if ($tasknumber == -1) {
+    if ($tasknumber == -1 || $tasknumber == "") {
         $redirect = "/$username/";
     } else {
         $redirect = "/$username/$tasknumber/";
@@ -70,7 +71,7 @@ if ((int) ($response->getStatus()/100) == 2) {
 } else {
     $_SESSION['flash'] = "Oops. ".$response->getReasonPhrase();
     $redirect = isset($_SERVER['HTTP_REFERRER']) ? $_SERVER['HTTP_REFERRER'] :
-                                                   "/tasklist/";
+                                                   "/";
 }
 header("Location: $redirect");
 ?>

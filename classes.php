@@ -22,6 +22,20 @@
 require_once 'HTTP/Request2.php';
 
 /**
+ * An enumeration of status codes whenever adding an Account to the database.
+ */
+class AccountEntry {
+    const SUCCESS = 0;
+    const ACCOUNT_EXISTS = 1;
+    const CREATION_FAILED = 2;
+    const ACCOUNT_NOT_FOUND = 3;
+    const ACCOUNT_NOT_LINKED = 4;
+    const NOT_AUTHORIZED = 5;
+    const ACCOUNT_ALREADY_LINKED = 6;
+}
+
+
+/**
  * Class for manipulating a user object.
  * The user object deals with the PHP server's accounts, and not the remote
  * server's accounts.  This class mostly contains getters and setters for
@@ -95,7 +109,8 @@ class User {
      * @return User The user with the email address given.
      */
     public static function getUserByEmail($email) {
-        return Util::getUserByEmail($email);
+        $util = new Util();
+        return $util->getUserByEmail($email);
     }
 
     /**
@@ -105,7 +120,8 @@ class User {
      * @return User The user with the id given.
      */
     public static function getUserById($id) {
-        return Util::getUserById($id);
+        $util = new Util();
+        return $util->getUserById($id);
     }
 
     /**
@@ -119,7 +135,8 @@ class User {
      *          informatoin to pass back to the user.
      */
     public static function authenticateUser($email, $password) {
-        return Util::authenticateUser($email, $password);
+        $util = new Util();
+        return $util->authenticateUser($email, $password);
     }
 
     /**
@@ -135,9 +152,10 @@ class User {
      *          this method could also allow 'success' to be true if there
      *          is other information to pass back.
      */
-    public static function registerUser($email, ,$password, 
-                $opt_password_verify=null) {
-        return Util::registerUser($email, $password, $opt_password_verify)
+    public static function registerUser($email, $password, 
+            $opt_password_verify=null) {
+        $util = new Util();
+        return $util->registerUser($email, $password, $opt_password_verify);
     }
 }
 
@@ -238,7 +256,8 @@ class Account {
      *          given username.
      */
     public static function getAccountByName($name) {
-        return Util::getAccountByName($name);
+        $util = new Util();
+        return $util->getAccountByName($name);
     }
 
     /**
@@ -248,7 +267,8 @@ class Account {
      * @return Account the account with the given uri, or null if none.
      */
     public static function getAccountByUri($uri) {
-        return Util::getAccountByUri($uri);
+        $util = new Util();
+        return $util->getAccountByUri($uri);
     }
 
     /**
@@ -258,7 +278,8 @@ class Account {
      * @return Account The account with the given id, or null if none.
      */
     public static function getAccountById($uri) {
-        return Util::getAccountById($id);
+        $util = new Util();
+        return $util->getAccountById($id);
     }
 
     /**
@@ -270,10 +291,11 @@ class Account {
      *          parameters (associated with our accounts that we use), so that
      *          we can link users and accounts.
      * @param User $user The User object to use to link the account.
-     * @param Account $account The Account object to use to add to the database.
+     * @param mixed $accounts A list of accounts to add.
      */
-    public static function addAccount($user, $account) {
-        Util::addAccount($user, $account);
+    public static function addAccounts($user, $accounts) {
+        $util = new Util();
+        $util->addAccounts($accounts, $user);
     }
 }
 
@@ -529,7 +551,7 @@ class Task {
             $startTime = $this->mActivationTime->format('G:i');
         }
         if ($this->mExpirationTime != null) {
-            $expirationDate = $this->mExpirationDate->format('D, M j, Y');
+            $expirationDate = $this->mExpirationTime->format('D, M j, Y');
             $expirationAt = 'at';
             $expirationTime = $this->mExpirationTime->format('G:i');
         }
@@ -685,16 +707,16 @@ EOF;
      *          no date could be parsed.
      */
     private static function parseDate($datestr) {
-        $formats = array('Y#m#d\TH#m#s#uP', 'Y#m#d\TH#m#sP', 'Y#m#d', 'Y#n#d', 
-            'Y#m#d H:m:s', 'Y#m#d G#m#s', 'Y#m#d H#m', 'Y#m#d G#m', 'Y#m#j', 
-            'Y#n#j', 'Y#m#j H#m#s', 'Y#m#j G#m#s', 'Y#m#j H#m', 'Y#m#j G#m', 
-            'm#d#Y', 'n#d#Y', 'm#d#Y H#m#s', 'm#d#Y G#m#s', 'm#d#Y H#m', 
-            'm#d#Y G#m', 'm#j#Y', 'n#j#Y', 'm#j#Y H#m#s', 'm#j#Y G#m#s', 
-            'm#j#Y H#m', 'm#j#Y G#m', 'Y#m#d\TH#m#s', 'Y#m#d\TG#m#s', 
-            'Y#m#d\TH#m', 'Y#m#d\TG#m', 'Y#m#j\TH#m#s', 'Y#m#j\TG#m#s', 
-            'Y#m#j\TH#m', 'Y#m#j\TG#m', 'm#d#Y\TH#m#s', 'm#d#Y\TG#m#s', 
-            'm#d#Y\TH#m', 'm#d#Y\TG#m', 'm#j#Y\TH#m#s', 'm#j#Y\TG#m#s', 
-            'm#j#Y\TH#m', 'm#j#Y\TG#m');
+        $formats = array('Y#m#d\TH#i#s#uP', 'Y#m#d\TH#i#sP', 'Y#m#d', 'Y#n#d', 
+            'Y#m#d H:i:s', 'Y#m#d G#i#s', 'Y#m#d H#i', 'Y#m#d G#i', 'Y#m#j', 
+            'Y#n#j', 'Y#m#j H#i#s', 'Y#m#j G#i#s', 'Y#m#j H#i', 'Y#m#j G#i', 
+            'm#d#Y', 'n#d#Y', 'm#d#Y H#i#s', 'm#d#Y G#i#s', 'm#d#Y H#i', 
+            'm#d#Y G#i', 'm#j#Y', 'n#j#Y', 'm#j#Y H#i#s', 'm#j#Y G#i#s', 
+            'm#j#Y H#i', 'm#j#Y G#i', 'Y#m#d\TH#i#s', 'Y#m#d\TG#i#s', 
+            'Y#m#d\TH#i', 'Y#m#d\TG#i', 'Y#m#j\TH#i#s', 'Y#m#j\TG#i#s', 
+            'Y#m#j\TH#i', 'Y#m#j\TG#i', 'm#d#Y\TH#i#s', 'm#d#Y\TG#i#s', 
+            'm#d#Y\TH#i', 'm#d#Y\TG#i', 'm#j#Y\TH#i#s', 'm#j#Y\TG#i#s', 
+            'm#j#Y\TH#i', 'm#j#Y\TG#i');
         $date = null;
         foreach ($formats as $format) {
             try {
@@ -763,7 +785,7 @@ EOF;
             if (!$copy) $method = 'PUT';
             if (!$copy) $uri = $task->getUri();
             if (!$copy) $etag = $task->getEtag();
-            if (!$copy) $tasknumber = $task->getTaskNumber();
+            if (!$copy) $tasknumber = $task->getId();
         }
         $modificationDate = date('m/d/Y');
         $modificationTime = date('G:i');
@@ -1029,7 +1051,7 @@ class Util {
      * Static variable for the MySql class.
      * @var Mysqli
      */
-    private static $mysqli = null;
+    private $mysqli = null;
 
     /**
      * Static variable used to store the user currently logged in, if any.
@@ -1044,14 +1066,14 @@ class Util {
      * Static initializer for this class.  Has to be explicitly called since
      * PHP doesn't support constructors for static classes.
      */
-    public static function __construct() {
+    public function __construct() {
         if (!isset($_SESSION)) session_start();
-        if (!isset($_SESSION['user']) or !$_SESSION['user']) {
-            self::$user = null;
+        if (isset($_SESSION['user']) and is_a($_SESSION['user'], 'User')) {
+            $this->mUser = $_SESSION['user'];
         } else {
-            self::$user = $_SESSION['user'];
+            $this->mUser = null;
         }
-        self::$mysqli = new mysqli("localhost", "root", "", "htm_database");
+        $this->mysqli = new mysqli("localhost", "root", "", "htm_database");
     }
 
     /**
@@ -1059,29 +1081,18 @@ class Util {
      * can be completed.
      */
     public function handleLogin() {
-        if (self::$user == null) {
+        if ($this->mUser == null) {
             $_SESSION['flash'] = "You must be logged in to use that feature.";
-            header("Location /login/");
+            header("Location: /login/");
         }
     }
 
     /**
-     * Searches the database for an Account with a username.
-     * @todo {Andrew Hays} Rename to getAccountByName and fix all references
+     * Returns the currently logged in user, if any.
+     * @return User The user that is currently logged in.  Or null if none.
      */
-    public function getAccountByName($name) {
-        handleLogin();
-        $result = self::$mysqli->query(
-            "SELECT a.username, a.passphrase, a.link, a.id ".
-            "FROM accounts a JOIN user_accounts ua ON (a.id = ua.accountId) ".
-            "                JOIN users u ON (ua.userID = u.id) ".
-            "WHERE a.username='$name' AND u.id={$this->$user->getId()}");
-        if ($result) {
-            $row = $result->fetch_assoc();
-            return new Account($row["a.username"], $row["a.passphrase"], 
-                $row["a.link"], $row["a.id"]);
-        }
-        return null;
+    public function getLoggedInUser() {
+        return $this->mUser;
     }
 
     /**
@@ -1104,7 +1115,8 @@ class Util {
      *          required.
      * @return array Some details associated with the account.
      */
-    public function retrieveMessage($uri, Account $account) {
+    public function retrieveMessage(Account $account, $uri = null) {
+        if ($uri == null) $uri = $account->getUri();
         $user = $account->getName();
         $password = $account->getPassword();
         $etag = null;
@@ -1156,64 +1168,231 @@ class Util {
      * @todo {Grant Beasley} Adjust this query to use new tables.  You'll likely
      *          need to accept a new parameter (like a {@link User} object) so
      *          that you will only get accounts associated with that User.
-     * @param boolarray $all Whether or not to return all accounts.  If it's
-     *          an array, only for the selected <code>User</code>
+     * @param mixed $all Whether or not to return all accounts.  
+     *          If it's an array, only for the selected <code>Users</code>, if
+     *          its a User, only do it for the given user.  If false, only use
+     *          the logged in account.
      * @param bool $associative Whether or not to return them as an associative
      *          array of arrays. (i.e. array("Bob"=>array(Task, Task, Task)))
      * @return array An array of {@link Account} objects.
      */
     public function getAccounts($all = false, $associative=false) {
         $users = array();
-
-        $result = self::$mysqli->query("SELECT Username, Password, URI ".
-                                       "FROM users; ");
-        if ($result) {
-            while ($row = $result->fetch_assoc()) {
-                $users[] = new Account($row["Username"], $row["Password"], 
-                    $row["URI"]);
+        if (is_bool($all)) {
+            if ($all) {
+                $query = "SELECT id, email FROM users";
+                if ($result = $this->$mysql->query($query)) {
+                    while ($row = $result->fetch_assoc()) {
+                        $users[] = new User($row['email'], $row['id']);
+                    }
+                }
+            } else {
+                $this->handleLogin();
+                $users[] = $this->getLoggedInUser();
             }
-            return $users;
+        } else if (is_array($all)) {
+            foreach($all as $user) {
+                if (is_string($user)) {
+                    $query = "SELECT id, email FROM users ".
+                             "WHERE email='$user'";
+                    if ($result = $this->mysql->query($query)) {
+                        $row = $result->fetch_assoc();
+                        $users[] = new User($row['email'], $row['id']);
+                    }
+                }  else if (is_a($user, 'User')) {
+                    $users[] = $user;
+                }
+            }
+        } else if (is_a($all, 'User')) {
+            $users[] = $all;
+        } else if (is_string($all)) {
+            $query = "SELECT id, email FROM users ".
+                     "WHERE email='$user'";
+            if ($result = $this->mysql->query($query)) {
+                $row = $result->fetch_assoc();
+                $users[] = new User($row['email'], $row['id']);
+            }
         }
-        return null;
+           
+        $results = array();
+        foreach ($users as $user) {
+            $query = "SELECT a.id, a.link, a.username, a.passphrase ".
+                "FROM user_accounts ua JOIN accounts a ON ".
+                "(ua.accountID = a.id) WHERE ua.userID='{$user->getId()}'";
+            if ($result = $this->mysqli->query($query)) {
+                $pointer = null;
+                if ($associative) {
+                    $results[$user->getName()] = array();
+                    $pointer = &$results[$user->getName()];
+                } else {
+                    $pointer = &$results;
+                }
+
+                while ($row = $result->fetch_assoc()) {
+                    $pointer[] = new Account($row['username'],
+                        $row['passphrase'], $row['link'], $row['id']);
+                }
+            }
+        }
+        return $results;
     }
 
     /**
      * Returns a list of tasks for a given account.
      * @todo {Andrew Hays} Write similar method that accepts an array of
      *          accounts to display a list of all tasks for the listed accounts
-     * @param Account $account The account to look up tasks for.
+     * @param Account|array $accounts The account or accounts to look up 
+     *          tasks for.
      * @param boolean $fetch_description Whether or not to continue to do 
      *          requests to fetch descriptions for the tasks as well, or if
      *          names and links will be fine.
-     * @return array An array of {@link Task} objects
+     * @return array An array of {@link Task} objects.  Note that if you
      */
-    static function getTasksForAccount(Account $account, 
-                                       $fetch_description = true) {
-        try {
-            $response = self::retrieveMessage($account->getUri(), 
-                                $account->getName(), $account->getPassword());
-            $tasks = array();
-            
-            if ($response["status"] == 200) {
-                $xml = self::getXmlResponse($response["body"]);
-                $taskNodes = $xml->xpath('//ns:link[@rel="'.
-                                         'http://danieloscarschulte.de/cs'.
-                                         '/tm/taskDescription"]');
-                foreach ($taskNodes as $taskNode) {
-                    if ($fetch_description) {
-                        $task = self::retrieveTaskDescription($account, 
-                            "".$taskNode['href']);
-                        if ($task != null) $tasks[] = $task;
-                    } else {
-                        $tasks[] = new Task("".$taskNode, "".$taskNode['href']);
+    public function getTasksForAccounts($accounts, $fetch_description = true,
+                                        $associative = true) {
+        if (is_array($accounts)) {
+            $results = array();
+            foreach ($accounts as $key=>$account) {
+                if ($account == null) continue;
+                $list = getTasksForAccounts($account, $fetch_description, 
+                    $associative);                
+                if ($associative) {
+                    $results[$key] = $list;
+                } else {
+                    foreach ($list as $l) {
+                        $results[] = $l;
                     }
                 }
             }
-            return $tasks;
-        } catch(HttpInvalidParamException $ex) {
-            //die("<b>Could not connect to the network.</b>");
-            return array();
+            return $results;
+        } else {
+            try {
+                if ($accounts == null) return array();
+                $response = $this->retrieveMessage($accounts);
+                $tasks = array();
+                
+                if ($response["status"] == 200) {
+                    $xml = $this->getXmlResponse($response["body"]);
+                    $taskNodes = $xml->xpath('//ns:link[@rel="'.
+                                             'http://danieloscarschulte.de/cs'.
+                                             '/tm/taskDescription"]');
+                    foreach ($taskNodes as $taskNode) {
+                        if ($fetch_description) {
+                            $task = $this->retrieveTaskDescription($accounts, 
+                                "".$taskNode['href']);
+                            if ($task != null) $tasks[] = $task;
+                        } else {
+                            $tasks[] = new Task("".$taskNode, 
+                                "".$taskNode['href']);
+                        }
+                    }
+                }
+                return $tasks;
+            } catch(HttpInvalidParamException $ex) {
+                //die("<b>Could not connect to the network.</b>");
+                return array();
+            }
         }
+    }
+
+    /**
+     * Quick function to get an associative array of all tasks for a specific
+     * user.  See {@link Util::getAccounts()} and 
+     *          {@link Util::getTasksForAccounts()} as this method just calls
+     *          both of those methods and returns the results.
+     */
+    public function getTasksForUsers($users, $fetch_descriptions) {
+        return getTasksForAccounts(getAccounts($users, true), 
+            $fetch_descriptions, true);
+    }
+
+    private function getXByY($table, $key, $value) {
+        $query = "SELECT * FROM $table WHERE $key='$value'";
+        if ($result = $this->mysqli->query($query)) {
+            return $row = $result->fetch_assoc();
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves a user by a given email address.
+     */
+    public function getUserByEmail($email) {
+        if ($row = $this->getXByY('users', 'email', $email)) {
+            return new User($row['email'], $row['id']);
+        }
+    }
+
+    /**
+     * Retrieves a user by a given id.
+     */
+    public function getUserById($id) {
+        if ($row = $this->getXByY('users', 'id', $id)) {
+            return new User($row['email'], $row['id']);
+        }
+    }
+
+    /**
+     * Retrieve an account by a given username.
+     */
+    public function getAccountByName($name) {
+        if ($row = $this->getXByY('accounts', 'username', $name)) {
+            return new Account($row['username'], $row['passphrase'],
+                $row['link'], $row['id']);
+        }
+    }
+
+    /**
+     * Retrieve an account by a given Uri.
+     */
+    public function getAccountByUri($uri) {
+        if ($row = $this->getXByY('accounts', 'link', $uri)) {
+            return new Account($row['username'], $row['passphrase'],
+                $row['link'], $row['id']);
+        }
+    }
+
+    /**
+     * Retrieve an account by a given id.
+     */
+    public function getAccountById($id) {
+        if ($row = $this->getXByY('accounts', 'id', $id)) {
+            return new Account($row['username'], $row['passphrase'],
+                $row['link'], $row['id']);
+        }
+    }
+
+    /**
+     * Authenticates a user by checking to see if the username and password
+     * match the database's.
+     */
+    public function authenticateUser($email, $password) {
+        $password = sha1($password);
+        $query = "SELECT COUNT(*) as count FROM users ".
+            "WHERE email='$email' AND passphrase='$password'";
+        if ($result = $this->mysqli->query($query)) {
+            $row = $result->fetch_assoc();
+            return $row['count'] != 0;
+        }
+        return false;
+    }
+
+    /**
+     * Register a new user, if the user doesn't already exist in the database.
+     */
+    public function registerUser($email, $password, $opt_password_again=null) {
+        if ($password != $opt_password_again and $opt_password_again != null) {
+            return false;
+        }
+        $query = "SELECT COUNT(*) as count FROM users WHERE email='$email';";
+        if ($result = $this->mysqli->query($query)) {
+            $row = $result->fetch_assoc();
+            if ($row['count'] != 0) return false;
+        }
+        $password = sha1($password);
+        $query = "INSERT INTO users(email, passphrase) ".
+            "VALUES('$email', '$password');";
+        return $this->mysqli->query($query);
     }
 
     /**
@@ -1222,37 +1401,35 @@ class Util {
      * @param string $taskUri The Uri to look in for the account.
      * @return Task A task with descriptions loaded.
      */
-    static function retrieveTaskDescription(Account $account, $taskUri) {
+    public function retrieveTaskDescription(Account $account, $taskUri) {
         try {
-            $response = self::retrieveMessage($taskUri,
-                                $account->getName(), $account->getPassword());
-
+            $response = $this->retrieveMessage($account, $taskUri);
             $task = null;
             // TODO {Andrew Hays|Grant Beasley} handle other response codes 
             // besides 200
             if ($response["status"] == 200) {
-                $xml = self::getXmlResponse($response["body"]);
+                $xml = $this->getXmlResponse($response["body"]);
                 $task = new Task(null, $taskUri);
                 $task->setEtag(htmlentities($response["etag"]));
-                $task->setName(self::firstValue($xml,'//ns:taskName'));
-                $task->setType(self::firstValue($xml,'//ns:taskType'));
+                $task->setName($this->firstValue($xml,'//ns:taskName'));
+                $task->setType($this->firstValue($xml,'//ns:taskType'));
                 $task->setDetail(html_entity_decode(html_entity_decode(
-                    self::firstValue($xml,'//ns:taskDetail'))));
-                $task->setStatus(self::firstValue($xml,'//ns:taskStatus'));
-                $task->setPriority(self::firstValue($xml,'//ns:taskPriority'));
-                $task->setEstimatedCompletionTime(self::firstValue(
+                    $this->firstValue($xml,'//ns:taskDetail'))));
+                $task->setStatus($this->firstValue($xml,'//ns:taskStatus'));
+                $task->setPriority($this->firstValue($xml,'//ns:taskPriority'));
+                $task->setEstimatedCompletionTime($this->firstValue(
                     $xml,'//ns:estimatedDuration'));
-                $task->setActivationTime(self::firstValue(
+                $task->setActivationTime($this->firstValue(
                     $xml,'//ns:taskActivationTime'));
-                $task->setExpirationTime(self::firstValue(
-                    $xml, '//ns:taskExpriationTime'));
-                $task->setAdditionTime(self::firstValue(
+                $task->setExpirationTime($this->firstValue(
+                    $xml, '//ns:taskExpirationTime'));
+                $task->setAdditionTime($this->firstValue(
                     $xml,'//ns:taskAdditionTime'));
-                $task->setModificationTime(self::firstValue(
+                $task->setModificationTime($this->firstValue(
                     $xml,'//ns:taskModificationTime'));
-                $task->setProgress(self::firstValue(
+                $task->setProgress($this->firstValue(
                     $xml,'//ns:taskProgress'));
-                $task->setProcessProgress(self::firstValue(
+                $task->setProcessProgress($this->firstValue(
                     $xml,'//ns:processProgress'));
                 foreach($xml->xpath('//ns:taskTag') as $k=>$v) {
                     $task->addTag("".$v);
@@ -1272,7 +1449,7 @@ class Util {
      * @param string $xpath The xpath search to use.
      * @return string The value at the point.
      */
-    private static function firstValue($xml, $xpath) {
+    private function firstValue($xml, $xpath) {
         $result = $xml->xpath($xpath);
         if (count($result) > 0) {
             return "".$result[0];
@@ -1286,7 +1463,7 @@ class Util {
      * @param array $params An associative array used to create the Xml document
      * @return string An xml string to submit to the server.
      */
-    private static function GenerateXmlDoc($params) {
+    private function GenerateXmlDoc($params) {
         $xml  = "<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n";
         $xml .= "<tm xmlns=\"http://danieloscarschulte.de/cs/ns/2011/tm\">\n";
         $xml .= "\t<taskDescription>\n";
@@ -1310,7 +1487,7 @@ class Util {
      * to document them specifically.
      * @return HTTP_Request2 The request to the server for later parsing.
      */
-    private static function TaskEntry($user, $name=null, $priority=null, 
+    private function TaskEntry($user, $name=null, $priority=null, 
             $status=null, $eta=null, $ActivationTime=null, 
             $ExpirationTime=null, $Addition=null, $Modification=null, 
             $progress=null, $processProgress=null,$tags=array(), $type=null, 
@@ -1335,7 +1512,7 @@ class Util {
         if ($details != null) $params["taskDetail:"] = $details;
         if ($tags != null && count($tags) > 0) {
             if (count($tags) == 1) $tags = explode(",", $tags[0]);
-            $tags = array_map("trim", $tags);
+            $tags = array_unique(array_map("trim", $tags));
             $tagsHtml = implode("</taskTag>\n\t\t<taskTag>", $tags);
             $params["taskTag"] = $tagsHtml;
         }
@@ -1347,7 +1524,7 @@ class Util {
         $request = new HTTP_Request2($uri, $http_method);
         $userpass = "{$user->getName()}:{$user->getPassword()}";
         $request->setAuth($user->getName(), $user->getPassword());
-        $body = self::GenerateXmlDoc($params);
+        $body = $this->GenerateXmlDoc($params);
         $request->setBody($body);
         $request->setHeader("Content-Type", "application/xml;charset=UTF-8");
         $request->setHeader("If-Match", html_entity_decode($etag));
@@ -1359,11 +1536,11 @@ class Util {
     /**
      * Method for adding a new task entry.
      */
-    static function AddEntry($user, $name=null, $priority=null, $status=null, 
+    public function AddEntry($user, $name=null, $priority=null, $status=null, 
             $eta=null, $ActivationTime=null, $ExpirationTime=null, 
             $Addition=null, $Modification=null, $progress=null, 
             $processProgress=null, $tags=array(), $type=null, $details=null) {
-        return self::TaskEntry($user, $name, $priority, $status, $eta, 
+        return $this->TaskEntry($user, $name, $priority, $status, $eta, 
             $ActivationTime, $ExpirationTime, $Addition,
             $Modification, $progress, $processProgress,
             $tags, $type, $details, $user->getUri(), "POST", null);
@@ -1372,12 +1549,12 @@ class Util {
     /**
      * Method for updating an existing task entry.
      */
-    static function EditEntry($user, $name=null, $priority=null, $status=null, 
+    public function EditEntry($user, $name=null, $priority=null, $status=null, 
             $eta=null, $ActivationTime=null, $ExpirationTime=null, 
             $Addition=null, $Modification=null, $Progress=null, 
             $ProcessProgress=null, $Tags=null, $Type=null, 
             $details=null, $Uri=null, $etag=null) {
-        return self::TaskEntry($user, $name, $priority, $status, $eta, 
+        return $this->TaskEntry($user, $name, $priority, $status, $eta, 
             $ActivationTime, $ExpirationTime, $Addition,
             $Modification, $Progress, $ProcessProgress,
             $Tags, $Type, $details, $Uri, "PUT", $etag);
@@ -1386,40 +1563,79 @@ class Util {
     /**
      * Method for adding a new account to the database, if it doesn't already
      * exist and it validates against the server correctly.
-     * @todo {Grant Beasley|Andrew Hays} Update function to use new queries.
-     *          This may require a bit of magic to not die if the user already
-     *          exists in the database, but we still want to link it to another
-     *          User.  Speaking of which, this will probably require more
-     *          parameters for linking it to a {@link User} object.
-     * @todo {Andrew Hays} Use a better return system instead of true|false|null
-     *          and update all methods that call it.
-     * @param string $name The name for the Account
-     * @param string $password The password for the Account.
-     * @param string $uri The uri for the Account.
-     * @return boolean Whether or not the method was successful.
+     * @param mixed $accounts The Account to add, or an array of them.
+     * @param User $user The user to add for, or null to select the logged in
+     *          User.
+     * @return mixed An integer representing the code if only one account was
+     *          added, or an array of codes with the key being the 
+     *          account name and the value being the result code.
      */
-    public static function addAccount($name, $password, $uri) {
-        if ($result = self::$mysqli->query("SELECT COUNT(*) as total ".
-                                           "FROM users ".
-                                           "WHERE Username='$name';")) {
-            $row = $result->fetch_assoc();
-            if ($row["total"] > 0) {
-                return null;
+    public function addAccounts($accounts, User $user = null) {
+        if (is_array($accounts)) {
+            $results = array();
+            foreach($accounts as $account) {
+                $results[$account->getName()] = $this->addAccounts($account,
+                    $user);
+            }
+            return $results;
+        }
+        if (!$user) {
+            $this->handleLogin();
+            $user = $this->getLoggedInUser();
+        }
+        $query = "SELECT id FROM accounts ".
+            "WHERE link='{$accounts->getUri()}' AND ".
+            "username='{$accounts->getName()}'";
+        $id = null;
+        $result_code = null;
+        if ($result = $this->mysqli->query($query)) {
+            if ($result->num_rows != 0) {
+                $id = $result->fetch_assoc();
+                $id = $id["id"];
+                $result_code = AccountEntry::ACCOUNT_EXISTS;
             }
         }
-        $result = self::retrieveMessage($uri, $name, $password);
-        var_dump($result);
-        if ((int) ($result["status"]/100) == 2) {
-            $query = "INSERT INTO users(Username, Password,    URI) ".
-                     "           VALUES('$name',  '$password', '$uri');";
-            $result = self::$mysqli->query($query);
+        $result = $this->retrieveMessage($accounts);
+
+        if ((int) ($result["status"]/100) == 2 and 
+                $result_code != AccountEntry::ACCOUNT_EXISTS) {
+            $query = "INSERT INTO accounts(username, passphrase, link) ".
+                "VALUES('{$accounts->getName()}', ".
+                "'{$accounts->getPassword()}', '{$accounts->getUri()}');";
+            $result = $this->mysqli->query($query);
             if ($result === TRUE) {
-                return true;
+                $id = $this->mysqli->insert_id;
+                $result_code = AccountEntry::SUCCESS;
             } else {
-                return false;
+                $result_code = AccountEntry::CREATION_FAILED;
+            }
+        } else if ($result["status"] == 401) {
+            $result_code = AccountEntry::NOT_AUTHORIZED;
+        } else if ((int)($result["status"]/100)!=2){
+            $result_code = AccountEntry::ACCOUNT_NOT_FOUND;
+        }
+        
+        if (($result_code == AccountEntry::SUCCESS || 
+                $result_code == AccountEntry::ACCOUNT_EXISTS) && $id != null) {
+            $query = "SELECT COUNT(*) as count FROM user_accounts WHERE ".
+                "userID='{$user->getId()}' AND accountID='$id'";
+            if ($result = $this->mysqli->query($query)) {
+                $row = $result->fetch_assoc();
+                if (((int) $row['count']) != 0) {
+                    return AccountEntry::ACCOUNT_ALREADY_LINKED;
+                }
+            }
+            $query = "INSERT INTO user_accounts(userID, accountID) ".
+                "VALUES('{$user->getId()}', '$id')";
+            $result = $this->mysqli->query($query);
+            if ($result === TRUE) {
+                return $result_code;
+            } else {
+                return AccountEntry::ACCOUNT_NOT_LINKED;
             }
         }
-        return false;
+    
+        return $result_code;
     }
 
     /**
@@ -1439,14 +1655,128 @@ class Util {
      * @return string The uri that the username corresponds to, or null if it
      *          doesn't exist.
      */
-    public static function getUriFromUsername($username) {
+    public function getUriFromUsername($username) {
         $query = "SELECT a.link FROM accounts a WHERE a.username='$name'";
-        if ($result = $mysql->query($query)) {
+        if ($result = $this->mysql->query($query)) {
             $row = $result->fetch_assoc();
-            return $row['a.link'];
+            return $row['link'];
         } else {
             return null;
         }
     }
-} Util::init();
+
+    /**
+     * Returns a Task from a Task Number.
+     * @param int $taskNumber The number to use.
+     * @param Account
+     * @return Task The task with the given number.
+     */
+    public function getTaskById($taskNumber, Account $account) {
+        return $this->retrieveTaskDescription($account, 
+            Task::uriFromTaskNumber($taskNumber));
+    }
+}
+
+class Wizard {
+    public static function getPage($page) {
+        $util = new Util();
+        switch($page) {
+        case 1:
+    ?>
+    <div class='page-1'>
+    <h1>Welcome!</h1>
+    <p>In this tutorial, we will walk you through step-by-step how to work with this client for the Human Task Management application.  By the end of it, you should be set up well enough to have an account set up and be able to view all of the tasks for that account.</p>
+    <p>Please click the "next" button in order to keep going.</p>
+    <a href='/wizard/page/2' rel='next' class='next-link'>Next</a>
+    </div>
+    <?
+            break;
+
+        case 2:
+    ?>
+    <div class='page-2'>
+    <h1>Accounts</h1>
+    <p>In order to do anything with this application, you will need to have at least one account set up on the REST server and attach it to your account on this server.  Use the following form to set this up now.</p>
+    <div id='flash'>
+    <? if (isset($_SESSION['flash'])) echo $_SESSION['flash']; ?>
+    </div>
+    <form action='new_account_wiz.php' method='POST'>
+        <table>
+            <tr>
+                <td class='label'>
+                    <label for='username' id='username-label'>Username</label>
+                </td>
+                <td>
+    <?
+    $name = '';
+    if (isset($_SESSION['username'])) {
+        $name = $_SESSION['username'];
+    }
+    ?>
+                    <input type='text' name='username' id='username'
+                           value='<?=$name?>' />
+                </td>
+            </tr>
+            <tr>
+                <td class='label'>
+                    <label for='uri' id='uri-label'>Link</label>
+                </td>
+                <td>
+    <?
+    $uri = '';
+    if (isset($_SESSION['uri'])) {
+        $name = $_SESSION['uri'];
+    }
+    ?>
+                    <input type='text' name='uri' id='uri'
+                           value='<?=$uri?>' />
+                </td>
+            </tr>
+            <tr>
+                <td class='label'>
+                    <label for='password' id='password-label'>Password</label>
+                </td>
+                <td>
+                    <input type='password' name='password' id='password' />
+                </td>
+            </tr>
+        </table>
+    <p>Whenever the form is complete, just hit the next button and the application will sign the account in for you.</p>
+    <a href='/wizard/page/1' rel='prev' class='prev-link'>Prev</a>
+    <input type='submit' href='/wizard/page/3' rel='next' class='next-link'
+           value='Next' />
+    </form>
+    </div>
+    <?
+            break;
+        case 3:
+    ?>
+    <div class='page-3'>
+    <h1>Great Job!</h1>
+    <?
+            $name = $util->getAccounts();
+            if ($name == null or count($name) == 0) {
+                $name = 'Johnny';
+            } else {
+                $name = $name[0]->getName();
+            }
+    ?>
+    <p>Now every time you log in to the application, you will see <?=$name?>'s tasks, along with anyone else's tasks that you add to your account on this server.  Have a group account with shared tasks?  No problem!  Just have everyone add the same account and any tasks that you add, all of your partners will be able to see as well.  You can also see any tasks that they add for the account.</p>
+    <p>Click on the "finish" button to go to your homescreen now and start managing all of our tasks!</p>
+    <a href='/wizard/page/2' rel='prev' class='prev-link'>Prev</a>
+    <a href='/' rel='last' class='next-link'>Finish</a>
+    </div>
+    <?
+            break;
+        };
+    }
+
+    public static function hasPrev($page) {
+        return $page > 1;
+    }
+
+    public static function hasNext($page) {
+        return $page < 3;
+    }
+}
 ?>

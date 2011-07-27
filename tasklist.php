@@ -5,57 +5,49 @@
  */
 
 require_once("classes.php");
-if (!isset($_SESSION)) {
-    session_start();
-}
+
+$util = new Util();
 
 $edit= isset($_GET['edit']) && $_GET['edit'] != '0' && $_GET['edit'] != 'false';$new = isset($_GET['new']) && $_GET['new'] != '0' && $_GET['new'] != 'false';
 $copy= isset($_GET['copy']) && $_GET['copy'] != '0' && $_GET['copy'] != 'false';
 $edit = $edit | $new | $copy;
 
-$selectedUserUri = null;
-$selectedTaskUri = null;
+$selectedAccount = null;
+$selectedTask = null;
 $selectedTaskNumber = null;
-$selectedUserName = null;
+$selectedAccountName = null;
 
 if (isset($_GET['user'])) {
-    $selectedUserName = urldecode($_GET['user']);
+    $selectedAccountName = urldecode($_GET['user']);
 }
 if (isset($_GET['task'])) {
     $selectedTaskNumber = $_GET['task'];
 }
 
+if ($selectedAccountName != null) {
+    $selectedAccount = $util->getAccountByName($selectedAccountName);
+}
+
+$accounts = $util->getAccounts();
+if (count($accounts) > 0 && $selectedAccount == null) {
+    $selectedAccount = $accounts[0];
+} else if (count($accounts) == 0) {
+    header("Location: /wizard/");
+}
+
 if ($selectedTaskNumber != null) {
-    $selectedTaskUri = Task::uriFromTaskNumber($selectedTaskNumber);
-}
-
-if ($selectedUserName != null) {
-    $selectedUserUri = Account::uriFromUserName($selectedUserName);
-}
-
-$accounts = Util::getAccounts();
-if (count($accounts) > 0) {
-    $selectedUser = $accounts[0];
-} else {
-    $selectedUser = null;
-}
-
-foreach ($accounts as $account) {
-    if ($account->getUri() == $selectedUserUri) {
-        $selectedUser = $account;
+    $selectedTask = $util->getTaskById($selectedTaskNumber, $selectedAccount);
+    if ($selectedTask == null) {
+        $_SESSION['flash'] = "Task doesn't exist or access denied.";
     }
 }
 
-$tasks = Util::getTasksForAccount($selectedUser);
-if (count($tasks) > 0) {
-    $selectedTask = $tasks[0];
-} else {
-    $selectedTask = null;
-}
-
-foreach ($tasks as $task) {
-    if ($task->getUri() == $selectedTaskUri) {
-        $selectedTask = $task;
+$tasks = array();
+if (count($accounts) > 0) {
+    $tasks = $util->getTasksForAccounts($selectedAccount, false);
+    if (count($tasks) > 0 && $selectedTask == null) {
+        $selectedTask = $util->retrieveTaskDescription($selectedAccount,
+            $tasks[0]->getUri());
     }
 }
 
@@ -66,7 +58,7 @@ if ($new) $selectedTask = null;
 <html>
     <head>
         <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>Task list for <?= $selectedUser->getName() ?></title>
+        <title>Task list for <?= $selectedAccount->getName() ?></title>
         <link href="/css/custom-theme/taskstyle.css" 
               type="text/css" rel="Stylesheet" />
         <script type='text/javascript' 
@@ -77,6 +69,7 @@ goog.require('goog.Uri');
 goog.require('goog.date');
 goog.require('goog.date.Date');
 goog.require('goog.dom');
+goog.require('goog.dom.forms');
 goog.require('goog.editor.Field');
 goog.require('goog.editor.plugins.BasicTextFormatter');
 goog.require('goog.editor.plugins.EnterHandler');
@@ -103,6 +96,8 @@ goog.require('goog.ui.ButtonSide');
 goog.require('goog.ui.Component');
 goog.require('goog.ui.CustomButton');
 goog.require('goog.ui.CustomButtonRenderer');
+goog.require('goog.ui.Dialog');
+goog.require('goog.ui.Dialog.ButtonSet');
 goog.require('goog.ui.DatePicker');
 goog.require('goog.ui.ProgressBar');
 goog.require('goog.ui.Slider');
@@ -136,12 +131,12 @@ goog.require('goog.ui.editor.ToolbarController');
                     </span>
                     <ul id="accounts-list" class="list">
                     <? foreach($accounts as $account): ?>
-                        <? if ($account == $selectedUser): ?>
+                        <? if ($account == $selectedAccount): ?>
                         <li class='selected'>
                         <? else: ?>
                         <li>
                         <? endif; ?>
-                        <?$username = urlencode($account->getUserName());?>
+                        <?$username = urlencode($account->getName());?>
                             <a href="/<?= $username ?>/">
                                 <span class="account-name">
                                     <?= $account->getName() ?>
@@ -152,7 +147,7 @@ goog.require('goog.ui.editor.ToolbarController');
                     </ul>
                 </div>
                 <div id="tasks" class="section">
-                    <? $username = urlencode($selectedUser->getUserName());?>
+                    <? $username = urlencode($selectedAccount->getName());?>
                     <span class="header">
                         <span>Tasks</span>
                         <a id="add-task" href="/<?= $username ?>/new/">
@@ -163,13 +158,14 @@ goog.require('goog.ui.editor.ToolbarController');
                     </span>
                     <ul id="tasks-list" class="list">
                     <? foreach($tasks as $task): ?>
-                        <? if ($task == $selectedTask && !$copy && !$new): ?>
+                        <? if ($task->getUri() == $selectedTask->getUri() && 
+                                !$copy && !$new): ?>
                         <li class='selected'>
                         <? else: ?>
                         <li>
                         <? endif; ?>
-                        <? $username = urlencode($selectedUser->getName());?>
-                        <? $tasknum = urlencode($task->getTaskNumber()); ?>
+                        <? $username = urlencode($selectedAccount->getName());?>
+                        <? $tasknum = urlencode($task->getId()); ?>
                         <? $taskname = Util::urlifyTaskName($task->getName());?>
                         <a href="/<?=$username?>/<?=$tasknum?>/<?=$taskname?>/">
                             <span class="task-name">
@@ -184,13 +180,13 @@ goog.require('goog.ui.editor.ToolbarController');
             </div>
             <div id="task-content" class="content">
         <? if ($edit and !$new): ?>
-            <?= Task::toEditHtml($selectedUser, $selectedTask, $copy); ?>
+            <?= Task::toEditHtml($selectedAccount, $selectedTask, $copy); ?>
         <? elseif ($edit and $new): ?>
-            <?= Task::toEditHtml($selectedUser); ?>
+            <?= Task::toEditHtml($selectedAccount); ?>
         <? else: ?>
             <? if ($selectedTask != null): ?>
-                <? $accNum = urlencode($selectedUser->getName()); ?>
-                <? $taskNum = urlencode($selectedTask->getTaskNumber()); ?>
+                <? $accNum = urlencode($selectedAccount->getName()); ?>
+                <? $taskNum = urlencode($selectedTask->getId()); ?>
                 <? $taskname = Util::urlifyTaskName($selectedTask->getName());?>
                 <div class='edit-buttons'>
                 <div id='edit-task-link-wrapper'>

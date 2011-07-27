@@ -5,6 +5,7 @@
  */
 ?>
 <!DOCTYPE html>
+<? if (!isset($_SESSION)) session_start(); ?>
 <html xmlns="http://www.w3.org/1999/xhtml" xml:lang="en" lang="en">
 
 <head>
@@ -30,17 +31,36 @@
 <div id="toppanel">
     <div id="panel">
         <div class="content clearfix">
+            <div class='table-cell'>
             <form class="clearfix" action="/loginsubmit.php" method="post">
+<? 
+$email = '';            
+if (isset($_SESSION) and isset($_SESSION['email'])) {
+    $email = $_SESSION['email'];
+}
+?>
                 <h1>User Login</h1>
-                <label class="grey" for="username">Username:</label>
-                <input class="field" type="text" name="username" id="username" 
-                       value="" size="23" />
-                <label class="grey" for="uri">Link:</label>
-                <input class="field" type="text" name="uri" id="uri" value=""
-                       size="23" />
-                <label class="grey" for="password">Password:</label>
-                <input class="field" type="password" name="password" 
-                       id="password" size="23" />
+                <table>
+                    <tr>
+                        <td>
+                            <label class="grey" for="email">
+                                Email Address:</label>
+                        </td>
+                        <td>
+                            <input class="field" type="text" name="email" 
+                                id="email" size="23" value="<?=$email?>"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="grey" for="password">Password:</label>
+                        </td>
+                        <td>
+                            <input class="field" type="password" name="password"
+                                   id="password" size="23" />
+                        </td>
+                    </tr>
+                </table>
                 <label>
                     <input name="rememberme" id="rememberme" type="checkbox" 
                            checked="checked" value="forever" /> 
@@ -51,6 +71,49 @@
                        class="bt_login" />
 		<!--<a class="lost-pwd" href="#">Lost your password?</a>-->
             </form>
+            </div>
+            <div class='table-cell' style='border-left: thin solid #999;'>
+            <form class="clearfix" action="/register.php" method="post">
+                <h1>Or Register!</h1>
+                <table>
+                    <tr>
+                        <td>
+                            <label class="grey" for="r_email">
+                                Email Address:</label>
+                        </td>
+                        <td>
+                            <input class="field" type="text" name="email" 
+                                id="r_email" size="23" value="<?=$email?>"/>
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="grey" for="r_password">Password:
+                            </label>
+                        </td>
+                        <td>
+                            <input class="field" type="password" name="password"
+                                   id="r_password" size="23" />
+                        </td>
+                    </tr>
+                    <tr>
+                        <td>
+                            <label class="grey" for="r_password_confirm">
+                                Confirm Password:</label>
+                        </td>
+                        <td>
+                            <input class="field" type="password" 
+                                   name="password_confirm" 
+                                   id="r_password_confirm" size="23" />
+                        </td>
+                    </tr>
+                </table>
+                <div class="clear"></div>
+                <input type="submit" name="submit" value="Login" 
+                       class="bt_login" />
+		<!--<a class="lost-pwd" href="#">Lost your password?</a>-->
+            </form>
+            </div>
         </div>
         <!--<div class="left right">			
             <form action="#" method="post">
@@ -85,18 +148,18 @@
 </div> <!-- / top -->
 	
 </div> <!--panel -->
-<? if (!isset($_SESSION)) session_start(); ?>
-<? if (isset($_SESSION["flash"])): ?>
 <div id="container">
     <div id="content" style= "padding-center:100PX;">
-        <h1>Login to see your tasks </h1>
-        <font color = "red">
+<? if (isset($_SESSION["flash"])): ?>
+        <h1><font color = "red">
             <?= $_SESSION['flash']; ?>
-        </font>
+        </font></h1>
+<? unset($_SESSION['flash']); ?>
+<? else: ?>
+        <h1>Login to see your tasks </h1>
+<? endif; ?>
     </div>
 </div>
-<? unset($_SESSION['flash']); ?>
-<? endif; ?>
 
 </body>
 </html>

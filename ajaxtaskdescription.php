@@ -9,10 +9,11 @@ require_once('classes.php'); ?>
 <? $edit = isset($_GET['edit']) && $_GET['edit'] != 0 ?>
 <? $copy = isset($_GET['copy']) && $_GET['copy'] != 0 ?>
 <? if (isset($_GET['user'])): ?>
-    <? $user = Account::getUserByUserName($_GET['user']); ?>
+    <? $util = new Util(); ?>
+    <? $user = $util->getAccountByName($_GET['user']); ?>
     <? if (isset($_GET['task'])): ?>
         <? $task_uri = Task::uriFromTaskNumber($_GET['task']); ?>
-        <? $task = Util::retrieveTaskDescription($user, $task_uri); ?>
+        <? $task = $util->retrieveTaskDescription($user, $task_uri); ?>
     <? else: ?>
         <? $task = null; ?>
     <? endif; ?>

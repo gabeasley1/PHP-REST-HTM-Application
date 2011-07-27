@@ -1,29 +1,27 @@
 <?
 /**
  * Handles all submit requests from the login form.
- * @todo {Andrew Hays} Redesign to use new style accounts.
  * @package PhpHtmRestApplicationLoginSubmit
  */
-
 require_once('classes.php');
+session_start();
+
 $href = "/login/";
 if (isset($_SERVER["HTTP_REFERRER"])) {
     $href = $_SERVER["HTTP_REFERRER"];
 }
-if (isset($_POST['username']) and isset($_POST['uri']) and 
-            isset($_POST['password'])) {
-    $username = $_POST['username'];
-    $uri = $_POST['uri'];
+if (isset($_POST['email']) and isset($_POST['password'])) {
+    $email = $_POST['email'];
     $password = $_POST['password'];
+
+    $util = new Util();
     
-    $result = Util::addAccount($username, $password, $uri);
-    if ($result or $result===null) {
-        $name = urlencode($username);
-        $href = "/$name/";
+    $result = $util->authenticateUser($email, $password);
+    if ($result) {
+        $_SESSION['user'] = $util->getUserByEmail($email);
+        $href = "/";
     } else {
-        if (!isset($_SESSION)) session_start();
-        $_SESSION['flash'] = "Oops! Something went wrong.  Are you sure that ".
-            "everything is entered in correctly?";
+        $_SESSION['flash'] = "Email or password is invalid.";
     }
 }
 

@@ -47,12 +47,25 @@ goog.require('goog.ui.editor.ToolbarController');
 */
 
 var $ = goog.dom.getElement;
+var $$ = goog.dom.getElementsByTagNameAndClass;
 
 /**
  * Utility class for manipulating the screen's tasks and description items.
  * @constructor
  */
 var Util = function() {
+    this.dialog_ = new goog.ui.Dialog();
+    this.dialog_.setButtonSet(false);
+    this.dialog_.setEscapeToCancel(false);
+    this.dialog_.setHasTitleCloseButton(false);
+    this.dialog_.setTitle("Please wait...");
+    this.dialog_.setContent(''+
+            '<div class="loading-message">'+
+              '<p>Currently fetching content for this page...</p>'+
+              '<img src="/css/custom-theme/images/loading_indeterminate.gif" '+
+                   'width="500" height="22" />'+
+            '</div>');
+
     try {
         this.history = new goog.history.Html5History();
         this.history.setUseFragment(false);
@@ -122,8 +135,9 @@ Util.trim = function(string, opt_chars) {
  * Update the URL bar's current URL (without refreshing the page).
  * @this {Util}
  * @param {(Element|string)} anchor An &lt;a&gt; element, or a string link.
+ * @param {string=} opt_string A string to use to replace the title.
  */
-Util.prototype.updateHistory = function(anchor) {
+Util.prototype.updateHistory = function(anchor, opt_title) {
     var url;
     if (goog.dom.isNodeLike(anchor)) {
         url = new goog.Uri(anchor.href).getPath();
@@ -131,7 +145,33 @@ Util.prototype.updateHistory = function(anchor) {
         url = anchor;
     }
     url = Util.trim(url, '/') + '/';
-    this.history.setToken(url);
+    this.history.setToken(url, opt_title);
+};
+
+/**
+ * Puts a loading screen on the page for whenever AJAX content is being fetched
+ * @param {boolean} visible Whether or not to show the loading screen.
+ */
+Util.prototype.setLoading = function(visible) {
+    this.dialog_.setVisible(visible);
+};
+
+/**
+ * Updates the URL bar's current URL (without refreshing the page). This also
+ * replaces the current item in the history stack instead of adding a new one
+ * @this {Util}
+ * @param {(Element|string)} anchor An &lt;a&gt; element, or string link.
+ * @param {string=} opt_string A string to use to replace the title.
+ */
+Util.prototype.replaceHistory = function(anchor, opt_title) {
+    var url;
+    if (goog.dom.isNodeLike(anchor)) {
+        url = new goog.Uri(anchor.href).getPath();
+    } else {
+        url = anchor;
+    }
+    url = Util.trim(url, '/')+'/';
+    this.history.replaceToken(url, opt_title);
 };
 
 /**
@@ -140,6 +180,7 @@ Util.prototype.updateHistory = function(anchor) {
  * @param {Event} evt The event to handle.
  */
 Util.prototype.historyHandler = function(evt) {
+    this.setLoading(true);
     if (evt.token) {
         var token = Util.trim(evt.token, '/').toLowerCase();
         var $this = this;
@@ -174,7 +215,8 @@ Util.prototype.historyHandler = function(evt) {
             var li = goog.dom.getElementsByTagNameAndClass(p[0], p[1], $(p[2]));
             if (li.length != 0) {
                 var a = goog.dom.getElementsByTagNameAndClass('a', null, li[0]);
-                this.updateHistory(Util.anchorToHref(a[0]));
+                this.setSelected(li[0]);
+                this.replaceHistory(Util.anchorToHref(a[0]));
                 return;
             }
         }
@@ -408,6 +450,7 @@ Util.prototype.getTaskDescription = function(anchor) {
         var xhr = e.target;
         $('task-content').innerHTML = xhr.getResponseText();
         $this.registerViewingItems();
+        $this.setLoading(false);
     });
 };
 
@@ -423,6 +466,7 @@ Util.prototype.getTaskEditor = function(anchor) {
         var xhr = e.target;
         $('task-content').innerHTML = xhr.getResponseText();
         $this.registerEditingItems();
+        $this.setLoading(false);
     });
 };
 
@@ -442,6 +486,7 @@ Util.prototype.getTaskList = function(anchor) {
         if (items.length == 0) {
             $('task-content').innerHTML = '<h2 style="padding:10px 30px;">'+
                 'There are no tasks available to display.</h2>';
+            $this.setLoading(false);
         } else {
             $this.setSelected(items[0]);
             var a = goog.dom.getElementsByTagNameAndClass('a', null, items[0]);
@@ -560,6 +605,107 @@ Util.prototype.registerForTaskContextMenu = function(list_item) {
             $this.updateHistory(href);
         });
     });
+};
+
+/**
+ * Registers the add account button to bring up a popup with some information
+ * to fill out.
+ * @param {Element} button The button to register to the dialog.
+ */
+Util.prototype.registerAddAccountButton = function(button) {
+    this.account_dialog_ = new goog.ui.Dialog();
+    this.account_dialog_.setTitle("Please enter the details for the " +
+            "new account.");
+    this.account_dialog_.setModal(false);
+    this.account_dialog_.setHasTitleCloseButton(true);
+    this.account_dialog_.setDraggable(true);
+    this.account_dialog_.setEscapeToCancel(true);
+    this.account_dialog_.setButtonSet(goog.ui.Dialog.ButtonSet.OK_CANCEL);
+    var form = goog.dom.createDom('form', {'action':'/new_account.php',
+        'method':'POST'});
+    var flash = goog.dom.createDom('div', 'flash');
+    var table = goog.dom.createDom('table');
+    var items = [{name:'username',text:'Name'},{name:'uri',text:'Link',size:40},
+        {name:'password',text:'Password',type:'password'}];
+    goog.array.forEach(items, function(item, ind, arr) {
+        var tr = goog.dom.createDom('tr');
+        var td1 = goog.dom.createDom('td', {'style':'text-align:right;'});
+        var td2 = goog.dom.createDom('td');
+        var label = goog.dom.createDom('label', {'for':item.name+'_actdial'});
+        goog.dom.setTextContent(label, item.text);
+        var input = goog.dom.createDom('input', {'type':item.type||'text', 
+            'name':item.name, 'id':item.name+'_actdial'});
+        if (item.size) input.size = item.size;
+        goog.dom.appendChild(td1, label);
+        goog.dom.appendChild(td2, input);
+        goog.dom.append(tr, td1, td2);
+        goog.dom.append(table, tr);
+    }, this);
+    goog.dom.append(form, flash, table);
+    this.account_dialog_.setContent(goog.dom.getOuterHtml(form));
+    var $this = this;
+    goog.events.listen(button, goog.events.EventType.CLICK, function(evt) {
+        evt.preventDefault();
+        evt.stopPropagation();
+        $this.account_dialog_.setVisible(true);
+    });
+
+    var formsubmit = function(evt) {
+        evt.preventDefault();
+        var form = $$('form', null, 
+                $this.account_dialog_.getContentElement())[0];
+        var in_data = goog.dom.forms.getFormDataString(form);
+        $this.account_dialog_.setVisible(false);
+        if (!evt.key || evt.key != 'ok') {
+            goog.array.forEach($$('input', null, form), function(input) {
+                input.value = '';
+            });
+            return;
+        }
+        $this.setLoading(true);
+        var callback = function(evt) {
+            var xhr = evt.target;
+            var out_data = xhr.getResponseJson();
+            if (out_data['success']) {
+                // Move on to the next thing.
+                $this.addAccount(out_data['account']);
+                goog.array.forEach($$('input', null, form), function(input) {
+                    input.value = '';
+                });
+            } else {
+                $this.account_dialog_.setVisible(true);
+                // Display error message.
+                var message = out_data['reason'];
+                var flash = $$('div', 'flash', form)[0];
+                flash.style.color = "red";
+                flash.style.fontWeight = "bold";
+                flash.style.textAlign = "center";
+                goog.dom.setTextContent(flash, message);
+            }
+            $this.setLoading(false);
+        };
+        goog.net.XhrIo.send("/ajaxwizform.php", callback, "POST", in_data);
+    };
+
+    goog.events.listen(form, goog.events.EventType.SUBMIT, formsubmit);
+    goog.events.listen(this.account_dialog_, goog.ui.Dialog.EventType.SELECT,
+            formsubmit);
+};
+
+/**
+ * Adds an account to the list of accounts.
+ * @param {Object} account The account object with some useful parameters to 
+ *              accept.
+ */
+Util.prototype.addAccount = function(account) {
+    // account['name'], account['uri']
+    var account_item = goog.dom.createDom('li');
+    var anchor = goog.dom.createDom('a', {'href':escape(account['name'])});
+    goog.dom.appendChild(anchor, goog.dom.createDom('span', 'account-name',
+                account['name']));
+    goog.dom.appendChild(account_item, anchor);
+    this.registerForAccountContextMenu(account_item);
+    goog.dom.appendChild($('accounts-list'), account_item);
 };
 
 /**
@@ -756,3 +902,4 @@ goog.array.forEach(account_li, function(elem) {
 Util.registerCollapsibleMenu($('accounts'));
 Util.registerCollapsibleMenu($('tasks'));
 t.registerAddTaskButton($('add-task'));
+t.registerAddAccountButton($('add-account'));

@@ -9,11 +9,12 @@
 require_once('classes.php'); ?>
 
 <? if (isset($_GET['user'])): ?>
-    <? $user = Account::getUserByUserName(urldecode($_GET['user'])); ?>
-    <? foreach(Util::getTasksForAccount($user) as $task): ?>
+    <? $util = new Util(); ?>
+    <? $user = $util->getAccountByName(urldecode($_GET['user'])); ?>
+    <? foreach($util->getTasksForAccounts($user, false) as $task): ?>
         <li>
             <? $username = urlencode($user->getName()); ?>
-            <? $tasknum  = urlencode($task->getTaskNumber()); ?>
+            <? $tasknum  = urlencode($task->getId()); ?>
             <? $taskname = Util::urlifyTaskName($task->getName()); ?>
             <a href="/<?= $username ?>/<?= $tasknum ?>/<?=$taskname?>/">
                 <span class="task-name">
