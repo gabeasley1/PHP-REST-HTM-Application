@@ -1,1 +1,99 @@
+PHP REST Human Task Management Application
+=======================================
+
+In order to be able to run this application, you will need to have a few things installed.  This README file will attempt to walk you through how to do that step-by-step.  Note that I installed everything using Windows XP, but I imagine the steps are not too far off for Ubuntu, and I'll list what I can for reference help.
+
+Required Applications
+-------------------------------
+
+  * [PHP][php] [[?]][h-xampp]
+    * [`HTTP_Request2`][httprequest2] library [[?]][h-p-httprequest2]
+    * [`Net_URL2`][neturl2] library [[?]][h-p-neturl2]
+  * [MySQL][mysql] [[?]][h-xampp]
+  * [Apache][apache] [[?]][h-xampp]
+
+Suggested Applications
+--------------------------------
+  * Git
+  * [SASS][sass-lang] [[?]][h-sass]
+  * [Google Closure][closure]
+    * [Library][closure-library] [[?]][h-closure-library]
+    * [Compiler][closure-compiler] [[?]][h-closure-compiler]
+
+
+How To Install:
+--------------------------------
+
+### XAMPP
+
+[XAMPP][xampp] will provide installs for [Apache][apache], [MySQL][mysql], [PHP][php], and [Perl][perl].  In order to install it, you can download XAMPP for Windows [here](http://www.apachefriends.org/en/xampp-windows.html#641) and grab the executable (the easiest methods).  If you're not using windows, XAMPP also gives you a list of [all other supported operating systems](http://www.apachefriends.org/en/xampp.html).  For the purposes of these instructions, we will assume that you have installed XAMPP to `C:\xampp`.  There are other methods to install PHP, MySQL, and Apache, but they are not covered here and the rest of the instructions will assume that you have installed everything the same way that I did.
+
+### Net_URL2
+
+After you have installed XAMPP, the next thing to do is install the [`Net_URL2`][neturl2] library.  At the time of writing this, the current version of `Net_URL2` is `0.3.1`.  Open a command prompt (click "Start", then "All Programs", "Accessories", "Command Prompt") and type in the following commands:
+
+    cd C:\xampp\php
+    pear install Net_URL2-0.3.1
+
+Wait for the command to complete, and then `Net_URL2` should be up and running
+
+### HTTP_Request2
+
+After `Net_URL2` is installed, the commands for installing [`HTTP_Request2`][httprequest2] are very similar.  The current version of `HTTP_Request2` is `2.0.0RC1`, so open up command prompt again (click "Start", then "All Programs", "Accessories", "Command Prompt") and type in the following commands:
+
+    cd C:\xampp\php
+    pear install HTTP_Request2
+
+Once the command is complete, `HTTP_Request2` should also work.
+
+### Git
+
+In order to keep up with the latest versions of this application, you will probably want to install Git.  The installation for Git can be nicely explained on [Github's own tutorial](http://help.github.com/set-up-git-redirect).  The [other tutorials](http://help.github.com) on the site can also help if you want to create your own version of the project or do any number of other things with Git.
+
+### SASS
+
+While not required, [SASS][sass-lang] is very useful for editing CSS files.  In fact, all user-created CSS files are written using SASS.  SASS allows for things like variables, functions, nested classes and extensions.  [`wizard.scss`](https://github.com/Dru89/PHP-REST-HTM-Application/blob/master/css/custom-theme/wizard.scss) is an example of where this project uses SASS, and its output can be found at [`wizard.css`](https://github.com/Dru89/PHP-REST-HTM-Application/blob/master/css/custom-theme/wizard.css).
+
+In order, to install SASS, you must first install [Ruby](http://www.ruby-lang.org/en/).  After [installing Ruby](http://www.ruby-lang.org/en/downloads/]), open up your command prompt again and type in the following command:
+
+    gem install sass
+
+This will instlal SASS for you, and will give you some messages along the way to tell you how far it's gotten so far.  After installing SASS, you can then run a command that&mdash;as long as your command prompt window stays open&mdash;should monitor your `.scss` file and translate it into  a `.css` file.  For instance, if your file is `mystyles.scss`, you can convert it with
+
+    sass --watch mystyles.scss
+
+To find out more tricks with sass or you can either type
+
+    sass -h
+
+to read through the help section or you can read the documentation and tutorials on [their website][sass-lang].
+
+### Google Closure Library
+
+All of the user-written javascript files (files ending with `.js`) on this project require [Google Closure Library][closure-library] in order to run (with the exception of the login page).  Google Closure is a JavaScript library that provides a number of utilities for making the user experience of a web page a lot better.  The explanation of what Google's Closure Library does is quite lengthy, but you can read more about what it is and how to install it from their [introduction](http://code.google.com/closure/library/docs/introduction.html).  It walks you through how to download the source code and use it in your projects.  [`wizard.js`](http://code.google.com/closure/library/docs/introduction.html) contains an example of how this project uses Google's Closure Library to enhance the user experience.
+
+### Google Closure Compiler
+
+Like Closure Library, [Closure Compiler][closure-compiler] is a set of utilities for helping make the user experience better.  However, instead of providing a library to work with, the compiler provides a way to combine multiple javascript files into one file, and shrinking that file down as much as possible.  This may not sound very useful, but it speeds up the javascript and makes it secure so that other people can't as easily determine what the library is doing (and thus, try to access your website in ways that you didn't intend for them to).  This app uses the [Closure Compiler JAR](http://code.google.com/closure/compiler/docs/gettingstarted_app.html), but for starters, if you're interested, you can learn how to use the compiler on the web with [this tutorial](http://code.google.com/closure/compiler/docs/gettingstarted_ui.html).  In short, however, the compiler turns files that look like [`wizard.js`](https://github.com/Dru89/PHP-REST-HTM-Application/blob/master/js/wizard.js) into [`wizard.min.js`](https://github.com/Dru89/PHP-REST-HTM-Application/blob/master/js/wizard.min.js).
+
+[php]: http://www.php.net
+[httprequest2]: http://pear.php.net/package/HTTP_Request2/
+[neturl2]: http://pear.php.net/package/Net_URL2
+[mysql]: http://www.mysql.com
+[apache]: http://www.apache.org
+[s-required-applications]: #section-required-applications
+[s-suggested-applications]: #section-suggested-applications
+[s-how-to]: #section-howto
+[h-xampp]: #help-xampp
+[h-p-httprequest2]: #help-pear-httprequest2
+[h-p-neturl2]: #help-pear-neturl2
+[sass-lang]: http://sass-lang.com
+[h-sass]: #help-sass
+[closure]: http://code.google.com/closure/
+[closure-library]: http://code.google.com/closure/library/
+[h-closure-library]: #help-closure-library
+[closure-compiler]: http://code.google.com/closure/compiler/
+[h-closure-compiler]: #help-closure-compiler
+[perl]: http://perl.org
+[xampp]: http://www.apachefriends.org/en/xampp.html
 
