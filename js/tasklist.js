@@ -491,6 +491,7 @@ Util.prototype.getTaskList = function(anchor) {
             $this.setSelected(items[0]);
             var a = goog.dom.getElementsByTagNameAndClass('a', null, items[0]);
             $this.getTaskDescription(a[0]);
+            $this.replaceHistory(a[0]);
 
             goog.array.forEach(items, function(elem, ind, arr) {
                 $this.registerForSelection(elem);

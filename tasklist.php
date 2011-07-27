@@ -60,50 +60,6 @@ if ($new) $selectedTask = null;
         <title>Task list for <?= $selectedAccount->getName() ?></title>
         <link href="/css/custom-theme/taskstyle.css" 
               type="text/css" rel="Stylesheet" />
-        <script type='text/javascript' 
-                src='/closure-library/closure/goog/base.js'></script>
-        <script>
-goog.require('goog.History');
-goog.require('goog.Uri');
-goog.require('goog.date');
-goog.require('goog.date.Date');
-goog.require('goog.dom');
-goog.require('goog.dom.forms');
-goog.require('goog.editor.Field');
-goog.require('goog.editor.plugins.BasicTextFormatter');
-goog.require('goog.editor.plugins.EnterHandler');
-goog.require('goog.editor.plugins.HeaderFormatter');
-goog.require('goog.editor.plugins.LinkBubble');
-goog.require('goog.editor.plugins.LinkDialogPlugin');
-goog.require('goog.editor.plugins.ListTabHandler');
-goog.require('goog.editor.plugins.RemoveFormatting');
-goog.require('goog.editor.plugins.UndoRedo');
-goog.require('goog.events');
-goog.require('goog.history.EventType');
-goog.require('goog.history.Html5History');
-goog.require('goog.i18n.DateTimeFormat');
-goog.require('goog.i18n.DateTimeParse');
-goog.require('goog.i18n.DateTimeSymbols');
-goog.require('goog.i18n.DateTimeSymbols_en_US');
-goog.require('goog.locale');
-goog.require('goog.net.XhrIo');
-goog.require('goog.string');
-goog.require('goog.style');
-goog.require('goog.ui.Button');
-goog.require('goog.ui.ButtonRenderer');
-goog.require('goog.ui.ButtonSide');
-goog.require('goog.ui.Component');
-goog.require('goog.ui.CustomButton');
-goog.require('goog.ui.CustomButtonRenderer');
-goog.require('goog.ui.Dialog');
-goog.require('goog.ui.Dialog.ButtonSet');
-goog.require('goog.ui.DatePicker');
-goog.require('goog.ui.ProgressBar');
-goog.require('goog.ui.Slider');
-goog.require('goog.ui.decorate');
-goog.require('goog.ui.editor.DefaultToolbar');
-goog.require('goog.ui.editor.ToolbarController');
-        </script>
     </head>
     <body>
     <? if (isset($_SESSION['flash'])): ?>
@@ -219,6 +175,6 @@ goog.require('goog.ui.editor.ToolbarController');
         <? endif; ?>
             </div>
         </div>
-        <script type='text/javascript' src='/js/tasklist.js'></script>
+        <script type='text/javascript' src='/js/tasklist.min.js'></script>
     </body>
 </html>

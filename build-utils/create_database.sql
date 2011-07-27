@@ -1,3 +1,5 @@
+CREATE DATABASE IF NOT EXISTS htm_database;
+
 DROP TABLE IF EXISTS User_Accounts;
 
 DROP TABLE IF EXISTS Accounts;

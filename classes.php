@@ -1002,18 +1002,19 @@ EOF;
      */
     static function deleteTask($user, $task) {
         $url = $task->getUri();
-        $auth = "{$user->getName()}:{$user->getPassword()}";
         $request = new HTTP_Request2($url, HTTP_Request2::METHOD_DELETE);
-
+        $request->setAuth($user->getName(), $user->getPassword());
         $response = $request->send();
         $codeBase = (int) ($response->getStatus() / 100);
+        $status = ($response->getStatus());
 
         if ($codeBase == 2) {
             return true;
         } else if ($response->getStatus() == 401) {
             return "Bad authorization.  Your login credentials may be stale.";
         } else {
-            return "Something went wrong, the task may not have been deleted.";
+            return "($status) Something went wrong, the task may not have " .
+                "been deleted.";
         }
     }
 }

@@ -1,16 +1,16 @@
 <? 
 /**
  * Task deletion for those without JavaScript
- * @todo {Andrew Hays} make more secure.  
- *              Require session variables for user and account
  */
 
+/**
+ * Required to interact with all of the other data.
+ */
 require_once('classes.php');
-session_start();
 if (isset($_GET['user']) and isset($_GET['task'])) {
-    $user = Account::getUserByUserName($_GET['user']);
-    $task_uri = Task::uriFromTaskNumber($_GET['task']);
-    $task = Util::retrieveTaskDescription($user, $task_uri);
+    $util = new Util();
+    $user = $util->getAccountByName($_GET['user']);
+    $task = $util->getTaskById($_GET['task'], $user);
     $success = Task::deleteTask($user, $task);
     if ($success === true) {
         $_SESSION['flash'] = "Task successfully deleted.";
@@ -21,11 +21,12 @@ if (isset($_GET['user']) and isset($_GET['task'])) {
     $_SESSION['flash'] = "Not enough information provided to delete task.";
 }
 
-if (isset($_SERVER['HTTP_REFERER']) and $_SERVER['HTTP_REFERER']) {
-    $referrer = $_SERVER['HTTP_REFERER'];
+$referrer = "";
+if (isset($_GET['user'])) {
+    $refer = "/".urlencode($_GET['user'])."/";
 } else {
-    $referrer = "/tasklist/";
+    $refer = "/";
 }
 
-header("Location: $referrer");
+header("Location: $refer");
 ?>
