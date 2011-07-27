@@ -3,7 +3,6 @@
  * Retrieves a list of tasks for a user.
  * @todo {Andrew Hays} modify this so that it accepts a user param.  Probably
  *      through the session variable.
- * @package PhpHtmRestApplicationAjaxTaskList
  */
 
 require_once('classes.php'); ?>

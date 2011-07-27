@@ -700,7 +700,7 @@ Util.prototype.registerAddAccountButton = function(button) {
 Util.prototype.addAccount = function(account) {
     // account['name'], account['uri']
     var account_item = goog.dom.createDom('li');
-    var anchor = goog.dom.createDom('a', {'href':escape(account['name'])});
+    var anchor = goog.dom.createDom('a', {'href':'/'+escape(account['name'])});
     goog.dom.appendChild(anchor, goog.dom.createDom('span', 'account-name',
                 account['name']));
     goog.dom.appendChild(account_item, anchor);

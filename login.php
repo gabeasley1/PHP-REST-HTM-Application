@@ -1,7 +1,6 @@
 <?
 /**
  * Login page for REST Application
- * @package PhpHtmRestApplicationLoginView
  */
 ?>
 <!DOCTYPE html>

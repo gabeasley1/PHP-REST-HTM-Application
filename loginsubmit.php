@@ -1,7 +1,6 @@
 <?
 /**
  * Handles all submit requests from the login form.
- * @package PhpHtmRestApplicationLoginSubmit
  */
 require_once('classes.php');
 session_start();

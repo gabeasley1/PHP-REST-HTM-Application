@@ -2,7 +2,6 @@
 /**
  * Allows for retrieving Html for Task Descriptions and forms for editing those
  * descritpions.
- * @package PhpHtmRestApplicationAjaxTaskDescription
  */
 
 require_once('classes.php'); ?>

@@ -1,8 +1,29 @@
 //TODO rewrite page using history to navigate between links
+/*
+goog.require('goog.History');
+goog.require('goog.Uri');
+goog.require('goog.dom');
+goog.require('goog.dom.forms');
+goog.require('goog.dom.query');
+goog.require('goog.fx.AnimationQueue');
+goog.require('goog.fx');
+goog.require('goog.fx.dom');
+goog.require('goog.history.EventType');
+goog.require('goog.history.Html5History');
+goog.require('goog.math.Coordinate');
+goog.require('goog.net.XhrIo');
+goog.require('goog.style');
+goog.require('goog.ui.Dialog');
+*/
 
 var $ = goog.dom.getElement;
 var $$ = goog.dom.getElementsByTagNameAndClass;
 
+/**
+ * The Wizard class handles all of the mechanics behind how the wizard 
+ * works.
+ * @constructor
+ */
 var Wizard = function() {
     var dialog = new goog.ui.Dialog();
     dialog.setButtonSet(false);
@@ -15,6 +36,10 @@ var Wizard = function() {
               '<img src="/css/custom-theme/images/loading_indeterminate.gif" '+
                    'width="500" height="22" />'+
             '</div>');
+    /**
+     * The loading dialog.
+     * @type {goog.ui.Dialog}
+     */
     this.loading_dialog_ = dialog;
     
     this.current_page = $$('div', 'current-page')[0];
@@ -35,6 +60,11 @@ var Wizard = function() {
     this.registerButtons();
 }
 
+/**
+ * Processes all history events from the goog.history.EventType.NAVIGATE event.
+ * @this {Wizard}
+ * @param {Event} evt The event to handle.
+ */
 Wizard.prototype.processHistoryEvent = function(evt) {
     var tok = evt.token;
     var prevTok = parseInt(goog.dom.getTextContent($('page-number')));
@@ -62,6 +92,12 @@ Wizard.prototype.processHistoryEvent = function(evt) {
     });
 }
 
+/**
+ * Updates the wizard to the given page.
+ * @this {Wizard}
+ * @param {Element} dom The page to update.
+ * @param {fromRight} Whether or not to bring the page in from the right.
+ */
 Wizard.prototype.updateWizard = function(dom, fromRight) {
     var parent = $$(null, 'content')[0];
     dom.style.position = "absolute";
@@ -106,47 +142,26 @@ Wizard.prototype.updateWizard = function(dom, fromRight) {
         }
         $this.registerFormSubmit(dom);
         $this.current_page = dom;
-        $this.unloading();
+        $this.setLoading(false);
     });
     flyIn.play();
 };
 
+/**
+ * Sets whether or not to display the loading dialog.
+ * @this {Wizard}
+ * @param {boolean} loading Whether or not the page is loading elements.
+ */
 Wizard.prototype.setLoading = function(loading) {
     this.loading_dialog_.setVisible(loading);
 };
 
-Wizard.prototype.loading = function() {
-    if (this.loadingGif_ || this.loadingDiv_) this.unloading();
-    var div = goog.dom.createDom('div', 'modal');
-    var loading = goog.dom.createDom('span', 'loading-wheel');
-    var pagesize = goog.dom.getViewportSize();
-    loading.style.position = 'fixed';
-    loading.style.zIndex = 11;
-    loading.style.visibility = "hidden";
-    
-    goog.dom.appendChild($$('body')[0], div);
-    goog.dom.appendChild($$('body')[0], loading);
-    var size = goog.style.getSize(loading);
-    var position = new goog.math.Coordinate((pagesize.width-size.width)/2,
-            (pagesize.height-size.height)/2);
-    goog.style.setPosition(loading, position);
-    loading.style.visibility = "visible";
-
-    this.loadingDiv_ = div;
-    this.loadingGif_ = loading;
-};
-
-Wizard.prototype.unloading = function() {
-    if (this.loadingDiv_) {
-        goog.dom.removeNode(this.loadingDiv_);
-        this.loadingDiv_ = null;
-    }
-    if (this.loadingGif_) {
-        goog.dom.removeNode(this.loadingGif_);
-        this.loadingGif_ = null;
-    }
-};
-
+/**
+ * Registers the form to submit (if any)
+ * @this {Wizard}
+ * @param {Element} opt_page The page to register.  If none, current_page is
+ *      used.
+ */
 Wizard.prototype.registerFormSubmit = function(opt_page) {
     var page = opt_page || this.current_page;
     var form = $$('form', null, page);
@@ -154,7 +169,7 @@ Wizard.prototype.registerFormSubmit = function(opt_page) {
     if (form && form.length > 0) {
         form = form[0];
         goog.events.listen(form, goog.events.EventType.SUBMIT, function(evt) {
-            $this.loading();
+            $this.setLoading(true);
             evt.preventDefault();
             var in_data = goog.dom.forms.getFormDataString(form);
             var callback = function(evt) {
@@ -183,6 +198,11 @@ Wizard.prototype.registerFormSubmit = function(opt_page) {
     } 
 };
 
+/**
+ * Registers the previous button on the page.
+ * @this {Wizard}
+ * @param {Element=} opt_page Option page.  this.current_page used otherwise.
+ */
 Wizard.prototype.registerPrevButton = function(opt_page) {
     var page = opt_page || this.current_page;
     var prev_link = $$(null, 'prev-link', page);
@@ -195,7 +215,6 @@ Wizard.prototype.registerPrevButton = function(opt_page) {
         $$('div', 'left-page')[0].style.visibility = 'hidden';
     }
     if (prev_link) {
-        prev_link
         goog.events.listen(prev_link, goog.events.EventType.CLICK, function(e) {
             if (prev_link.nodeName.toUpperCase()=="A") {
                 e.preventDefault();
@@ -212,6 +231,11 @@ Wizard.prototype.registerPrevButton = function(opt_page) {
     }
 };
 
+/**
+ * Registers the next button on the page.
+ * @this {Wizard}
+ * @param {Element=} opt_page Option page.  this.current_page used otherwise.
+ */
 Wizard.prototype.registerNextButton = function(opt_page) {
     var page = opt_page || this.current_page;
     var next_link = $$(null, 'next-link', page);
@@ -240,16 +264,33 @@ Wizard.prototype.registerNextButton = function(opt_page) {
     }
 };
 
+/**
+ * Registers both buttons on the page.
+ * @this {Wizard}
+ * @param {Element=} opt_page Option page.  this.current_page used otherwise.
+ */
 Wizard.prototype.registerButtons = function(opt_page) {
     this.registerNextButton(opt_page);
     this.registerPrevButton(opt_page);
     this.registerFormSubmit(opt_page);
 };
 
+/**
+ * Updates the history token on the page.  Adds token to top of stack.
+ * @this {Wizard}
+ * @param {string} where The location to update to.
+ * @param {string=} opt_title The title to update to, if any.
+ */
 Wizard.prototype.updateHistory = function(where, opt_title) {
     this.history.setToken(where, opt_title);
 }
 
+/**
+ * Updates the history token on the page.  Replaces current token in stack.
+ * @this {Wizard}
+ * @param {string} where The location to update to.
+ * @param {string=} opt_title The title to update to, if any.
+ */
 Wizard.prototype.setupPageStyle = function(page) {
     var position = goog.style.getPosition(page);
     page.style.position = "absolute";
@@ -257,14 +298,53 @@ Wizard.prototype.setupPageStyle = function(page) {
 }
 
 
-
+/**
+ * The width to use for the wizard. 
+ * @const 
+ * @type {int}
+ */
 Wizard.WIDTH = 700;
+
+/**
+ * The height to use for the wizard page.
+ * @const
+ * @type {int}
+ */
 Wizard.HEIGHT = 700;
+
+/**
+ * The padding to use for the wizard page.
+ * @const
+ * @type {int}
+ */
 Wizard.PADDING = 25;
+
+/**
+ * The top position for the wizard page.
+ * @const
+ * @type {int}
+ */
 Wizard.TOP = 50;
+
+/**
+ * The animation length to use for changing pages.
+ * @const
+ * @type {int}
+ */
 Wizard.ANIMATION_LENGTH = 700;
+
+/**
+ * The function to use for the easing effect.
+ * @const
+ * @type {function(int):int}
+ */
 Wizard.ANIMATION_EASING = goog.fx.easing.inAndOut;
 
+/**
+ * The coordinate to use when starting out on the left.
+ * @const
+ * @type {goog.math.Coordinate}
+ */
 Wizard.LEFT_POSITION = new goog.math.Coordinate(-Wizard.WIDTH, Wizard.TOP);
 // Right position can't be used since the screen size can change.
 

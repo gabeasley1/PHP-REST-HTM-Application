@@ -11,7 +11,7 @@ REM         http://code.google.com/closure/compiler/docs/gettingstarted_app.html
 REM   = jQuery (tested with 1.6.2) 
 REM         http://docs.jquery.com/Downloading_jQuery#Current_Release
 REM   = jQuery UI (tested with 1.8.14) http://jqueryui.com/download
-"%code%\closure-library\closure\bin\calcdeps.py" ^
-        -i tasklist.js -p "%code%\closure-library" -o compiled ^
-        -c "%code%\closure-library\compiler.jar" ^
+set closure=%code%\closure-library
+"%closure%\closure\bin\calcdeps.py" -i "%1" -p "%closure%" -o compiled ^
+        -c "%closure%\compiler.jar" ^
         -f "--compilation_level=ADVANCED_OPTIMIZATIONS"

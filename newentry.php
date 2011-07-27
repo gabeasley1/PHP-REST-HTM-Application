@@ -1,7 +1,6 @@
 <?
 /**
  * Handles forms for creating a new task or updating an existing one.
- * @package PhpHtmRestApplicationTaskCreation
  */
 
 require_once('classes.php');

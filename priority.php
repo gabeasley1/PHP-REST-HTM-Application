@@ -2,7 +2,6 @@
 /**
  * Displays an image to the screen based on some given values.  
  * Used for the priority bubble.
- * @package PhpHtmRestApplicationPriorityImage
  */
 
 /**

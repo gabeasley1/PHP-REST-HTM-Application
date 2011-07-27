@@ -1,7 +1,6 @@
 <? 
 /**
  * Allows for deleting tasks through a series of GIT requests.
- * @package PhpHtmRestApplicationAjaxTaskDeletion
  * @todo {Andrew Hays} Make a more secure method of deleting tasks.
  */
 

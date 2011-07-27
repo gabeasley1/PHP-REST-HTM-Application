@@ -8,17 +8,14 @@
  * </code>
  *
  * @author Andrew Hays
+ * @author Grant Beasley
  * @copyright LGPLv3
- * @version 1.0
- * @package PhpHtmRestApplicationClasses
- * @todo {Andrew Hays|Grant Beasley} This package will likely need another class
- *              that is associated with the new style users that we will be
- *              storing in our database.  We will need methods for manipulating
- *              those and other methods (that will likely go in the
- *              {@link Util} class) to link the User objects with the Account
- *              objects.
+ * @version 1.3
  */
 
+/**
+ * This is used for all HTTP Requests.
+ */
 require_once 'HTTP/Request2.php';
 
 /**
@@ -43,8 +40,6 @@ class AccountEntry {
  * is never used for anything but an authentication method.
  *
  * @author Andrew Hays
- * @package PhpHtmRestApplicationClasses
- * @subpackage Accounts
  */
 class User {
     /**
@@ -166,8 +161,7 @@ class User {
  * manipulating an account.
  *
  * @author Andrew Hays
- * @package PhpHtmRestApplicationClasses
- * @subpackage Accounts
+ * @author Grant Beasley
  */
 class Account {
     /**
@@ -247,10 +241,6 @@ class Account {
     /**
      * Gets the account for a user given a username.
      * @static
-     * @todo {Grant Beasley} Any calls to this function should use the new style
-     *          queries from the database.  It will return Accounts associated
-     *          with Daniel's API based on a username given, by comparing it
-     *          with the database.
      * @param string $name The name associated with the account.
      * @return Account The account for Daniel's database associated with the 
      *          given username.
@@ -285,11 +275,6 @@ class Account {
     /**
      * Adds a new account to the database.
      * @static
-     * @todo {Grant Beasley} This should use the new style queries, where the
-     *          $name, $password, and $uri variables are associated with the
-     *          API from Daniel.  You will likely need to add a few more
-     *          parameters (associated with our accounts that we use), so that
-     *          we can link users and accounts.
      * @param User $user The User object to use to link the account.
      * @param mixed $accounts A list of accounts to add.
      */
@@ -700,8 +685,6 @@ EOF;
     /**
      * Attempts to parse the date given a date string using one of many
      * date string styles.
-     * @todo {Andrew Hays} I would love to see some way to clean this up,
-     *          but right now I don't know what that would be.
      * @param string The string to parse.
      * @return DateTime the DateTime associated with the account, or null if 
      *          no date could be parsed.
@@ -1042,9 +1025,8 @@ EOF;
  * <code>
  *      Util::methodName()
  * </code>
- * @todo {Grant Beasley|Andrew Hays} Methods should be added to link the 
- *      {@link User} class (when created) with {@link Account} objects.
  * @author Andrew Hays
+ * @author Grant Beasley
  */
 class Util {
     /**
@@ -1165,9 +1147,6 @@ class Util {
 
     /**
      * Returns all accounts in the database
-     * @todo {Grant Beasley} Adjust this query to use new tables.  You'll likely
-     *          need to accept a new parameter (like a {@link User} object) so
-     *          that you will only get accounts associated with that User.
      * @param mixed $all Whether or not to return all accounts.  
      *          If it's an array, only for the selected <code>Users</code>, if
      *          its a User, only do it for the given user.  If false, only use
@@ -1239,8 +1218,6 @@ class Util {
 
     /**
      * Returns a list of tasks for a given account.
-     * @todo {Andrew Hays} Write similar method that accepts an array of
-     *          accounts to display a list of all tasks for the listed accounts
      * @param Account|array $accounts The account or accounts to look up 
      *          tasks for.
      * @param boolean $fetch_description Whether or not to continue to do 
@@ -1677,6 +1654,10 @@ class Util {
     }
 }
 
+/**
+ * Class for manipulating wizard pages.  Mostly useless.
+ * @author Andrew hays
+ */
 class Wizard {
     public static function getPage($page) {
         $util = new Util();

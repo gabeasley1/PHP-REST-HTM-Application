@@ -3,7 +3,6 @@
  * Task deletion for those without JavaScript
  * @todo {Andrew Hays} make more secure.  
  *              Require session variables for user and account
- * @package PhpHtmRestApplicationTaskDelete
  */
 
 require_once('classes.php');

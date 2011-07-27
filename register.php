@@ -1,7 +1,6 @@
 <?
 /**
  * Handles all submit requests from the registration form.
- * @package PhpHtmRestApplicationRegisterSumbmit
  */
 require_once('classes.php');
 session_start();
