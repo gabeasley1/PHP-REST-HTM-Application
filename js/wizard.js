@@ -173,19 +173,17 @@ Wizard.prototype.registerFormSubmit = function(opt_page) {
             evt.preventDefault();
             var in_data = goog.dom.forms.getFormDataString(form);
             var callback = function(evt) {
+                $this.setLoading(false);
                 var xhr = evt.target;
                 var out_data = xhr.getResponseJson();
-                console.log(xhr.getResponseText());
-                console.log(xhr.getResponseType());
-                console.log(out_data);
-                if (out_data.success) {
+                if (out_data['success']) {
                     // Move on to the next thing.
                     var current_page = parseInt(goog.dom.getTextContent(
                             $('page-number')));
                     $this.updateHistory(current_page+1);
                 } else {
                     // Display error message.
-                    var message = out_data.reason;
+                    var message = out_data['reason'];
                     var flash = $('flash');
                     flash.style.color = "red";
                     flash.style.fontWeight = "bold";
