@@ -1,6 +1,12 @@
 PHP REST Human Task Management Application
 =======================================
 
+## Contributors
+
+  * [Andrew Hays](https://github.com/Dru89)
+  * [Grant Beasley](https://)
+  * [Kevin Topiwala](https://)
+
 In order to be able to run this application, you will need to have a few things installed.  This README file will attempt to walk you through how to do that step-by-step.  Note that I installed everything using Windows XP, but I imagine the steps are not too far off for Ubuntu, and I'll list what I can for reference help.
 
 Required Applications
